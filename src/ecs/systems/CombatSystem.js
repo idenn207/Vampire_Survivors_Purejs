@@ -109,6 +109,8 @@ export default class CombatSystem extends System {
       return;
     }
 
+    console.log('item: ', item);
+
     // 드랍 아이템 타입별 처리
     switch (item.drop_type) {
       case 'exp':

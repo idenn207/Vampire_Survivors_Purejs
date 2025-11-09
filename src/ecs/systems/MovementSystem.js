@@ -26,8 +26,10 @@ export default class MovementSystem extends System {
     // 가속도 적용
     rigidbody.velocity.add(rigidbody.acceleration.clone().multiply(deltaTime));
 
-    // 마찰력 적용
-    rigidbody.applyFriction(deltaTime);
+    // 마찰력 적용 (friction이 0보다 클 때만)
+    if (rigidbody.friction > 0) {
+      rigidbody.applyFriction(deltaTime);
+    }
 
     // 속도 제한
     rigidbody.clampVelocity();

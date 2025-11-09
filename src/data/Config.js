@@ -38,7 +38,7 @@ const Config = {
 
   // 경험치 설정
   EXPERIENCE: {
-    BASE_VALUE: 1,
+    BASE_VALUE: 45,
     MAGNET_SPEED: 300, // 자석 끌림 속도
     PICKUP_RANGE: 30, // 획득 범위
   },

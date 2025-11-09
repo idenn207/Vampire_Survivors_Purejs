@@ -130,6 +130,14 @@ class ProjectilePool {
   get activeCount() {
     return this._pool.activeCount;
   }
+
+  /**
+   * 모든 활성 투사체 가져오기
+   * @returns {Array<Entity>}
+   */
+  getActiveProjectiles() {
+    return Array.from(this._pool._active);
+  }
 }
 
 // Singleton 인스턴스 export

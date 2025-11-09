@@ -26,10 +26,17 @@ import CollisionSystem from '../ecs/systems/CollisionSystem.js';
 import CombatSystem from '../ecs/systems/CombatSystem.js';
 import ExperienceSystem from '../ecs/systems/ExperienceSystem.js';
 import MovementSystem from '../ecs/systems/MovementSystem.js';
+import ProjectileSystem from '../ecs/systems/ProjectileSystem.js';
 import WeaponSystem from '../ecs/systems/WeaponSystem.js';
 
 // Managers
+import { createCameraManager } from '../managers/CameraManager.js';
 import spawnManager from '../managers/SpawnManager.js';
+import waveManager from '../managers/WaveManager.js';
+import projectilePool from '../pool/ProjectilePool.js';
+
+// UI
+import LevelUpUI from '../ui/LevelUpUI.js';
 
 // Data
 import Config from '../data/Config.js';
@@ -43,6 +50,8 @@ export default class GameScene extends Scene {
     this._systems = [];
     this._player = null;
     this._projectiles = [];
+    this._camera = null;
+    this._levelup_ui = null;
   }
 
   /**
@@ -51,15 +60,25 @@ export default class GameScene extends Scene {
   init() {
     super.init();
 
+    // 카메라 생성
+    this._camera = createCameraManager(Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT);
+
     // 플레이어 생성
     this.#createPlayer();
+
+    // 카메라 타겟 설정
+    this._camera.setTarget(this._player);
 
     // SpawnManager 초기화
     spawnManager.setPlayer(this._player);
     spawnManager.setWave(1);
 
+    // LevelUpUI 생성
+    this._levelup_ui = new LevelUpUI();
+
     // 이벤트 구독
     eventBus.on('player_leveled_up', this.#handlePlayerLevelUp, this);
+    eventBus.on('wave_changed', this.#handleWaveChanged, this);
 
     console.log('GameScene initialized');
   }
@@ -77,7 +96,7 @@ export default class GameScene extends Scene {
     // Rigidbody
     const rigidbody = new Rigidbody();
     rigidbody.max_speed = Config.PLAYER.MOVE_SPEED;
-    rigidbody.friction = 10;
+    rigidbody.friction = 0; // 관성 제거
     this._player.addComponent(rigidbody);
 
     // Renderer
@@ -116,7 +135,22 @@ export default class GameScene extends Scene {
     const { player, level } = data;
     console.log(`Player leveled up to ${level}!`);
 
-    // 일시정지하고 레벨업 UI 표시 (추후 구현)
+    // 레벨업 UI 표시
+    if (this._levelup_ui) {
+      this._levelup_ui.show(player);
+    }
+  }
+
+  /**
+   * 웨이브 변경 처리
+   * @param {Object} data
+   */
+  #handleWaveChanged(data) {
+    const { wave } = data;
+    console.log(`Wave ${wave} started!`);
+
+    // SpawnManager에 새 웨이브 설정
+    spawnManager.setWave(wave);
   }
 
   /**
@@ -145,13 +179,19 @@ export default class GameScene extends Scene {
     const combatSystem = new CombatSystem();
     this._systems.push(combatSystem);
 
-    // Weapon System
+    // Weapon System (플레이어 추가)
     const weaponSystem = new WeaponSystem(this._player, []);
+    weaponSystem.addEntity(this._player);
     this._systems.push(weaponSystem);
 
-    // Experience System
+    // Experience System (플레이어 추가)
     const experienceSystem = new ExperienceSystem(this._player, []);
+    experienceSystem.addEntity(this._player);
     this._systems.push(experienceSystem);
+
+    // Projectile System
+    const projectileSystem = new ProjectileSystem();
+    this._systems.push(projectileSystem);
 
     console.log('GameScene started');
   }
@@ -163,6 +203,14 @@ export default class GameScene extends Scene {
   update(deltaTime) {
     // 플레이어 입력 처리
     this.#handlePlayerInput();
+
+    // 카메라 업데이트
+    if (this._camera) {
+      this._camera.update(deltaTime);
+    }
+
+    // WaveManager 업데이트
+    waveManager.update(deltaTime);
 
     // SpawnManager 업데이트
     spawnManager.update(deltaTime);
@@ -225,6 +273,14 @@ export default class GameScene extends Scene {
     // ExperienceSystem 드랍 아이템 목록 업데이트
     const experienceSystem = this._systems[5];
     experienceSystem.setDropItems(dropItems);
+
+    // ProjectileSystem 투사체 업데이트
+    const projectileSystem = this._systems[6];
+    this._projectiles.forEach((proj) => {
+      if (!projectileSystem.entities.includes(proj)) {
+        projectileSystem.addEntity(proj);
+      }
+    });
   }
 
   /**
@@ -233,12 +289,7 @@ export default class GameScene extends Scene {
    */
   #updateProjectiles(deltaTime) {
     // projectilePool의 활성 투사체를 _projectiles에 동기화
-    // (간단한 구현을 위해 매 프레임 재구성)
-    this._projectiles = [];
-
-    // projectilePool의 _pool._active에서 투사체 가져오기
-    // 실제로는 projectilePool에 getActive() 메서드 추가 필요
-    // 여기서는 임시로 비워둠
+    this._projectiles = projectilePool.getActiveProjectiles();
   }
 
   /**
@@ -257,8 +308,11 @@ export default class GameScene extends Scene {
     const movement = input.getMovementInput();
 
     if (!movement.isZero()) {
-      const force = movement.multiply(stats.move_speed * 10);
-      rigidbody.addForce(force);
+      // 이동 중일 때는 속도 직접 설정 (관성 없음)
+      rigidbody.velocity.set(movement.x * stats.move_speed, movement.y * stats.move_speed);
+    } else {
+      // 키를 떼면 즉시 정지
+      rigidbody.velocity.set(0, 0);
     }
 
     // ESC - 일시정지
@@ -281,6 +335,12 @@ export default class GameScene extends Scene {
     // 배경 그리기
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+    // 카메라 변환 시작
+    ctx.save();
+    if (this._camera) {
+      ctx.translate(-this._camera.offset.x, -this._camera.offset.y);
+    }
 
     // 모든 엔티티 렌더링
     const allEntities = [this._player, ...spawnManager.enemies, ...this._projectiles, ...spawnManager.dropItems].filter((e) => e && e.active && !e.destroyed);
@@ -310,7 +370,10 @@ export default class GameScene extends Scene {
       ctx.restore();
     });
 
-    // UI 그리기
+    // 카메라 변환 종료
+    ctx.restore();
+
+    // UI 그리기 (카메라 영향 안받음)
     this.#renderUI(ctx);
   }
 
@@ -377,11 +440,16 @@ export default class GameScene extends Scene {
     // Wave 표시
     ctx.font = 'bold 20px Arial';
     ctx.textAlign = 'right';
-    ctx.fillText(`Wave ${spawnManager.currentWave}`, ctx.canvas.width - 20, 30);
+    ctx.fillText(`Wave ${waveManager.currentWave}`, ctx.canvas.width - 20, 30);
+
+    // Wave 타이머
+    const remainingTime = Math.ceil(waveManager.remainingTime);
+    ctx.font = '16px Arial';
+    ctx.fillText(`Next: ${remainingTime}s`, ctx.canvas.width - 20, 55);
 
     // 적 수 표시
     ctx.font = '14px Arial';
-    ctx.fillText(`Enemies: ${spawnManager.enemies.length}`, ctx.canvas.width - 20, 55);
+    ctx.fillText(`Enemies: ${spawnManager.enemies.length}`, ctx.canvas.width - 20, 80);
 
     // 조작법 표시
     ctx.fillStyle = '#888';
@@ -435,9 +503,25 @@ export default class GameScene extends Scene {
   destroy() {
     // 이벤트 구독 해제
     eventBus.off('player_leveled_up', this.#handlePlayerLevelUp, this);
+    eventBus.off('wave_changed', this.#handleWaveChanged, this);
+
+    // UI 정리
+    if (this._levelup_ui) {
+      this._levelup_ui.destroy();
+      this._levelup_ui = null;
+    }
 
     // SpawnManager 정리
     spawnManager.clear();
+
+    // WaveManager 리셋
+    waveManager.reset();
+
+    // 카메라 리셋
+    if (this._camera) {
+      this._camera.reset();
+      this._camera = null;
+    }
 
     // 모든 엔티티 파괴
     this._entities.forEach((entity) => entity.destroy());

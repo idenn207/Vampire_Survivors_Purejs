@@ -34,6 +34,10 @@ export default class WeaponSystem extends System {
   process(entity, deltaTime) {
     const weapon = entity.getComponent('Weapon');
 
+    if (!weapon) {
+      return;
+    }
+
     // 쿨타임 업데이트
     weapon.updateCooldown(deltaTime);
 

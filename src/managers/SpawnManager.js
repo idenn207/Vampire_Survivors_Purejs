@@ -11,6 +11,7 @@ import EnemyData from '../data/EnemyData.js';
 import AI from '../ecs/components/AI.js';
 import dropItemPool from '../pool/DropItemPool.js';
 import enemyPool from '../pool/EnemyPool.js';
+import projectilePool from '../pool/ProjectilePool.js';
 import eventBus from '../utils/EventBus.js';
 
 class SpawnManager {
@@ -245,8 +246,10 @@ class SpawnManager {
   #handleProjectileHit(data) {
     const { projectile } = data;
 
-    // 투사체 제거 (projectilePool에 반환)
-    // (실제 구현에서는 projectilePool에서 관리)
+    // 투사체 제거
+    if (projectile && projectile.active) {
+      projectilePool.despawn(projectile);
+    }
   }
 
   /**
