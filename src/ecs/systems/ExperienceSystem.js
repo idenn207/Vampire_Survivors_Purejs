@@ -18,6 +18,14 @@ export default class ExperienceSystem extends System {
   }
 
   /**
+   * 플레이어 설정
+   * @param {Entity} player
+   */
+  setPlayer(player) {
+    this._player = player;
+  }
+
+  /**
    * 드랍 아이템 목록 설정
    * @param {Array<Entity>} dropItems
    */

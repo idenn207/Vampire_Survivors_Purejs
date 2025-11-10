@@ -36,6 +36,9 @@ export default class Stats extends Component {
 
     // 골드
     this.gold = 0;
+
+    // 통계
+    this.kills = 0;
   }
 
   /**

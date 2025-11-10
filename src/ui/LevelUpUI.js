@@ -7,6 +7,7 @@
  */
 
 import WeaponData from '../data/WeaponData.js';
+import Weapon from '../ecs/components/Weapon.js';
 import eventBus from '../utils/EventBus.js';
 
 export default class LevelUpUI {
@@ -211,10 +212,18 @@ export default class LevelUpUI {
 
     switch (choice.type) {
       case 'weapon':
-        // 무기 교체는 동적 import 없이 처리
-        // (실제로는 WeaponData를 이미 import했으므로 직접 사용)
-        console.log(`Weapon change: ${choice.name} (현재는 구현 생략)`);
-        // TODO: 무기 교체 로직
+        // 무기 교체
+        const weaponData = WeaponData[choice.id];
+
+        // 기존 무기 제거 후 새 무기 추가
+        if (this._player.hasComponent('Weapon')) {
+          this._player.removeComponent('Weapon');
+        }
+
+        const newWeapon = new Weapon(weaponData);
+        this._player.addComponent(newWeapon);
+
+        console.log(`Acquired weapon: ${weaponData.name}`);
         break;
 
       case 'gold':

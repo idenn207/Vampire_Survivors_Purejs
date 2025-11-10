@@ -93,9 +93,12 @@ export default class CombatSystem extends System {
     // 무적 시간 부여 (0.5초)
     playerHealth.setInvincible(0.5);
 
+    // 피격 이벤트
+    eventBus.emit('player_hit', { player, damage });
+
     // 플레이어 사망 시
     if (playerHealth.is_dead) {
-      eventBus.emit('player_died');
+      eventBus.emit('player_died', { player });
     }
   }
 
@@ -108,8 +111,6 @@ export default class CombatSystem extends System {
     if (!stats) {
       return;
     }
-
-    console.log('item: ', item);
 
     // 드랍 아이템 타입별 처리
     switch (item.drop_type) {

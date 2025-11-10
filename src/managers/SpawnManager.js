@@ -106,10 +106,17 @@ class SpawnManager {
     const enemy = enemyPool.spawn(enemyType, spawnX, spawnY, this._current_wave);
 
     if (enemy) {
-      // AI 컴포넌트 추가
-      const ai = new AI('chase');
+      // AI 컴포넌트 처리
+      let ai = enemy.getComponent('AI');
+
+      if (!ai) {
+        // AI 컴포넌트가 없으면 새로 추가
+        ai = new AI('chase');
+        enemy.addComponent(ai);
+      }
+
+      // 타겟을 현재 플레이어로 업데이트
       ai.setTarget(this._player);
-      enemy.addComponent(ai);
 
       this._enemies.push(enemy);
     }

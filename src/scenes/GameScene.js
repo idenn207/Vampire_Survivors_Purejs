@@ -36,6 +36,7 @@ import waveManager from '../managers/WaveManager.js';
 import projectilePool from '../pool/ProjectilePool.js';
 
 // UI
+import GameOverUI from '../ui/GameOverUI.js';
 import LevelUpUI from '../ui/LevelUpUI.js';
 
 // Data
@@ -52,6 +53,12 @@ export default class GameScene extends Scene {
     this._projectiles = [];
     this._camera = null;
     this._levelup_ui = null;
+    this._gameover_ui = null;
+    this._is_game_over = false;
+
+    // 화면 쉐이크
+    this._shake_intensity = 0;
+    this._shake_duration = 0;
   }
 
   /**
@@ -61,7 +68,9 @@ export default class GameScene extends Scene {
     super.init();
 
     // 카메라 생성
-    this._camera = createCameraManager(Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT);
+    if (!this._camera) {
+      this._camera = createCameraManager(Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT);
+    }
 
     // 플레이어 생성
     this.#createPlayer();
@@ -73,12 +82,32 @@ export default class GameScene extends Scene {
     spawnManager.setPlayer(this._player);
     spawnManager.setWave(1);
 
-    // LevelUpUI 생성
-    this._levelup_ui = new LevelUpUI();
+    // UI 생성 (중복 방지)
+    if (!this._levelup_ui) {
+      this._levelup_ui = new LevelUpUI();
+    }
+    if (!this._gameover_ui) {
+      this._gameover_ui = new GameOverUI();
+    }
+
+    // 게임 상태 초기화
+    this._is_game_over = false;
+
+    // 이벤트 구독 (중복 방지를 위해 먼저 해제)
+    eventBus.off('player_leveled_up', this.#handlePlayerLevelUp, this);
+    eventBus.off('wave_changed', this.#handleWaveChanged, this);
+    eventBus.off('player_died', this.#handlePlayerDied, this);
+    eventBus.off('player_hit', this.#handlePlayerHit, this);
+    eventBus.off('enemy_killed', this.#handleEnemyKilled, this);
+    eventBus.off('game_restart', this.#handleGameRestart, this);
 
     // 이벤트 구독
     eventBus.on('player_leveled_up', this.#handlePlayerLevelUp, this);
     eventBus.on('wave_changed', this.#handleWaveChanged, this);
+    eventBus.on('player_died', this.#handlePlayerDied, this);
+    eventBus.on('player_hit', this.#handlePlayerHit, this);
+    eventBus.on('enemy_killed', this.#handleEnemyKilled, this);
+    eventBus.on('game_restart', this.#handleGameRestart, this);
 
     console.log('GameScene initialized');
   }
@@ -154,6 +183,121 @@ export default class GameScene extends Scene {
   }
 
   /**
+   * 플레이어 사망 처리
+   * @param {Object} data
+   */
+  #handlePlayerDied(data) {
+    if (this._is_game_over) {
+      return;
+    }
+
+    this._is_game_over = true;
+    console.log('Player died!');
+
+    // 게임오버 통계
+    const stats = this._player.getComponent('Stats');
+    const gameOverStats = {
+      wave: waveManager.currentWave,
+      level: stats.level,
+      kills: stats.kills,
+      gold: stats.gold,
+    };
+
+    // 게임오버 UI 표시
+    if (this._gameover_ui) {
+      this._gameover_ui.show(gameOverStats);
+    }
+  }
+
+  /**
+   * 플레이어 피격 처리
+   * @param {Object} data
+   */
+  #handlePlayerHit(data) {
+    // 화면 쉐이크
+    this.#startScreenShake(5, 0.2);
+  }
+
+  /**
+   * 적 처치 처리
+   * @param {Object} data
+   */
+  #handleEnemyKilled(data) {
+    const stats = this._player.getComponent('Stats');
+    if (stats) {
+      stats.kills++;
+    }
+  }
+
+  /**
+   * 게임 재시작 처리
+   */
+  #handleGameRestart() {
+    console.log('Restarting game...');
+
+    // 게임오버 상태 해제
+    this._is_game_over = false;
+
+    // UI 숨기기
+    if (this._gameover_ui) {
+      this._gameover_ui.hide();
+    }
+
+    // 모든 풀 초기화
+    spawnManager.clear();
+    projectilePool.despawnAll();
+
+    // WaveManager 리셋
+    waveManager.reset();
+
+    // 기존 플레이어 파괴
+    if (this._player) {
+      this._player.destroy();
+    }
+
+    // 시스템 클리어 (재사용)
+    this._systems.forEach((system) => system.clear());
+
+    // 플레이어 재생성
+    this._entities = [];
+    this._projectiles = [];
+    this.#createPlayer();
+
+    // 카메라 타겟 재설정
+    if (this._camera) {
+      this._camera.reset();
+      this._camera.setTarget(this._player);
+    }
+
+    // SpawnManager 재초기화
+    spawnManager.setPlayer(this._player);
+    spawnManager.setWave(1);
+
+    // 시스템들에 플레이어 재등록
+    this._systems[0].addEntity(this._player); // MovementSystem
+    this._systems[1].setPlayer(this._player); // AISystem
+    this._systems[4].addEntity(this._player); // WeaponSystem
+    this._systems[5].setPlayer(this._player); // ExperienceSystem
+    this._systems[5].addEntity(this._player); // ExperienceSystem
+
+    // 화면 쉐이크 리셋
+    this._shake_intensity = 0;
+    this._shake_duration = 0;
+
+    console.log('Game restarted successfully');
+  }
+
+  /**
+   * 화면 쉐이크 시작
+   * @param {number} intensity - 강도
+   * @param {number} duration - 지속시간 (초)
+   */
+  #startScreenShake(intensity, duration) {
+    this._shake_intensity = intensity;
+    this._shake_duration = duration;
+  }
+
+  /**
    * 씬 시작
    */
   start() {
@@ -201,8 +345,16 @@ export default class GameScene extends Scene {
    * @param {number} deltaTime
    */
   update(deltaTime) {
+    // 게임오버 상태면 업데이트 중지
+    if (this._is_game_over) {
+      return;
+    }
+
     // 플레이어 입력 처리
     this.#handlePlayerInput();
+
+    // 화면 쉐이크 업데이트
+    this.#updateScreenShake(deltaTime);
 
     // 카메라 업데이트
     if (this._camera) {
@@ -226,6 +378,21 @@ export default class GameScene extends Scene {
 
     // 디버그 정보 업데이트
     this.#updateDebugInfo();
+  }
+
+  /**
+   * 화면 쉐이크 업데이트
+   * @param {number} deltaTime
+   */
+  #updateScreenShake(deltaTime) {
+    if (this._shake_duration > 0) {
+      this._shake_duration -= deltaTime;
+
+      if (this._shake_duration <= 0) {
+        this._shake_intensity = 0;
+        this._shake_duration = 0;
+      }
+    }
   }
 
   /**
@@ -336,11 +503,22 @@ export default class GameScene extends Scene {
     ctx.fillStyle = '#0a0a0a';
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+    // 화면 쉐이크 적용
+    let shakeX = 0;
+    let shakeY = 0;
+    if (this._shake_intensity > 0) {
+      shakeX = (Math.random() - 0.5) * this._shake_intensity;
+      shakeY = (Math.random() - 0.5) * this._shake_intensity;
+    }
+
     // 카메라 변환 시작
     ctx.save();
     if (this._camera) {
-      ctx.translate(-this._camera.offset.x, -this._camera.offset.y);
+      ctx.translate(-this._camera.offset.x + shakeX, -this._camera.offset.y + shakeY);
     }
+
+    // 배경 그리드 그리기
+    this.#renderGrid(ctx);
 
     // 모든 엔티티 렌더링
     const allEntities = [this._player, ...spawnManager.enemies, ...this._projectiles, ...spawnManager.dropItems].filter((e) => e && e.active && !e.destroyed);
@@ -351,6 +529,17 @@ export default class GameScene extends Scene {
 
       if (!transform || !renderer || !renderer.visible) {
         return;
+      }
+
+      // 무적 상태 깜빡임 효과
+      const health = entity.getComponent('Health');
+      if (health && health.is_invincible) {
+        // 0.1초마다 깜빡임
+        const blinkInterval = 0.1;
+        const time = performance.now() / 1000;
+        if (Math.floor(time / blinkInterval) % 2 === 0) {
+          return; // 깜빡임 - 렌더링 스킵
+        }
       }
 
       ctx.save();
@@ -375,6 +564,41 @@ export default class GameScene extends Scene {
 
     // UI 그리기 (카메라 영향 안받음)
     this.#renderUI(ctx);
+  }
+
+  /**
+   * 배경 그리드 렌더링
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  #renderGrid(ctx) {
+    if (!this._camera) {
+      return;
+    }
+
+    const gridSize = 50;
+    const startX = Math.floor(this._camera.offset.x / gridSize) * gridSize;
+    const startY = Math.floor(this._camera.offset.y / gridSize) * gridSize;
+    const endX = startX + ctx.canvas.width + gridSize;
+    const endY = startY + ctx.canvas.height + gridSize;
+
+    ctx.strokeStyle = '#1a1a1a';
+    ctx.lineWidth = 1;
+
+    // 세로선
+    for (let x = startX; x <= endX; x += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(x, startY);
+      ctx.lineTo(x, endY);
+      ctx.stroke();
+    }
+
+    // 가로선
+    for (let y = startY; y <= endY; y += gridSize) {
+      ctx.beginPath();
+      ctx.moveTo(startX, y);
+      ctx.lineTo(endX, y);
+      ctx.stroke();
+    }
   }
 
   /**
@@ -451,6 +675,9 @@ export default class GameScene extends Scene {
     ctx.font = '14px Arial';
     ctx.fillText(`Enemies: ${spawnManager.enemies.length}`, ctx.canvas.width - 20, 80);
 
+    // 미니맵
+    this.#renderMinimap(ctx);
+
     // 조작법 표시
     ctx.fillStyle = '#888';
     ctx.font = '14px Arial';
@@ -458,6 +685,79 @@ export default class GameScene extends Scene {
     ctx.fillText('WASD: Move', 20, ctx.canvas.height - 60);
     ctx.fillText('ESC: Pause', 20, ctx.canvas.height - 40);
     ctx.fillText('P: Debug Info', 20, ctx.canvas.height - 20);
+  }
+
+  /**
+   * 미니맵 렌더링
+   * @param {CanvasRenderingContext2D} ctx
+   */
+  #renderMinimap(ctx) {
+    const minimapSize = 150;
+    const minimapX = ctx.canvas.width - minimapSize - 20;
+    const minimapY = ctx.canvas.height - minimapSize - 20;
+    const minimapScale = 0.05; // 월드 좌표를 미니맵 좌표로 변환하는 스케일
+
+    // 미니맵 배경
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(minimapX, minimapY, minimapSize, minimapSize);
+
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(minimapX, minimapY, minimapSize, minimapSize);
+
+    const playerTransform = this._player.getComponent('Transform');
+    const centerX = minimapX + minimapSize / 2;
+    const centerY = minimapY + minimapSize / 2;
+
+    // 플레이어 (중앙 고정)
+    ctx.fillStyle = '#00ff00';
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 적 표시
+    ctx.fillStyle = '#ff0000';
+    spawnManager.enemies.forEach((enemy) => {
+      if (!enemy.active || enemy.destroyed) return;
+
+      const enemyTransform = enemy.getComponent('Transform');
+      if (!enemyTransform) return;
+
+      // 플레이어 기준 상대 좌표
+      const relativeX = (enemyTransform.position.x - playerTransform.position.x) * minimapScale;
+      const relativeY = (enemyTransform.position.y - playerTransform.position.y) * minimapScale;
+
+      const mapX = centerX + relativeX;
+      const mapY = centerY + relativeY;
+
+      // 미니맵 범위 내에만 표시
+      if (mapX >= minimapX && mapX <= minimapX + minimapSize && mapY >= minimapY && mapY <= minimapY + minimapSize) {
+        ctx.beginPath();
+        ctx.arc(mapX, mapY, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
+
+    // 경험치 표시
+    ctx.fillStyle = '#00ffff';
+    spawnManager.dropItems.forEach((item) => {
+      if (!item.active || item.destroyed || item.drop_type !== 'exp') return;
+
+      const itemTransform = item.getComponent('Transform');
+      if (!itemTransform) return;
+
+      const relativeX = (itemTransform.position.x - playerTransform.position.x) * minimapScale;
+      const relativeY = (itemTransform.position.y - playerTransform.position.y) * minimapScale;
+
+      const mapX = centerX + relativeX;
+      const mapY = centerY + relativeY;
+
+      if (mapX >= minimapX && mapX <= minimapX + minimapSize && mapY >= minimapY && mapY <= minimapY + minimapSize) {
+        ctx.beginPath();
+        ctx.arc(mapX, mapY, 1.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    });
   }
 
   /**
@@ -504,11 +804,20 @@ export default class GameScene extends Scene {
     // 이벤트 구독 해제
     eventBus.off('player_leveled_up', this.#handlePlayerLevelUp, this);
     eventBus.off('wave_changed', this.#handleWaveChanged, this);
+    eventBus.off('player_died', this.#handlePlayerDied, this);
+    eventBus.off('player_hit', this.#handlePlayerHit, this);
+    eventBus.off('enemy_killed', this.#handleEnemyKilled, this);
+    eventBus.off('game_restart', this.#handleGameRestart, this);
 
-    // UI 정리
+    // UI 정리 (완전 파괴)
     if (this._levelup_ui) {
       this._levelup_ui.destroy();
       this._levelup_ui = null;
+    }
+
+    if (this._gameover_ui) {
+      this._gameover_ui.destroy();
+      this._gameover_ui = null;
     }
 
     // SpawnManager 정리
@@ -538,6 +847,7 @@ export default class GameScene extends Scene {
 
     this._player = null;
     this._projectiles = [];
+    this._is_game_over = false;
 
     super.destroy();
     console.log('GameScene destroyed');
