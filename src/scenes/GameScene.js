@@ -19,6 +19,7 @@ import Rigidbody from '../ecs/components/Rigidbody.js';
 import Stats from '../ecs/components/Stats.js';
 import Transform from '../ecs/components/Transform.js';
 import Weapon from '../ecs/components/Weapon.js';
+import WeaponSlot from '../ecs/components/WeaponSlot.js';
 
 // Systems
 import AISystem from '../ecs/systems/AISystem.js';
@@ -148,10 +149,15 @@ export default class GameScene extends Scene {
     collider.setLayer(0); // PLAYER 레이어
     this._player.addComponent(collider);
 
-    // 초기 무기 추가 (마법 미사일)
-    const weaponData = WeaponData.magic_missile;
-    const weapon = new Weapon(weaponData);
-    this._player.addComponent(weapon);
+    // WeaponSlot 추가 (10개 슬롯)
+    const weaponSlot = new WeaponSlot();
+    this._player.addComponent(weaponSlot);
+
+    // 시작 무기 추가 (근접 검)
+    const startWeaponData = WeaponData.melee_slash;
+    const startWeapon = new Weapon(startWeaponData);
+    weaponSlot.addWeapon(startWeapon);
+    stats.weapon_slot_count = 1;
 
     this._entities.push(this._player);
   }
@@ -612,6 +618,7 @@ export default class GameScene extends Scene {
 
     const stats = this._player.getComponent('Stats');
     const health = this._player.getComponent('Health');
+    const weaponSlot = this._player.getComponent('WeaponSlot');
 
     // 체력바
     const barWidth = 200;
@@ -660,6 +667,14 @@ export default class GameScene extends Scene {
 
     // 골드 표시
     ctx.fillText(`Gold: ${stats.gold}`, barX, expBarY + 50);
+
+    // 무기 슬롯 표시
+    if (weaponSlot) {
+      ctx.fillText(`Weapons: ${weaponSlot.usedSlots}/10`, barX, expBarY + 70);
+    }
+
+    // 능력치 슬롯 표시
+    ctx.fillText(`Abilities: ${stats.ability_slots.length}/10`, barX, expBarY + 90);
 
     // Wave 표시
     ctx.font = 'bold 20px Arial';
@@ -773,20 +788,23 @@ export default class GameScene extends Scene {
     const transform = this._player.getComponent('Transform');
     const rigidbody = this._player.getComponent('Rigidbody');
     const stats = this._player.getComponent('Stats');
+    const weaponSlot = this._player.getComponent('WeaponSlot');
 
     debugPanel.innerHTML = `
-            <div><strong>Player Debug</strong></div>
-            <div>Pos: (${transform.position.x.toFixed(1)}, ${transform.position.y.toFixed(1)})</div>
-            <div>Vel: (${rigidbody.velocity.x.toFixed(1)}, ${rigidbody.velocity.y.toFixed(1)})</div>
-            <div>Speed: ${rigidbody.velocity.magnitude().toFixed(1)}</div>
-            <div>Level: ${stats.level} | Exp: ${stats.exp}/${stats.exp_to_next}</div>
-            <div>Gold: ${stats.gold}</div>
-            <div><strong>Game Info</strong></div>
-            <div>Wave: ${spawnManager.currentWave}</div>
-            <div>Enemies: ${spawnManager.enemies.length}</div>
-            <div>Drop Items: ${spawnManager.dropItems.length}</div>
-            <div>Projectiles: ${this._projectiles.length}</div>
-        `;
+      <div><strong>Player Debug</strong></div>
+      <div>Pos: (${transform.position.x.toFixed(1)}, ${transform.position.y.toFixed(1)})</div>
+      <div>Vel: (${rigidbody.velocity.x.toFixed(1)}, ${rigidbody.velocity.y.toFixed(1)})</div>
+      <div>Speed: ${rigidbody.velocity.magnitude().toFixed(1)}</div>
+      <div>Level: ${stats.level} | Exp: ${stats.exp}/${stats.exp_to_next}</div>
+      <div>Gold: ${stats.gold}</div>
+      <div>Weapons: ${weaponSlot ? weaponSlot.usedSlots : 0}/10</div>
+      <div>Abilities: ${stats.ability_slots.length}/10</div>
+      <div><strong>Game Info</strong></div>
+      <div>Wave: ${spawnManager.currentWave}</div>
+      <div>Enemies: ${spawnManager.enemies.length}</div>
+      <div>Drop Items: ${spawnManager.dropItems.length}</div>
+      <div>Projectiles: ${this._projectiles.length}</div>
+    `;
   }
 
   /**

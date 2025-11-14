@@ -45,9 +45,12 @@ const Config = {
 
   // 골드 설정
   GOLD: {
-    DROP_CHANCE: 0.5, // 드랍 확률
-    BASE_VALUE: 1,
-    PICKUP_RANGE: 50, // 획득 범위 (경험치보다 큼)
+    DROP_CHANCE: 0.1, // 드랍 확률 (10%)
+    BASE_VALUE: 100, // 기본 골드량
+    MIN_MULTIPLIER: 0.5, // 최소 배율 (50%)
+    MAX_MULTIPLIER: 1.5, // 최대 배율 (150%)
+    BOSS_MULTIPLIER: 5, // 보스 배율
+    PICKUP_RANGE: 50, // 획득 범위
   },
 
   // 충돌 레이어
