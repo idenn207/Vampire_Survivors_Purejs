@@ -6,6 +6,11 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var events = window.VampireSurvivors.Core.events;
+
+  // ============================================
   // Constants
   // ============================================
   var PANEL_X = 10;
@@ -32,6 +37,11 @@
   var CURRENCY_ICON_SIZE = 16;
   var CURRENCY_GAP = 20;
 
+  // Upgrade button
+  var UPGRADE_BTN_SIZE = 20;
+  var UPGRADE_BTN_COLOR = '#3498DB';
+  var UPGRADE_BTN_HOVER_COLOR = '#2980B9';
+
   // ============================================
   // Class Definition
   // ============================================
@@ -40,17 +50,48 @@
     // Instance Properties
     // ----------------------------------------
     _player = null;
+    _upgradeButtonRect = null;
+    _isUpgradeButtonHovered = false;
 
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
-    constructor() {}
+    constructor() {
+      this._upgradeButtonRect = { x: 0, y: 0, width: UPGRADE_BTN_SIZE, height: UPGRADE_BTN_SIZE };
+    }
 
     // ----------------------------------------
     // Public Methods
     // ----------------------------------------
     setPlayer(player) {
       this._player = player;
+    }
+
+    /**
+     * Handle mouse move for hover detection
+     * @param {number} mouseX
+     * @param {number} mouseY
+     */
+    handleMouseMove(mouseX, mouseY) {
+      this._isUpgradeButtonHovered = this._isPointInRect(
+        mouseX,
+        mouseY,
+        this._upgradeButtonRect
+      );
+    }
+
+    /**
+     * Handle click - check if upgrade button was clicked
+     * @param {number} mouseX
+     * @param {number} mouseY
+     * @returns {boolean} True if button was clicked
+     */
+    handleClick(mouseX, mouseY) {
+      if (this._isPointInRect(mouseX, mouseY, this._upgradeButtonRect)) {
+        events.emit('upgrade:open_screen');
+        return true;
+      }
+      return false;
     }
 
     render(ctx) {
@@ -218,6 +259,42 @@
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(gold.toString(), x + CURRENCY_ICON_SIZE + 8, y + CURRENCY_ICON_SIZE / 2);
+
+      // Upgrade button (arrow up)
+      var btnX = x + CURRENCY_ICON_SIZE + 60;
+      var btnY = y - 2;
+
+      // Update button rect for hit detection
+      this._upgradeButtonRect.x = btnX;
+      this._upgradeButtonRect.y = btnY;
+
+      // Button background
+      ctx.fillStyle = this._isUpgradeButtonHovered ? UPGRADE_BTN_HOVER_COLOR : UPGRADE_BTN_COLOR;
+      ctx.fillRect(btnX, btnY, UPGRADE_BTN_SIZE, UPGRADE_BTN_SIZE);
+
+      // Border
+      ctx.strokeStyle = '#2C3E50';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(btnX, btnY, UPGRADE_BTN_SIZE, UPGRADE_BTN_SIZE);
+
+      // Arrow up icon
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      var centerX = btnX + UPGRADE_BTN_SIZE / 2;
+      var centerY = btnY + UPGRADE_BTN_SIZE / 2;
+      ctx.moveTo(centerX, centerY - 6);
+      ctx.lineTo(centerX + 5, centerY + 2);
+      ctx.lineTo(centerX + 2, centerY + 2);
+      ctx.lineTo(centerX + 2, centerY + 6);
+      ctx.lineTo(centerX - 2, centerY + 6);
+      ctx.lineTo(centerX - 2, centerY + 2);
+      ctx.lineTo(centerX - 5, centerY + 2);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    _isPointInRect(x, y, rect) {
+      return x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height;
     }
 
     // ----------------------------------------

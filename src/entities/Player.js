@@ -18,6 +18,7 @@
   var WeaponSlot = window.VampireSurvivors.Components.WeaponSlot;
   var Experience = window.VampireSurvivors.Components.Experience;
   var Gold = window.VampireSurvivors.Components.Gold;
+  var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
 
   // ============================================
   // Constants
@@ -58,6 +59,7 @@
       this.addComponent(new WeaponSlot());
       this.addComponent(new Experience(100, 1.2)); // 100 base XP, 1.2x scaling
       this.addComponent(new Gold(0)); // Start with 0 gold
+      this.addComponent(new PlayerStats()); // Stat upgrades tracking
 
       // Add tag
       this.addTag('player');
@@ -117,6 +119,10 @@
 
     get gold() {
       return this.getComponent(Gold);
+    }
+
+    get playerStats() {
+      return this.getComponent(PlayerStats);
     }
 
     // ----------------------------------------
