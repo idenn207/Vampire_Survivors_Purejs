@@ -39,6 +39,7 @@
   var PickupSystem = Systems.PickupSystem;
   var HUDSystem = Systems.HUDSystem;
   var LevelUpSystem = Systems.LevelUpSystem;
+  var GameOverSystem = Systems.GameOverSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
@@ -145,6 +146,10 @@
       levelUpSystem.initialize(game, entityManager);
       game.addSystem(levelUpSystem);
 
+      var gameOverSystem = new GameOverSystem();
+      gameOverSystem.initialize(game, entityManager);
+      game.addSystem(gameOverSystem);
+
       // Create player at center
       player = entityManager.create(Player);
       var transform = player.getComponent(Transform);
@@ -173,15 +178,22 @@
       weaponSystem.setCamera(camera);
       weaponSystem.initializeBehaviors();
       levelUpSystem.setPlayer(player);
+      gameOverSystem.setPlayer(player);
+      gameOverSystem.setHUDSystem(hudSystem);
 
       // Camera follows player
       camera.follow(player);
 
-      // Listen for player death
+      // Listen for player death (handled by GameOverSystem)
       events.on('player:died', function (data) {
         console.log('[App] Player died!');
         game.debugManager.error('Player died!');
-        // TODO: Implement game over screen
+      });
+
+      // Listen for game restart
+      events.on('game:restart', function (data) {
+        console.log('[App] Restarting game...');
+        window.location.reload();
       });
 
       // Listen for player damage
@@ -211,6 +223,7 @@
       game.debugManager.register(pickupSystem);
       game.debugManager.register(hudSystem);
       game.debugManager.register(levelUpSystem);
+      game.debugManager.register(gameOverSystem);
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
       game.debugManager.register(pickupPool);
