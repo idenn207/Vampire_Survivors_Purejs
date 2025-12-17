@@ -1,6 +1,6 @@
 /**
- * @fileoverview Player entity with input-driven movement
- * @module Entities/Player
+ * @fileoverview Enemy entity with chase AI
+ * @module Entities/Enemy
  */
 (function (Entities) {
   'use strict';
@@ -18,53 +18,51 @@
   // ============================================
   // Constants
   // ============================================
-  var DEFAULT_SPEED = 200; // pixels per second
-  var DEFAULT_WIDTH = 32;
-  var DEFAULT_HEIGHT = 32;
-  var PLAYER_COLOR = '#00FF00'; // Green
+  var DEFAULT_SPEED = 100; // pixels per second
+  var DEFAULT_WIDTH = 24;
+  var DEFAULT_HEIGHT = 24;
+  var ENEMY_COLOR = '#FF0000'; // Red
 
   // ============================================
   // Class Definition
   // ============================================
-  class Player extends Entity {
+  class Enemy extends Entity {
     // ----------------------------------------
     // Instance Properties
     // ----------------------------------------
     _speed = DEFAULT_SPEED;
+    _health = 1;
 
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
-    constructor() {
+    constructor(x, y) {
       super();
 
       // Add components
-      this.addComponent(new Transform(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT));
+      this.addComponent(new Transform(x || 0, y || 0, DEFAULT_WIDTH, DEFAULT_HEIGHT));
       this.addComponent(new Velocity());
-      this.addComponent(new Sprite(PLAYER_COLOR));
+      this.addComponent(new Sprite(ENEMY_COLOR));
       this.addComponent(
         new Collider(
           DEFAULT_WIDTH / 2, // radius
-          CollisionLayer.PLAYER, // layer
-          CollisionLayer.ENEMY | CollisionLayer.TERRAIN | CollisionLayer.PICKUP // mask
+          CollisionLayer.ENEMY, // layer
+          CollisionLayer.PLAYER | CollisionLayer.HITBOX // mask
         )
       );
 
       // Add tag
-      this.addTag('player');
+      this.addTag('enemy');
     }
 
     // ----------------------------------------
     // Public Methods
     // ----------------------------------------
-    update(deltaTime, input) {
-      // Get input direction
-      var direction = input.getMovementDirection();
-
-      // Set velocity based on input
-      var velocity = this.getComponent(Velocity);
-      velocity.vx = direction.x * this._speed;
-      velocity.vy = direction.y * this._speed;
+    takeDamage(amount) {
+      this._health -= amount;
+      if (this._health <= 0) {
+        this._isActive = false;
+      }
     }
 
     // ----------------------------------------
@@ -76,6 +74,14 @@
 
     set speed(value) {
       this._speed = Math.max(0, value);
+    }
+
+    get health() {
+      return this._health;
+    }
+
+    set health(value) {
+      this._health = Math.max(0, value);
     }
 
     get transform() {
@@ -93,27 +99,10 @@
     get collider() {
       return this.getComponent(Collider);
     }
-
-    // ----------------------------------------
-    // Debug Interface
-    // ----------------------------------------
-    getDebugInfo() {
-      var transform = this.getComponent(Transform);
-      var velocity = this.getComponent(Velocity);
-
-      return {
-        label: 'Player',
-        entries: [
-          { key: 'Position', value: Math.round(transform.x) + ', ' + Math.round(transform.y) },
-          { key: 'Velocity', value: Math.round(velocity.vx) + ', ' + Math.round(velocity.vy) },
-          { key: 'Speed', value: this._speed },
-        ],
-      };
-    }
   }
 
   // ============================================
   // Export to Namespace
   // ============================================
-  Entities.Player = Player;
+  Entities.Enemy = Enemy;
 })(window.VampireSurvivors.Entities);

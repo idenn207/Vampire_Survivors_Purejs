@@ -23,7 +23,9 @@
   var Player = Entities.Player;
   var BackgroundSystem = Systems.BackgroundSystem;
   var PlayerSystem = Systems.PlayerSystem;
+  var EnemySystem = Systems.EnemySystem;
   var MovementSystem = Systems.MovementSystem;
+  var CollisionSystem = Systems.CollisionSystem;
   var CameraSystem = Systems.CameraSystem;
   var RenderSystem = Systems.RenderSystem;
 
@@ -63,9 +65,17 @@
       playerSystem.initialize(game, entityManager);
       game.addSystem(playerSystem);
 
+      var enemySystem = new EnemySystem();
+      enemySystem.initialize(game, entityManager);
+      game.addSystem(enemySystem);
+
       var movementSystem = new MovementSystem();
       movementSystem.initialize(game, entityManager);
       game.addSystem(movementSystem);
+
+      var collisionSystem = new CollisionSystem();
+      collisionSystem.initialize(game, entityManager);
+      game.addSystem(collisionSystem);
 
       var cameraSystem = new CameraSystem();
       cameraSystem.initialize(game, entityManager);
@@ -83,16 +93,30 @@
       transform.x = game.width / 2 - transform.width / 2;
       transform.y = game.height / 2 - transform.height / 2;
 
-      // Set player reference in PlayerSystem
+      // Set player reference in PlayerSystem and EnemySystem
       playerSystem.setPlayer(player);
+      enemySystem.setPlayer(player);
 
       // Camera follows player
       camera.follow(player);
+
+      // Listen for collisions
+      events.on('collision:detected', function (collision) {
+        var entityA = collision.entityA;
+        var entityB = collision.entityB;
+
+        // Check for player-enemy collision
+        if ((entityA.hasTag('player') && entityB.hasTag('enemy')) || (entityA.hasTag('enemy') && entityB.hasTag('player'))) {
+          console.log('[App] Player-enemy collision detected');
+        }
+      });
 
       // Register debug info
       game.debugManager.register(entityManager);
       game.debugManager.register(player);
       game.debugManager.register(camera);
+      game.debugManager.register(enemySystem);
+      game.debugManager.register(collisionSystem);
 
       // Hook into game loop
       events.on('game:started', function () {
