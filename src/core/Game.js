@@ -44,6 +44,7 @@
     _rafId = null;
     _systems = [];
     _isRunning = false;
+    _elapsedTime = 0; // Total game time in seconds
 
     _boundLoop = null;
 
@@ -86,6 +87,7 @@
       this._isRunning = true;
       this._state = GameState.RUNNING;
       this._time.reset();
+      this._elapsedTime = 0;
 
       await events.emit('game:started', { game: this });
 
@@ -168,6 +170,9 @@
     _update(deltaTime) {
       if (this._state !== GameState.RUNNING) return;
 
+      // Track elapsed game time
+      this._elapsedTime += deltaTime;
+
       for (var i = 0; i < this._systems.length; i++) {
         var system = this._systems[i];
         if (system.isEnabled !== false) {
@@ -229,6 +234,10 @@
 
     get debugManager() {
       return this._debugManager;
+    }
+
+    get elapsedTime() {
+      return this._elapsedTime;
     }
 
     // ----------------------------------------

@@ -83,8 +83,25 @@
       var baseX = transform.centerX;
       var baseY = transform.centerY;
 
-      // Roll drops based on enemy type (default for now)
-      var drops = DropTable.rollDrops('default');
+      // Determine enemy type for drop table
+      // Check for specific enemy type tags or property
+      var enemyType = 'default';
+      if (entity.enemyType) {
+        enemyType = entity.enemyType;
+      } else if (entity.hasTag('boss')) {
+        enemyType = 'boss';
+      } else if (entity.hasTag('miniboss')) {
+        enemyType = 'miniboss';
+      } else if (entity.hasTag('elite')) {
+        enemyType = 'elite';
+      } else if (entity.hasTag('swarm')) {
+        enemyType = 'swarm';
+      } else if (entity.hasTag('tank')) {
+        enemyType = 'tank';
+      }
+
+      // Roll drops based on enemy type with multipliers
+      var drops = DropTable.rollDrops(enemyType);
 
       // Spawn each drop with slight position offset
       for (var i = 0; i < drops.length; i++) {

@@ -53,7 +53,8 @@
     constructor(type, value, x, y) {
       super();
 
-      var config = PickupConfig.getPickupConfig(type) || PickupConfig.getPickupConfig('exp');
+      // Pass value for XP tier calculation
+      var config = PickupConfig.getPickupConfig(type, value) || PickupConfig.getPickupConfig('exp');
       var size = config ? config.size : DEFAULT_SIZE;
       var color = config ? config.color : DEFAULT_COLOR;
       var magnetRadius = config ? config.magnetRadius : 100;
@@ -93,7 +94,8 @@
      * @param {number} y
      */
     reset(type, value, x, y) {
-      var config = PickupConfig.getPickupConfig(type) || PickupConfig.getPickupConfig('exp');
+      // Pass value for XP tier calculation
+      var config = PickupConfig.getPickupConfig(type, value) || PickupConfig.getPickupConfig('exp');
       var size = config ? config.size : DEFAULT_SIZE;
       var color = config ? config.color : DEFAULT_COLOR;
       var magnetRadius = config ? config.magnetRadius : 100;

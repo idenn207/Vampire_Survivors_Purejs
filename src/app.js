@@ -37,6 +37,7 @@
   var RenderSystem = Systems.RenderSystem;
   var DropSystem = Systems.DropSystem;
   var PickupSystem = Systems.PickupSystem;
+  var HUDSystem = Systems.HUDSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
@@ -135,6 +136,10 @@
       renderSystem.setCamera(camera);
       game.addSystem(renderSystem);
 
+      var hudSystem = new HUDSystem();
+      hudSystem.initialize(game, entityManager);
+      game.addSystem(hudSystem);
+
       // Create player at center
       player = entityManager.create(Player);
       var transform = player.getComponent(Transform);
@@ -158,6 +163,8 @@
       combatSystem.setPlayer(player);
       weaponSystem.setPlayer(player);
       pickupSystem.setPlayer(player);
+      hudSystem.setPlayer(player);
+      hudSystem.setCamera(camera);
       weaponSystem.setCamera(camera);
       weaponSystem.initializeBehaviors();
 
@@ -196,6 +203,7 @@
       game.debugManager.register(weaponSystem);
       game.debugManager.register(dropSystem);
       game.debugManager.register(pickupSystem);
+      game.debugManager.register(hudSystem);
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
       game.debugManager.register(pickupPool);
