@@ -23,6 +23,8 @@
     _game = null;
     _panel = null;
     _console = null;
+    _selectedEntity = null;
+    _entityManager = null;
 
     _boundHandleKeyDown = null;
 
@@ -32,6 +34,7 @@
     constructor() {
       this._console = new DebugConsole();
       this._panel = new DebugPanel(this._console);
+      this._panel.setDebugManager(this);
 
       this._boundHandleKeyDown = this._handleKeyDown.bind(this);
     }
@@ -117,6 +120,50 @@
       this._panel.removeSection(label);
     }
 
+    setEntityManager(entityManager) {
+      this._entityManager = entityManager;
+    }
+
+    handleClick(input) {
+      if (!this._isEnabled) return;
+      if (!input.isMousePressed(0)) return;
+
+      // Skip if clicking inside debug panel
+      var mouseScreen = input.mousePosition;
+      if (this._isInsidePanel(mouseScreen.x, mouseScreen.y)) return;
+
+      var mouseWorld = input.mouseWorldPosition;
+      var clicked = this._findEntityAtPosition(mouseWorld.x, mouseWorld.y);
+
+      if (clicked) {
+        if (clicked === this._selectedEntity) {
+          this.clearSelection(); // Click same entity = deselect
+        } else {
+          this.selectEntity(clicked);
+        }
+      } else {
+        this.clearSelection(); // Click empty space = deselect
+      }
+    }
+
+    selectEntity(entity) {
+      if (this._selectedEntity) {
+        this._selectedEntity.removeTag('debug:selected');
+      }
+      this._selectedEntity = entity;
+      entity.addTag('debug:selected');
+      this._panel.setActiveTab(3); // Switch to Entity tab
+      this._console.info('Selected entity #' + entity.id);
+    }
+
+    clearSelection() {
+      if (this._selectedEntity) {
+        this._selectedEntity.removeTag('debug:selected');
+        this._console.info('Deselected entity');
+        this._selectedEntity = null;
+      }
+    }
+
     log(message, type) {
       this._console.log(message, type);
     }
@@ -183,6 +230,49 @@
       }
     }
 
+    _isInsidePanel(screenX, screenY) {
+      var panelHeight = this._panel._calculateTotalHeight();
+      return (
+        screenX >= this._panel._x &&
+        screenX <= this._panel._x + this._panel._width &&
+        screenY >= this._panel._y &&
+        screenY <= this._panel._y + panelHeight
+      );
+    }
+
+    _findEntityAtPosition(worldX, worldY) {
+      if (!this._entityManager) return null;
+
+      var Transform = window.VampireSurvivors.Components.Transform;
+      var Sprite = window.VampireSurvivors.Components.Sprite;
+      var entities = this._entityManager.getWithComponents(Transform, Sprite);
+
+      // Sort by zIndex descending (top-most first)
+      entities.sort(function (a, b) {
+        return b.getComponent(Sprite).zIndex - a.getComponent(Sprite).zIndex;
+      });
+
+      for (var i = 0; i < entities.length; i++) {
+        var entity = entities[i];
+        if (!entity.isActive) continue;
+
+        var transform = entity.getComponent(Transform);
+        var width = transform.width * transform.scale;
+        var height = transform.height * transform.scale;
+
+        // Point-in-rectangle check
+        if (
+          worldX >= transform.x &&
+          worldX <= transform.x + width &&
+          worldY >= transform.y &&
+          worldY <= transform.y + height
+        ) {
+          return entity;
+        }
+      }
+      return null;
+    }
+
     // ----------------------------------------
     // Getters / Setters
     // ----------------------------------------
@@ -196,6 +286,10 @@
 
     get panel() {
       return this._panel;
+    }
+
+    get selectedEntity() {
+      return this._selectedEntity;
     }
 
     // ----------------------------------------

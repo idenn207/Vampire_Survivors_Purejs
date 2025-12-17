@@ -76,6 +76,30 @@
     }
 
     // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugInfo() {
+      var entries = [
+        { key: 'ID', value: this._id },
+        { key: 'Active', value: this._isActive },
+        { key: 'Tags', value: this.getTags().join(', ') || 'none' },
+      ];
+
+      // Collect debug entries from all components
+      this._components.forEach(function (component) {
+        if (typeof component.getDebugEntries === 'function') {
+          var componentEntries = component.getDebugEntries();
+          entries = entries.concat(componentEntries);
+        }
+      });
+
+      return {
+        label: 'Entity #' + this._id,
+        entries: entries,
+      };
+    }
+
+    // ----------------------------------------
     // Getters / Setters
     // ----------------------------------------
     get id() {

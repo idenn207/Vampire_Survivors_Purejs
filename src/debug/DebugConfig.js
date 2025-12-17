@@ -12,7 +12,7 @@
     // Toggle
     TOGGLE_KEY: 'F3',
     RESUME_KEYS: Object.freeze(['Space', 'Enter']),
-    TAB_KEYS: Object.freeze(['Digit1', 'Digit2', 'Digit3']),
+    TAB_KEYS: Object.freeze(['Digit1', 'Digit2', 'Digit3', 'Digit4']),
 
     // Panel Position
     PANEL_X: 10,
@@ -62,7 +62,11 @@
     }),
 
     // Tabs
-    TABS: Object.freeze(['Performance', 'Systems', 'Console']),
+    TABS: Object.freeze(['Performance', 'Systems', 'Console', 'Entity']),
+
+    // Entity Selection
+    SELECTION_BORDER_COLOR: '#FFFF00',
+    SELECTION_BORDER_WIDTH: 2,
   });
 
   // ============================================

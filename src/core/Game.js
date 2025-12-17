@@ -155,6 +155,11 @@
       this._update(this._time.deltaTime);
       this._render();
 
+      // Handle debug panel input (must run even when paused)
+      if (this._debugManager) {
+        this._debugManager.handleClick(this._input);
+      }
+
       this._input.update();
 
       this._rafId = requestAnimationFrame(this._boundLoop);

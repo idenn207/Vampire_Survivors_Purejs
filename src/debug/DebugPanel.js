@@ -20,6 +20,7 @@
     _debuggables = [];
     _summaryProviders = [];
     _console = null;
+    _debugManager = null;
     _x = Config.PANEL_X;
     _y = Config.PANEL_Y;
     _width = Config.PANEL_WIDTH;
@@ -45,6 +46,10 @@
       if (provider && typeof provider.getSummaryInfo === 'function') {
         this._summaryProviders.push(provider);
       }
+    }
+
+    setDebugManager(debugManager) {
+      this._debugManager = debugManager;
     }
 
     removeSection(label) {
@@ -87,7 +92,7 @@
       // Draw keyboard hints
       ctx.fillStyle = Config.VALUE_COLOR;
       ctx.font = (fontSize - 1) + 'px ' + Config.FONT_FAMILY;
-      var hintText = 'F3:Hide  Space:Pause  1-3:Tabs';
+      var hintText = 'F3:Hide  Space:Pause  1-4:Tabs';
       var hintWidth = ctx.measureText(hintText).width;
       ctx.fillText(hintText, this._x + this._width - padding - hintWidth, currentY);
 
@@ -120,6 +125,9 @@
           break;
         case 2:
           this._renderConsoleTab(ctx, currentY);
+          break;
+        case 3:
+          this._renderEntityTab(ctx, currentY);
           break;
       }
     }
@@ -294,6 +302,44 @@
       return startY;
     }
 
+    _renderEntityTab(ctx, startY) {
+      var padding = Config.PANEL_PADDING;
+      var lineHeight = Config.LINE_HEIGHT;
+      var fontSize = Config.FONT_SIZE;
+      var currentY = startY;
+
+      var selectedEntity = this._debugManager ? this._debugManager.selectedEntity : null;
+
+      if (!selectedEntity) {
+        ctx.fillStyle = Config.TEXT_COLOR;
+        ctx.font = fontSize + 'px ' + Config.FONT_FAMILY;
+        ctx.fillText('Click an entity to inspect', this._x + padding, currentY);
+        return currentY + lineHeight;
+      }
+
+      var info = selectedEntity.getDebugInfo();
+
+      // Render label
+      ctx.fillStyle = Config.LABEL_COLOR;
+      ctx.font = 'bold ' + fontSize + 'px ' + Config.FONT_FAMILY;
+      ctx.fillText(info.label, this._x + padding, currentY);
+      currentY += lineHeight;
+
+      // Render entries
+      ctx.font = fontSize + 'px ' + Config.FONT_FAMILY;
+      for (var i = 0; i < info.entries.length; i++) {
+        var entry = info.entries[i];
+        ctx.fillStyle = Config.TEXT_COLOR;
+        ctx.fillText('  ' + entry.key + ':', this._x + padding, currentY);
+        ctx.fillStyle = Config.VALUE_COLOR;
+        var keyWidth = ctx.measureText('  ' + entry.key + ': ').width;
+        ctx.fillText(String(entry.value), this._x + padding + keyWidth, currentY);
+        currentY += lineHeight;
+      }
+
+      return currentY;
+    }
+
     _renderSection(ctx, debuggable, startY) {
       var padding = Config.PANEL_PADDING;
       var lineHeight = Config.LINE_HEIGHT;
@@ -357,6 +403,9 @@
         case 2: // Console
           height += this._calculateConsoleHeight();
           break;
+        case 3: // Entity
+          height += this._calculateEntityHeight();
+          break;
       }
 
       height += padding;
@@ -408,6 +457,18 @@
       }
 
       return height;
+    }
+
+    _calculateEntityHeight() {
+      var lineHeight = Config.LINE_HEIGHT;
+      var selectedEntity = this._debugManager ? this._debugManager.selectedEntity : null;
+
+      if (!selectedEntity) {
+        return lineHeight; // Just "Click an entity to inspect" message
+      }
+
+      var info = selectedEntity.getDebugInfo();
+      return lineHeight + info.entries.length * lineHeight;
     }
 
     // ----------------------------------------

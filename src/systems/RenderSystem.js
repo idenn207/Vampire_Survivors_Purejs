@@ -102,6 +102,22 @@
           }
         }
 
+        // Draw debug selection highlight
+        if (entity.hasTag('debug:selected')) {
+          var DebugConfig = window.VampireSurvivors.Debug.DebugConfig;
+          ctx.strokeStyle = DebugConfig.SELECTION_BORDER_COLOR;
+          ctx.lineWidth = DebugConfig.SELECTION_BORDER_WIDTH;
+
+          if (sprite.shape === ShapeType.CIRCLE) {
+            var highlightRadius = Math.min(width, height) / 2 + 2;
+            ctx.beginPath();
+            ctx.arc(screenX + width / 2, screenY + height / 2, highlightRadius, 0, Math.PI * 2);
+            ctx.stroke();
+          } else {
+            ctx.strokeRect(screenX - 1, screenY - 1, width + 2, height + 2);
+          }
+        }
+
         // Restore context state
         ctx.restore();
       }

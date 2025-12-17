@@ -102,6 +102,16 @@
     }
 
     // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugEntries() {
+      return [
+        { key: 'Position', value: Math.round(this.x) + ', ' + Math.round(this.y) },
+        { key: 'Size', value: this._width + 'x' + this._height },
+      ];
+    }
+
+    // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
     dispose() {

@@ -78,6 +78,15 @@
     }
 
     // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugEntries() {
+      return [
+        { key: 'Velocity', value: Math.round(this._velocity.x) + ', ' + Math.round(this._velocity.y) },
+      ];
+    }
+
+    // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
     dispose() {

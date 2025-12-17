@@ -61,6 +61,9 @@
       entityManager.initialize(game);
       Managers.entityManager = entityManager;
 
+      // Wire debug manager with entity manager
+      game.debugManager.setEntityManager(entityManager);
+
       // Initialize pools
       projectilePool.initialize(entityManager);
       areaEffectPool.initialize(entityManager);
