@@ -65,10 +65,24 @@
     }
 
     toggle() {
+      // Toggle panel visibility only - no game state change
       this._isEnabled = !this._isEnabled;
 
       if (this._isEnabled) {
-        this._console.info('Debug panel enabled');
+        this._console.info('Debug panel opened');
+      }
+    }
+
+    togglePause() {
+      // Toggle game pause state while keeping panel open
+      if (!this._game) return;
+
+      if (this._game.state === 'paused') {
+        this._game.resume();
+        this._console.info('Game resumed');
+      } else if (this._game.state === 'running') {
+        this._game.pause();
+        this._console.info('Game paused');
       }
     }
 
@@ -82,6 +96,10 @@
 
     register(debuggable) {
       this._panel.addSection(debuggable);
+    }
+
+    registerSummary(provider) {
+      this._panel.addSummaryProvider(provider);
     }
 
     unregister(label) {
@@ -134,6 +152,23 @@
       if (e.code === Config.TOGGLE_KEY) {
         e.preventDefault();
         this.toggle();
+        return;
+      }
+
+      // Handle pause/resume keys when debug panel is open
+      if (this._isEnabled && Config.RESUME_KEYS.indexOf(e.code) !== -1) {
+        e.preventDefault();
+        this.togglePause(); // Toggle pause, keep panel open
+        return;
+      }
+
+      // Handle tab switching keys when debug panel is open
+      if (this._isEnabled) {
+        var tabIndex = Config.TAB_KEYS.indexOf(e.code);
+        if (tabIndex !== -1) {
+          e.preventDefault();
+          this._panel.setActiveTab(tabIndex);
+        }
       }
     }
 

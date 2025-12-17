@@ -229,6 +229,10 @@
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
+    getSummaryInfo() {
+      return [{ key: 'FPS', value: Math.round(this._time.fps) }];
+    }
+
     getDebugInfo() {
       return {
         label: 'Game',

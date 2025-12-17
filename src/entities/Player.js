@@ -104,6 +104,11 @@
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
+    getSummaryInfo() {
+      var transform = this.getComponent(Transform);
+      return [{ key: 'Player', value: Math.round(transform.x) + ', ' + Math.round(transform.y) }];
+    }
+
     getDebugInfo() {
       var transform = this.getComponent(Transform);
       var velocity = this.getComponent(Velocity);

@@ -128,9 +128,17 @@
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
+    getSummaryInfo() {
+      var totalListeners = 0;
+      this._listeners.forEach(function (set) {
+        totalListeners += set.size;
+      });
+      return [{ key: 'Events', value: totalListeners }];
+    }
+
     getDebugInfo() {
       var totalListeners = 0;
-      this._listeners.forEach(function(set) {
+      this._listeners.forEach(function (set) {
         totalListeners += set.size;
       });
 
@@ -139,8 +147,8 @@
         entries: [
           { key: 'Types', value: this._listeners.size },
           { key: 'Listeners', value: totalListeners },
-          { key: 'Once', value: this._onceListeners.size }
-        ]
+          { key: 'Once', value: this._onceListeners.size },
+        ],
       };
     }
 

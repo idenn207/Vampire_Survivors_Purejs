@@ -151,6 +151,11 @@
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
+    getSummaryInfo() {
+      var enemyCount = this.getCountByTag('enemy');
+      return [{ key: 'Entities', value: this._entities.size + ' (E:' + enemyCount + ')' }];
+    }
+
     getDebugInfo() {
       return {
         label: 'Entities',

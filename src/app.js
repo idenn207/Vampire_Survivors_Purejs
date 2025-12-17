@@ -127,6 +127,13 @@
       game.debugManager.register(collisionSystem);
       game.debugManager.register(combatSystem);
 
+      // Register summary providers for high-priority debug info
+      game.debugManager.registerSummary(game);
+      game.debugManager.registerSummary(events);
+      game.debugManager.registerSummary(player);
+      game.debugManager.registerSummary(camera);
+      game.debugManager.registerSummary(entityManager);
+
       // Hook into game loop
       events.on('game:started', function () {
         game.debugManager.info('ECS initialized');

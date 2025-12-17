@@ -168,6 +168,10 @@
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
+    getSummaryInfo() {
+      return [{ key: 'Camera', value: Math.round(this._position.x) + ', ' + Math.round(this._position.y) }];
+    }
+
     getDebugInfo() {
       var targetName = 'None';
       if (this._target) {
