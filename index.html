@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vampire Survivors</title>
+  <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body>
+  <div id="game-container">
+    <canvas id="game-canvas"></canvas>
+  </div>
+
+  <!-- Phase 1: Namespace Initialization -->
+  <script>
+    window.VampireSurvivors = window.VampireSurvivors || {};
+    window.VampireSurvivors.Core = {};
+    window.VampireSurvivors.Data = {};
+    window.VampireSurvivors.Entities = {};
+    window.VampireSurvivors.Components = {};
+    window.VampireSurvivors.Systems = {};
+    window.VampireSurvivors.Managers = {};
+    window.VampireSurvivors.UI = {};
+    window.VampireSurvivors.Utils = {};
+  </script>
+
+  <!-- Phase 2: Utilities (No Dependencies) -->
+  <script src="src/utils/Vector2.js"></script>
+
+  <!-- Phase 3: Core Systems -->
+  <script src="src/core/EventBus.js"></script>
+  <script src="src/core/Time.js"></script>
+  <script src="src/core/Input.js"></script>
+  <script src="src/core/Game.js"></script>
+
+  <!-- Phase 4: Entry Point -->
+  <script src="src/app.js"></script>
+</body>
+
+</html>
