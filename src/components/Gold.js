@@ -99,6 +99,11 @@
       return this._currentGold;
     }
 
+    // Alias for currentGold (used by UI components)
+    get amount() {
+      return this._currentGold;
+    }
+
     get totalGoldGained() {
       return this._totalGoldGained;
     }

@@ -29,6 +29,7 @@
     _isAuto = true;
     _stats = null;
     _upgrades = null;
+    _data = null; // Store original weapon data for reference
 
     // ----------------------------------------
     // Constructor
@@ -43,6 +44,9 @@
         console.warn('[Weapon] No weapon data provided');
         return;
       }
+
+      // Store original weapon data for reference (icons, etc.)
+      this._data = weaponData;
 
       this._id = weaponData.id || '';
       this._name = weaponData.name || '';
@@ -229,6 +233,10 @@
 
     get isAuto() {
       return this._isAuto;
+    }
+
+    get data() {
+      return this._data;
     }
 
     // ----------------------------------------

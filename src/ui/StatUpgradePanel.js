@@ -200,24 +200,23 @@
       ctx.fill();
 
       // Stat name
-      ctx.font = '14px Arial';
+      ctx.font = '13px Arial';
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(stat.name, x + ICON_SIZE + 8, y + ROW_HEIGHT / 2);
+      ctx.fillText(stat.name, x + ICON_SIZE + 6, y + ROW_HEIGHT / 2);
 
-      // Current value
-      ctx.font = 'bold 14px Arial';
-      ctx.fillStyle = VALUE_COLOR;
-      ctx.textAlign = 'right';
-      var valueX = this._x + this._width - BUTTON_MARGIN - BUTTON_SIZE - 60;
-      ctx.fillText('+' + stat.bonusPercent + '%', valueX, y + ROW_HEIGHT / 2);
-
-      // Upgrade button
+      // Upgrade button (right side)
       var buttonX = this._x + this._width - BUTTON_MARGIN - BUTTON_SIZE;
       var buttonY = y + (ROW_HEIGHT - BUTTON_SIZE) / 2;
 
       if (stat.isMaxLevel) {
+        // Current value (before MAX)
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = VALUE_COLOR;
+        ctx.textAlign = 'right';
+        ctx.fillText('+' + stat.bonusPercent + '%', buttonX - 8, y + ROW_HEIGHT / 2);
+
         // Max level indicator
         ctx.fillStyle = BUTTON_DISABLED_COLOR;
         ctx.fillRect(buttonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
@@ -227,6 +226,19 @@
         ctx.textBaseline = 'middle';
         ctx.fillText('MAX', buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE / 2);
       } else {
+        // Cost (left of button)
+        ctx.font = 'bold 11px Arial';
+        ctx.fillStyle = canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(stat.cost + 'g', buttonX - 6, y + ROW_HEIGHT / 2);
+
+        // Current value (further left)
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = VALUE_COLOR;
+        ctx.textAlign = 'right';
+        ctx.fillText('+' + stat.bonusPercent + '%', buttonX - 50, y + ROW_HEIGHT / 2);
+
         // Upgrade button
         ctx.fillStyle = isHovered ? BUTTON_HOVER_COLOR : BUTTON_COLOR;
         if (!canAfford) {
@@ -243,12 +255,6 @@
         ctx.moveTo(buttonX + 6, buttonY + BUTTON_SIZE / 2);
         ctx.lineTo(buttonX + BUTTON_SIZE - 6, buttonY + BUTTON_SIZE / 2);
         ctx.stroke();
-
-        // Cost below button
-        ctx.font = '10px Arial';
-        ctx.fillStyle = canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
-        ctx.textAlign = 'center';
-        ctx.fillText(stat.cost + 'g', buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE + 10);
       }
     }
 
@@ -271,7 +277,7 @@
       }
 
       // Perform upgrade
-      gold.spend(cost);
+      gold.spendGold(cost);
       playerStats.upgradeStat(statId);
 
       // Apply immediate effects

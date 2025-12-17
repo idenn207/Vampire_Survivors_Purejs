@@ -487,7 +487,7 @@
       }
 
       // Perform upgrade
-      gold.spend(cost);
+      gold.spendGold(cost);
       weapon.upgrade();
 
       return { weapon: weapon, success: true, cost: cost };
