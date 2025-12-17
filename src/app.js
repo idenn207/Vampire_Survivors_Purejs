@@ -35,9 +35,12 @@
   var CombatSystem = Systems.CombatSystem;
   var CameraSystem = Systems.CameraSystem;
   var RenderSystem = Systems.RenderSystem;
+  var DropSystem = Systems.DropSystem;
+  var PickupSystem = Systems.PickupSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
+  var pickupPool = Pool.pickupPool;
 
   // ============================================
   // Application State
@@ -67,6 +70,7 @@
       // Initialize pools
       projectilePool.initialize(entityManager);
       areaEffectPool.initialize(entityManager);
+      pickupPool.initialize(entityManager);
 
       // Setup camera
       camera = new Camera(game.width, game.height);
@@ -107,6 +111,15 @@
       combatSystem.setCollisionSystem(collisionSystem);
       game.addSystem(combatSystem);
 
+      var dropSystem = new DropSystem();
+      dropSystem.initialize(game, entityManager);
+      game.addSystem(dropSystem);
+
+      var pickupSystem = new PickupSystem();
+      pickupSystem.initialize(game, entityManager);
+      pickupSystem.setCollisionSystem(collisionSystem);
+      game.addSystem(pickupSystem);
+
       var weaponSystem = new WeaponSystem();
       weaponSystem.initialize(game, entityManager);
       weaponSystem.setInput(game.input);
@@ -144,6 +157,7 @@
       enemySystem.setPlayer(player);
       combatSystem.setPlayer(player);
       weaponSystem.setPlayer(player);
+      pickupSystem.setPlayer(player);
       weaponSystem.setCamera(camera);
       weaponSystem.initializeBehaviors();
 
@@ -162,6 +176,16 @@
         game.debugManager.warn('Player hit! HP: ' + data.currentHealth + '/' + data.maxHealth);
       });
 
+      // Listen for level up
+      events.on('player:level_up', function (data) {
+        game.debugManager.info('Level Up! Now level ' + data.newLevel);
+      });
+
+      // Listen for pickup collection
+      events.on('pickup:collected', function (data) {
+        // Future: visual feedback, sounds
+      });
+
       // Register debug info
       game.debugManager.register(entityManager);
       game.debugManager.register(player);
@@ -170,8 +194,11 @@
       game.debugManager.register(collisionSystem);
       game.debugManager.register(combatSystem);
       game.debugManager.register(weaponSystem);
+      game.debugManager.register(dropSystem);
+      game.debugManager.register(pickupSystem);
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
+      game.debugManager.register(pickupPool);
 
       // Register summary providers for high-priority debug info
       game.debugManager.registerSummary(game);

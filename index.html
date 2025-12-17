@@ -52,6 +52,12 @@
   <script src="src/components/AreaEffect.js"></script>
   <script src="src/components/Weapon.js"></script>
   <script src="src/components/WeaponSlot.js"></script>
+  <script src="src/components/Pickup.js"></script>
+  <script src="src/components/Experience.js"></script>
+  <script src="src/components/Gold.js"></script>
+
+  <!-- Phase 4.5: Data (needed by some entities) -->
+  <script src="src/data/PickupConfig.js"></script>
 
   <!-- Phase 5: Entities -->
   <script src="src/entities/Entity.js"></script>
@@ -59,13 +65,16 @@
   <script src="src/entities/Enemy.js"></script>
   <script src="src/entities/Projectile.js"></script>
   <script src="src/entities/AreaEffect.js"></script>
+  <script src="src/entities/Pickup.js"></script>
 
   <!-- Phase 5.5: Pools (depend on entities) -->
   <script src="src/pool/ProjectilePool.js"></script>
   <script src="src/pool/AreaEffectPool.js"></script>
+  <script src="src/pool/PickupPool.js"></script>
 
   <!-- Phase 5.7: Data -->
   <script src="src/data/WeaponData.js"></script>
+  <script src="src/data/DropTable.js"></script>
 
   <!-- Phase 6: Managers -->
   <script src="src/managers/EntityManager.js"></script>
@@ -80,6 +89,8 @@
   <script src="src/systems/AreaEffectSystem.js"></script>
   <script src="src/systems/CollisionSystem.js"></script>
   <script src="src/systems/CombatSystem.js"></script>
+  <script src="src/systems/DropSystem.js"></script>
+  <script src="src/systems/PickupSystem.js"></script>
   <script src="src/systems/CameraSystem.js"></script>
   <script src="src/systems/RenderSystem.js"></script>
 

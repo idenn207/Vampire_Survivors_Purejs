@@ -16,6 +16,8 @@
   var CollisionLayer = window.VampireSurvivors.Components.CollisionLayer;
   var Health = window.VampireSurvivors.Components.Health;
   var WeaponSlot = window.VampireSurvivors.Components.WeaponSlot;
+  var Experience = window.VampireSurvivors.Components.Experience;
+  var Gold = window.VampireSurvivors.Components.Gold;
 
   // ============================================
   // Constants
@@ -54,6 +56,8 @@
       );
       this.addComponent(new Health(DEFAULT_MAX_HEALTH));
       this.addComponent(new WeaponSlot());
+      this.addComponent(new Experience(100, 1.2)); // 100 base XP, 1.2x scaling
+      this.addComponent(new Gold(0)); // Start with 0 gold
 
       // Add tag
       this.addTag('player');
@@ -107,6 +111,14 @@
       return this.getComponent(WeaponSlot);
     }
 
+    get experience() {
+      return this.getComponent(Experience);
+    }
+
+    get gold() {
+      return this.getComponent(Gold);
+    }
+
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
@@ -119,6 +131,8 @@
       var transform = this.getComponent(Transform);
       var velocity = this.getComponent(Velocity);
       var health = this.getComponent(Health);
+      var exp = this.getComponent(Experience);
+      var gold = this.getComponent(Gold);
 
       return {
         label: 'Player',
@@ -127,6 +141,9 @@
           { key: 'Velocity', value: Math.round(velocity.vx) + ', ' + Math.round(velocity.vy) },
           { key: 'Speed', value: this._speed },
           { key: 'Health', value: health.currentHealth + '/' + health.maxHealth },
+          { key: 'Level', value: exp ? exp.level : 1 },
+          { key: 'XP', value: exp ? exp.currentExp + '/' + exp.expToNextLevel : '0/0' },
+          { key: 'Gold', value: gold ? gold.currentGold : 0 },
         ],
       };
     }
