@@ -6,7 +6,8 @@
       "Bash(node --check:*)",
       "Bash(git add:*)",
       "WebSearch",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx http-server -p 8080 -o)"
     ]
   }
 }

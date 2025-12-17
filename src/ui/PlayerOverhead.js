@@ -101,8 +101,7 @@
         this._renderHealthBar(ctx, screenPos.x, screenPos.y + HEALTH_BAR_OFFSET_Y);
       }
 
-      // Render cooldown indicator (if player has active weapon)
-      this._renderCooldownIndicator(ctx, screenPos.x + COOLDOWN_OFFSET_X, screenPos.y + COOLDOWN_OFFSET_Y);
+      // Cooldown indicator removed - was causing UI issues
     }
 
     // ----------------------------------------

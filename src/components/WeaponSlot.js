@@ -198,6 +198,14 @@
     // ----------------------------------------
     // Getters
     // ----------------------------------------
+    /**
+     * Get all equipped weapons (alias for getWeapons)
+     * @returns {Array<Weapon>}
+     */
+    get weapons() {
+      return this._weapons.slice();
+    }
+
     get weaponCount() {
       return this._weapons.length;
     }

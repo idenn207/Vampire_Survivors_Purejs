@@ -34,7 +34,6 @@
 
     // Event handlers
     _boundOnLevelUp = null;
-    _boundOnUpgradeKeyPressed = null;
 
     // ----------------------------------------
     // Constructor
@@ -45,7 +44,6 @@
       this._updatesDuringPause = true; // Process input even when game is paused
       this._screen = new LevelUpScreen();
       this._boundOnLevelUp = this._onLevelUp.bind(this);
-      this._boundOnUpgradeKeyPressed = this._onUpgradeKeyPressed.bind(this);
     }
 
     // ----------------------------------------
@@ -54,9 +52,8 @@
     initialize(game, entityManager) {
       super.initialize(game, entityManager);
 
-      // Listen for level-up events
+      // Listen for level-up events only (no manual access)
       events.on('player:level_up', this._boundOnLevelUp);
-      events.on('upgrade:open_screen', this._boundOnUpgradeKeyPressed);
     }
 
     /**
@@ -84,15 +81,6 @@
       }
     }
 
-    /**
-     * Open screen manually (via 'U' key or button)
-     */
-    openManually() {
-      if (this._isActive) return;
-      this._openedManually = true;
-      this._openScreen();
-    }
-
     // ----------------------------------------
     // Private Methods
     // ----------------------------------------
@@ -102,10 +90,6 @@
 
       this._openedManually = false;
       this._openScreen();
-    }
-
-    _onUpgradeKeyPressed() {
-      this.openManually();
     }
 
     _openScreen() {
@@ -142,7 +126,18 @@
           return w.isMaxLevel;
         });
 
-      // 1. If all slots full AND all max level -> only stat boosts
+      // 1. Check for evolution possibilities FIRST (HIGHEST PRIORITY - always shown)
+      var evolutionOptions = this._generateEvolutionOptions(equippedWeapons);
+      for (var e = 0; e < evolutionOptions.length && options.length < OPTIONS_COUNT; e++) {
+        options.push(evolutionOptions[e]);
+      }
+
+      // If we already have enough options from evolutions, return early
+      if (options.length >= OPTIONS_COUNT) {
+        return options;
+      }
+
+      // 2. If all slots full AND all max level -> add stat boosts
       if (allWeaponsMaxLevel) {
         var statOrder = Data.StatUpgradeData.getStatOrder();
         for (var s = 0; s < statOrder.length; s++) {
@@ -157,10 +152,14 @@
           }
         }
         this._shuffle(pool);
-        return pool.slice(0, OPTIONS_COUNT);
+        // Fill remaining slots with stat boosts
+        for (var p = 0; p < pool.length && options.length < OPTIONS_COUNT; p++) {
+          options.push(pool[p]);
+        }
+        return options;
       }
 
-      // 2. New weapons (if player has empty slots)
+      // 3. New weapons (if player has empty slots)
       if (!allSlotsFull) {
         var allWeaponIds = Data.getAllWeaponIds();
         for (var i = 0; i < allWeaponIds.length; i++) {
@@ -178,7 +177,7 @@
         }
       }
 
-      // 3. Existing weapon upgrades (for weapons not at max level)
+      // 4. Existing weapon upgrades (for weapons not at max level)
       for (var j = 0; j < equippedWeapons.length; j++) {
         var weapon = equippedWeapons[j];
         if (!weapon.isMaxLevel) {
@@ -192,10 +191,54 @@
         }
       }
 
-      // Shuffle and select
+      // Shuffle and fill remaining slots
       this._shuffle(pool);
-      for (var n = 0; n < OPTIONS_COUNT && n < pool.length; n++) {
+      for (var n = 0; n < pool.length && options.length < OPTIONS_COUNT; n++) {
         options.push(pool[n]);
+      }
+
+      return options;
+    }
+
+    /**
+     * Generate evolution options from max-level weapons
+     * @param {Array<Weapon>} equippedWeapons
+     * @returns {Array<Object>}
+     */
+    _generateEvolutionOptions(equippedWeapons) {
+      var WeaponEvolutionData = Data.WeaponEvolutionData;
+      if (!WeaponEvolutionData) {
+        return [];
+      }
+
+      var options = [];
+      var maxLevelWeapons = [];
+
+      // Find all max-level weapons
+      for (var i = 0; i < equippedWeapons.length; i++) {
+        if (equippedWeapons[i].isMaxLevel) {
+          maxLevelWeapons.push(equippedWeapons[i]);
+        }
+      }
+
+      // Check all pairs of max-level weapons for evolution recipes
+      for (var j = 0; j < maxLevelWeapons.length; j++) {
+        for (var k = j + 1; k < maxLevelWeapons.length; k++) {
+          var w1 = maxLevelWeapons[j];
+          var w2 = maxLevelWeapons[k];
+          var evolved = WeaponEvolutionData.findEvolution(w1.id, w2.id);
+
+          if (evolved) {
+            options.push({
+              type: 'evolution',
+              weapon1: w1,
+              weapon2: w2,
+              weaponId: evolved.id,
+              weaponData: evolved,
+              evolutionResult: evolved,
+            });
+          }
+        }
       }
 
       return options;
@@ -322,9 +365,24 @@
     }
 
     _performEvolution(option) {
-      // Evolution logic will be implemented in Phase 2
+      if (!this._player || !this._player.weaponSlot) return;
+
+      var weaponSlot = this._player.weaponSlot;
+
+      // Remove source weapons (by ID)
+      weaponSlot.removeWeapon(option.weapon1.id);
+      weaponSlot.removeWeapon(option.weapon2.id);
+
+      // Create and add evolved weapon
+      var evolvedWeapon = new Weapon(option.evolutionResult);
+      weaponSlot.addWeapon(evolvedWeapon);
+
+      // Emit evolution completed event
       events.emitSync('upgrade:evolution_completed', {
-        result: option.evolutionResult,
+        source1: option.weapon1.id,
+        source2: option.weapon2.id,
+        result: option.evolutionResult.id,
+        evolvedWeapon: evolvedWeapon,
       });
     }
 
@@ -371,7 +429,6 @@
     // ----------------------------------------
     dispose() {
       events.off('player:level_up', this._boundOnLevelUp);
-      events.off('upgrade:open_screen', this._boundOnUpgradeKeyPressed);
 
       if (this._screen) {
         this._screen.dispose();
@@ -380,7 +437,6 @@
 
       this._player = null;
       this._boundOnLevelUp = null;
-      this._boundOnUpgradeKeyPressed = null;
 
       super.dispose();
     }
