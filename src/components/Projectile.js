@@ -157,6 +157,18 @@
     }
 
     // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugEntries() {
+      return [
+        { key: 'Damage', value: this._damage },
+        { key: 'Pierce', value: this._pierce },
+        { key: 'Lifetime', value: this._elapsed.toFixed(1) + '/' + this._lifetime.toFixed(1) },
+        { key: 'Source', value: this._sourceWeaponId || 'unknown' },
+      ];
+    }
+
+    // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
     dispose() {

@@ -233,6 +233,19 @@
       };
     }
 
+    getDebugEntries() {
+      var weaponList = this._weapons
+        .map(function (w) {
+          return w.name + ' Lv' + w.level;
+        })
+        .join(', ');
+
+      return [
+        { key: 'Weapons', value: this._weapons.length + '/' + this._maxWeapons },
+        { key: 'Equipped', value: weaponList || 'none' },
+      ];
+    }
+
     // ----------------------------------------
     // Lifecycle
     // ----------------------------------------

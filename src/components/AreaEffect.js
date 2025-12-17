@@ -167,6 +167,19 @@
     }
 
     // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugEntries() {
+      return [
+        { key: 'Damage', value: this._damage },
+        { key: 'Radius', value: this._radius },
+        { key: 'Duration', value: this._elapsed.toFixed(1) + '/' + this._duration.toFixed(1) },
+        { key: 'TickRate', value: this._tickRate + '/s' },
+        { key: 'Source', value: this._sourceWeaponId || 'unknown' },
+      ];
+    }
+
+    // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
     dispose() {
