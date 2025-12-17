@@ -191,6 +191,35 @@
     return null;
   }
 
+  /**
+   * Get all weapons that can be combined with the given weapon for evolution
+   * @param {string} weaponId - The weapon to find partners for
+   * @returns {Array<string>} Array of weapon IDs that can combine with this weapon
+   */
+  function getEvolutionPartners(weaponId) {
+    var partners = [];
+
+    for (var key in EVOLUTION_RECIPES) {
+      var parts = key.split('+');
+      if (parts[0] === weaponId) {
+        partners.push(parts[1]);
+      } else if (parts[1] === weaponId) {
+        partners.push(parts[0]);
+      }
+    }
+
+    return partners;
+  }
+
+  /**
+   * Check if a weapon can be used in any evolution recipe
+   * @param {string} weaponId
+   * @returns {boolean}
+   */
+  function canEvolve(weaponId) {
+    return getEvolutionPartners(weaponId).length > 0;
+  }
+
   // ============================================
   // Export to Namespace
   // ============================================
@@ -202,5 +231,7 @@
     getAllEvolvedWeapons: getAllEvolvedWeapons,
     isEvolvedWeapon: isEvolvedWeapon,
     getSourceWeapons: getSourceWeapons,
+    getEvolutionPartners: getEvolutionPartners,
+    canEvolve: canEvolve,
   };
 })(window.VampireSurvivors.Data);

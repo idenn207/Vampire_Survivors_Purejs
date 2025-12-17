@@ -21,6 +21,14 @@
   var OPTIONS_COUNT = 3;
 
   // ============================================
+  // Evolution State Constants
+  // ============================================
+  var EvolutionState = Object.freeze({
+    NORMAL: 'normal',
+    SELECTING_MATERIAL: 'selecting_material',
+  });
+
+  // ============================================
   // Class Definition
   // ============================================
   class LevelUpSystem extends System {
@@ -31,6 +39,10 @@
     _player = null;
     _isActive = false;
     _openedManually = false;
+
+    // Evolution state
+    _evolutionState = EvolutionState.NORMAL;
+    _selectedMainWeapon = null;
 
     // Event handlers
     _boundOnLevelUp = null;
@@ -97,14 +109,34 @@
       this._game.pause();
       this._isActive = true;
 
+      // Reset evolution state when opening screen
+      this._evolutionState = EvolutionState.NORMAL;
+      this._selectedMainWeapon = null;
+
       // Generate weapon options
       var options = this._generateWeaponOptions();
 
-      // Show screen
-      this._screen.show(this._player, options, this._game.width, this._game.height);
+      // Show screen with evolution state
+      this._screen.show(this._player, options, this._game.width, this._game.height, {
+        evolutionState: this._evolutionState,
+        selectedMainWeapon: this._selectedMainWeapon,
+      });
     }
 
     _generateWeaponOptions() {
+      // Different options based on evolution state
+      if (this._evolutionState === EvolutionState.SELECTING_MATERIAL) {
+        return this._generateMaterialOptions();
+      }
+
+      return this._generateNormalOptions();
+    }
+
+    /**
+     * Generate normal weapon options (new weapons, upgrades, evolution main weapons)
+     * @returns {Array<Object>}
+     */
+    _generateNormalOptions() {
       var options = [];
       var pool = [];
 
@@ -126,13 +158,13 @@
           return w.isMaxLevel;
         });
 
-      // 1. Check for evolution possibilities FIRST (HIGHEST PRIORITY - always shown)
-      var evolutionOptions = this._generateEvolutionOptions(equippedWeapons);
-      for (var e = 0; e < evolutionOptions.length && options.length < OPTIONS_COUNT; e++) {
-        options.push(evolutionOptions[e]);
+      // 1. Check for evolution main weapon options FIRST (HIGHEST PRIORITY)
+      var evolutionMainOptions = this._generateEvolutionMainOptions(equippedWeapons);
+      for (var e = 0; e < evolutionMainOptions.length && options.length < OPTIONS_COUNT; e++) {
+        options.push(evolutionMainOptions[e]);
       }
 
-      // If we already have enough options from evolutions, return early
+      // If we already have enough options from evolution mains, return early
       if (options.length >= OPTIONS_COUNT) {
         return options;
       }
@@ -201,11 +233,62 @@
     }
 
     /**
-     * Generate evolution options from max-level weapons
+     * Generate material weapon options for the selected main weapon
+     * @returns {Array<Object>}
+     */
+    _generateMaterialOptions() {
+      var options = [];
+
+      if (!this._player || !this._player.weaponSlot || !this._selectedMainWeapon) {
+        return options;
+      }
+
+      var WeaponEvolutionData = Data.WeaponEvolutionData;
+      var weaponSlot = this._player.weaponSlot;
+      var equippedWeapons = weaponSlot.weapons || [];
+      var mainWeaponId = this._selectedMainWeapon.id;
+
+      // Get all potential evolution partners for the main weapon
+      var partnerIds = WeaponEvolutionData.getEvolutionPartners(mainWeaponId);
+
+      // Find equipped weapons that are valid materials (max level, in partner list, not the main weapon)
+      for (var i = 0; i < equippedWeapons.length; i++) {
+        var weapon = equippedWeapons[i];
+
+        // Skip if this is the main weapon
+        if (weapon.id === mainWeaponId) continue;
+
+        // Must be max level and in partner list
+        if (weapon.isMaxLevel && partnerIds.indexOf(weapon.id) !== -1) {
+          var evolved = WeaponEvolutionData.findEvolution(mainWeaponId, weapon.id);
+          if (evolved) {
+            options.push({
+              type: 'evolution_material',
+              weaponId: weapon.id,
+              weaponData: weapon.data,
+              weaponRef: weapon,
+              mainWeapon: this._selectedMainWeapon,
+              evolutionResult: evolved,
+            });
+          }
+        }
+      }
+
+      // Add cancel option
+      options.push({
+        type: 'evolution_cancel',
+      });
+
+      return options;
+    }
+
+    /**
+     * Generate evolution main weapon options from max-level weapons
+     * Only shows weapons that have a valid evolution partner also at max level
      * @param {Array<Weapon>} equippedWeapons
      * @returns {Array<Object>}
      */
-    _generateEvolutionOptions(equippedWeapons) {
+    _generateEvolutionMainOptions(equippedWeapons) {
       var WeaponEvolutionData = Data.WeaponEvolutionData;
       if (!WeaponEvolutionData) {
         return [];
@@ -213,6 +296,7 @@
 
       var options = [];
       var maxLevelWeapons = [];
+      var addedWeaponIds = {};
 
       // Find all max-level weapons
       for (var i = 0; i < equippedWeapons.length; i++) {
@@ -221,22 +305,28 @@
         }
       }
 
-      // Check all pairs of max-level weapons for evolution recipes
+      // For each max-level weapon, check if it has a valid evolution partner (also max level)
       for (var j = 0; j < maxLevelWeapons.length; j++) {
-        for (var k = j + 1; k < maxLevelWeapons.length; k++) {
-          var w1 = maxLevelWeapons[j];
-          var w2 = maxLevelWeapons[k];
-          var evolved = WeaponEvolutionData.findEvolution(w1.id, w2.id);
+        var weapon = maxLevelWeapons[j];
 
-          if (evolved) {
+        // Skip if already added
+        if (addedWeaponIds[weapon.id]) continue;
+
+        // Check if this weapon can evolve with any other max-level weapon
+        var partnerIds = WeaponEvolutionData.getEvolutionPartners(weapon.id);
+
+        for (var k = 0; k < maxLevelWeapons.length; k++) {
+          var potentialPartner = maxLevelWeapons[k];
+          if (potentialPartner.id !== weapon.id && partnerIds.indexOf(potentialPartner.id) !== -1) {
+            // Found a valid partner, add this weapon as a main weapon option
             options.push({
-              type: 'evolution',
-              weapon1: w1,
-              weapon2: w2,
-              weaponId: evolved.id,
-              weaponData: evolved,
-              evolutionResult: evolved,
+              type: 'evolution_main',
+              weaponId: weapon.id,
+              weaponData: weapon.data,
+              weaponRef: weapon,
             });
+            addedWeaponIds[weapon.id] = true;
+            break;
           }
         }
       }
@@ -297,10 +387,60 @@
           this._applyFreeStat(option);
           break;
 
-        case 'evolution':
+        case 'evolution_main':
+          this._selectMainWeapon(option);
+          return; // Don't close screen - wait for material selection
+
+        case 'evolution_material':
           this._performEvolution(option);
           break;
+
+        case 'evolution_cancel':
+          this._cancelEvolution();
+          return; // Don't close screen - go back to normal selection
       }
+    }
+
+    /**
+     * Select a weapon as the main weapon for evolution
+     * @param {Object} option
+     */
+    _selectMainWeapon(option) {
+      this._selectedMainWeapon = option.weaponRef;
+      this._evolutionState = EvolutionState.SELECTING_MATERIAL;
+
+      // Regenerate options for material selection
+      var materialOptions = this._generateWeaponOptions();
+
+      // Update screen with new options and state
+      this._screen.show(this._player, materialOptions, this._game.width, this._game.height, {
+        evolutionState: this._evolutionState,
+        selectedMainWeapon: this._selectedMainWeapon,
+      });
+
+      events.emitSync('evolution:main_selected', {
+        weaponId: option.weaponId,
+        weapon: option.weaponRef,
+      });
+    }
+
+    /**
+     * Cancel evolution and return to normal selection
+     */
+    _cancelEvolution() {
+      this._evolutionState = EvolutionState.NORMAL;
+      this._selectedMainWeapon = null;
+
+      // Regenerate normal options
+      var normalOptions = this._generateWeaponOptions();
+
+      // Update screen
+      this._screen.show(this._player, normalOptions, this._game.width, this._game.height, {
+        evolutionState: this._evolutionState,
+        selectedMainWeapon: this._selectedMainWeapon,
+      });
+
+      events.emitSync('evolution:cancelled', {});
     }
 
     _addNewWeapon(option) {
@@ -369,18 +509,31 @@
 
       var weaponSlot = this._player.weaponSlot;
 
+      // Get main weapon from stored selection and material from option
+      var mainWeapon = option.mainWeapon || this._selectedMainWeapon;
+      var materialWeapon = option.weaponRef;
+
+      if (!mainWeapon || !materialWeapon) {
+        console.warn('[LevelUpSystem] Evolution failed - missing weapons');
+        return;
+      }
+
       // Remove source weapons (by ID)
-      weaponSlot.removeWeapon(option.weapon1.id);
-      weaponSlot.removeWeapon(option.weapon2.id);
+      weaponSlot.removeWeapon(mainWeapon.id);
+      weaponSlot.removeWeapon(materialWeapon.id);
 
       // Create and add evolved weapon
       var evolvedWeapon = new Weapon(option.evolutionResult);
       weaponSlot.addWeapon(evolvedWeapon);
 
+      // Reset evolution state
+      this._evolutionState = EvolutionState.NORMAL;
+      this._selectedMainWeapon = null;
+
       // Emit evolution completed event
       events.emitSync('upgrade:evolution_completed', {
-        source1: option.weapon1.id,
-        source2: option.weapon2.id,
+        mainWeapon: mainWeapon.id,
+        materialWeapon: materialWeapon.id,
         result: option.evolutionResult.id,
         evolvedWeapon: evolvedWeapon,
       });
@@ -399,6 +552,11 @@
       this._screen.hide();
       this._isActive = false;
       this._openedManually = false;
+
+      // Reset evolution state
+      this._evolutionState = EvolutionState.NORMAL;
+      this._selectedMainWeapon = null;
+
       this._game.resume();
 
       events.emitSync('levelup:screen_closed', {});

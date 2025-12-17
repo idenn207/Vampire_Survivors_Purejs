@@ -42,6 +42,10 @@
     // Weapon options
     _weaponOptions = [];
 
+    // Evolution state
+    _evolutionState = 'normal';
+    _selectedMainWeapon = null;
+
     // Mouse state
     _mouseX = 0;
     _mouseY = 0;
@@ -65,20 +69,30 @@
      * @param {Array<Object>} weaponOptions
      * @param {number} canvasWidth
      * @param {number} canvasHeight
+     * @param {Object} [evolutionInfo] - Optional evolution state info
      */
-    show(player, weaponOptions, canvasWidth, canvasHeight) {
+    show(player, weaponOptions, canvasWidth, canvasHeight, evolutionInfo) {
       this._isVisible = true;
       this._player = player;
       this._weaponOptions = weaponOptions || [];
       this._canvasWidth = canvasWidth || 800;
       this._canvasHeight = canvasHeight || 600;
 
+      // Set evolution state
+      if (evolutionInfo) {
+        this._evolutionState = evolutionInfo.evolutionState || 'normal';
+        this._selectedMainWeapon = evolutionInfo.selectedMainWeapon || null;
+      } else {
+        this._evolutionState = 'normal';
+        this._selectedMainWeapon = null;
+      }
+
       // Set player on panels
       this._statPanel.setPlayer(player);
       this._weaponGridPanel.setPlayer(player);
 
-      // Set weapon options
-      this._weaponCardPanel.setOptions(this._weaponOptions);
+      // Set weapon options with evolution state
+      this._weaponCardPanel.setOptions(this._weaponOptions, this._evolutionState, this._selectedMainWeapon);
 
       // Calculate and set panel bounds
       this._calculatePanelBounds();
@@ -91,6 +105,8 @@
       this._isVisible = false;
       this._player = null;
       this._weaponOptions = [];
+      this._evolutionState = 'normal';
+      this._selectedMainWeapon = null;
       this._tooltip.hide();
     }
 
@@ -225,13 +241,18 @@
         };
       }
 
-      // Check weapon card panel click (weapon selection - closes screen)
+      // Check weapon card panel click (weapon selection)
       var weaponCardResult = this._weaponCardPanel.handleClick(this._mouseX, this._mouseY);
       if (weaponCardResult) {
+        // Determine if this selection should close the screen
+        // evolution_main and evolution_cancel don't close - they change state
+        var shouldClose =
+          weaponCardResult.type !== 'evolution_main' && weaponCardResult.type !== 'evolution_cancel';
+
         return {
           type: 'weapon_selection',
           result: weaponCardResult,
-          closesScreen: true, // Selecting a weapon closes the screen
+          closesScreen: shouldClose,
         };
       }
 

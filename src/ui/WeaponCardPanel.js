@@ -28,6 +28,9 @@
   var NEW_BADGE_COLOR = '#2ECC71';
   var UPGRADE_BADGE_COLOR = '#3498DB';
   var EVOLUTION_BADGE_COLOR = '#9B59B6';
+  var EVOLUTION_MAIN_BADGE_COLOR = '#E67E22';
+  var EVOLUTION_MATERIAL_BADGE_COLOR = '#9B59B6';
+  var CANCEL_BADGE_COLOR = '#95A5A6';
   var STAT_BADGE_COLOR = '#F39C12';
 
   // Attack type colors
@@ -54,6 +57,10 @@
     _hoveredIndex = -1;
     _cardRects = [];
 
+    // Evolution state
+    _evolutionState = 'normal';
+    _selectedMainWeapon = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -67,9 +74,11 @@
     /**
      * Set weapon options to display
      * @param {Array<Object>} options - Array of weapon option objects
+     * @param {string} [evolutionState] - Current evolution state ('normal' or 'selecting_material')
+     * @param {Object} [selectedMainWeapon] - The selected main weapon (when in material selection)
      * Options format:
      * {
-     *   type: 'new' | 'upgrade' | 'evolution' | 'stat',
+     *   type: 'new' | 'upgrade' | 'evolution' | 'evolution_main' | 'evolution_material' | 'evolution_cancel' | 'stat',
      *   weaponId: string,
      *   weaponData: Object,
      *   currentLevel: number (for upgrades),
@@ -78,8 +87,10 @@
      *   evolutionResult: Object (for evolution)
      * }
      */
-    setOptions(options) {
+    setOptions(options, evolutionState, selectedMainWeapon) {
       this._options = options || [];
+      this._evolutionState = evolutionState || 'normal';
+      this._selectedMainWeapon = selectedMainWeapon || null;
       this._calculateCardRects();
     }
 
@@ -146,12 +157,29 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(this._x, this._y, this._width, this._height);
 
-      // Title
+      // Title - changes based on evolution state
+      var title = 'SELECT ONE';
+      var subtitle = '';
+
+      if (this._evolutionState === 'selecting_material') {
+        title = 'SELECT MATERIAL';
+        if (this._selectedMainWeapon) {
+          subtitle = 'Main: ' + this._selectedMainWeapon.name;
+        }
+      }
+
       ctx.font = 'bold 18px Arial';
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('SELECT ONE', this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
+      ctx.fillText(title, this._x + this._width / 2, this._y + TITLE_HEIGHT / 2 - (subtitle ? 8 : 0));
+
+      // Show subtitle with main weapon name if selecting material
+      if (subtitle) {
+        ctx.font = '12px Arial';
+        ctx.fillStyle = EVOLUTION_MAIN_BADGE_COLOR;
+        ctx.fillText(subtitle, this._x + this._width / 2, this._y + TITLE_HEIGHT / 2 + 12);
+      }
 
       // Separator line
       ctx.strokeStyle = BORDER_COLOR;
@@ -169,8 +197,11 @@
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
       ctx.textAlign = 'center';
+      var hintText = this._evolutionState === 'selecting_material'
+        ? 'Select material to evolve, or cancel'
+        : 'Click to select (closes screen)';
       ctx.fillText(
-        'Click to select (closes screen)',
+        hintText,
         this._x + this._width / 2,
         this._y + this._height - 15
       );
@@ -215,7 +246,7 @@
       ctx.lineWidth = isHovered ? 3 : 2;
       ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
-      // Badge (NEW, UPGRADE, EVOLUTION, STAT)
+      // Badge (NEW, UPGRADE, EVOLUTION types, STAT)
       var badgeText = '';
       var badgeColor = '';
 
@@ -231,6 +262,18 @@
         case 'evolution':
           badgeText = 'EVOLUTION';
           badgeColor = EVOLUTION_BADGE_COLOR;
+          break;
+        case 'evolution_main':
+          badgeText = 'MAIN';
+          badgeColor = EVOLUTION_MAIN_BADGE_COLOR;
+          break;
+        case 'evolution_material':
+          badgeText = 'MATERIAL';
+          badgeColor = EVOLUTION_MATERIAL_BADGE_COLOR;
+          break;
+        case 'evolution_cancel':
+          badgeText = 'CANCEL';
+          badgeColor = CANCEL_BADGE_COLOR;
           break;
         case 'stat':
           badgeText = 'STAT BOOST';
@@ -268,7 +311,21 @@
     _renderIcon(ctx, centerX, centerY, option) {
       var color = '#FFFFFF';
 
-      if (option.type === 'stat') {
+      if (option.type === 'evolution_cancel') {
+        // Cancel icon - X mark
+        ctx.strokeStyle = CANCEL_BADGE_COLOR;
+        ctx.lineWidth = 4;
+        ctx.lineCap = 'round';
+        var size = ICON_SIZE / 2;
+        ctx.beginPath();
+        ctx.moveTo(centerX - size, centerY - size);
+        ctx.lineTo(centerX + size, centerY + size);
+        ctx.moveTo(centerX + size, centerY - size);
+        ctx.lineTo(centerX - size, centerY + size);
+        ctx.stroke();
+        ctx.lineCap = 'butt';
+        return;
+      } else if (option.type === 'stat') {
         color = option.statConfig ? option.statConfig.icon : '#F39C12';
         // Stat icon - hexagon
         ctx.fillStyle = color;
@@ -500,6 +557,12 @@
       if (option.type === 'stat' && option.statConfig) {
         return option.statConfig.name;
       }
+      if (option.type === 'evolution_cancel') {
+        return 'Cancel';
+      }
+      if (option.type === 'evolution_material' && option.evolutionResult) {
+        return option.weaponData.name;
+      }
       if (option.weaponData) {
         return option.weaponData.name;
       }
@@ -512,6 +575,15 @@
     _getOptionDescription(option) {
       if (option.type === 'stat' && option.statConfig) {
         return option.statConfig.description;
+      }
+      if (option.type === 'evolution_cancel') {
+        return 'Return to weapon selection';
+      }
+      if (option.type === 'evolution_main' && option.weaponData) {
+        return 'Select as main weapon for evolution';
+      }
+      if (option.type === 'evolution_material' && option.evolutionResult) {
+        return 'Evolves into: ' + option.evolutionResult.name;
       }
       if (option.type === 'new' && option.weaponData) {
         return option.weaponData.attackType + ' - ' + (option.weaponData.isAuto ? 'Auto' : 'Manual');
@@ -646,6 +718,8 @@
     dispose() {
       this._options = [];
       this._cardRects = [];
+      this._evolutionState = 'normal';
+      this._selectedMainWeapon = null;
     }
   }
 
