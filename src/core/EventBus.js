@@ -126,6 +126,25 @@
     }
 
     // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugInfo() {
+      var totalListeners = 0;
+      this._listeners.forEach(function(set) {
+        totalListeners += set.size;
+      });
+
+      return {
+        label: 'Events',
+        entries: [
+          { key: 'Types', value: this._listeners.size },
+          { key: 'Listeners', value: totalListeners },
+          { key: 'Once', value: this._onceListeners.size }
+        ]
+      };
+    }
+
+    // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
     dispose() {

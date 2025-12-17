@@ -2,7 +2,7 @@
  * @fileoverview Main game loop and state management
  * @module Core/Game
  */
-(function(Core) {
+(function (Core) {
   'use strict';
 
   // ============================================
@@ -11,18 +11,21 @@
   var Time = Core.Time;
   var Input = Core.Input;
   var events = Core.events;
+  var Debug = window.VampireSurvivors.Debug;
 
   // ============================================
   // Constants
   // ============================================
-  var GAME_WIDTH = 1280;
-  var GAME_HEIGHT = 720;
+  // var GAME_WIDTH = 1280;
+  var GAME_WIDTH = 800;
+  // var GAME_HEIGHT = 720;
+  var GAME_HEIGHT = 600;
 
   var GameState = Object.freeze({
     INITIALIZING: 'initializing',
     RUNNING: 'running',
     PAUSED: 'paused',
-    GAME_OVER: 'game_over'
+    GAME_OVER: 'game_over',
   });
 
   // ============================================
@@ -36,6 +39,7 @@
     _ctx = null;
     _time = null;
     _input = null;
+    _debugManager = null;
     _state = GameState.INITIALIZING;
     _rafId = null;
     _systems = [];
@@ -66,6 +70,10 @@
       this._ctx = this._canvas.getContext('2d');
 
       this._input.initialize(this._canvas);
+
+      // Initialize debug manager
+      this._debugManager = Debug.debugManager;
+      this._debugManager.initialize(this);
 
       await events.emit('game:initialized', { game: this });
 
@@ -124,7 +132,7 @@
 
     addSystem(system) {
       this._systems.push(system);
-      this._systems.sort(function(a, b) {
+      this._systems.sort(function (a, b) {
         return (a.priority || 0) - (b.priority || 0);
       });
     }
@@ -172,6 +180,11 @@
           system.render(this._ctx);
         }
       }
+
+      // Render debug overlay (always on top)
+      if (this._debugManager) {
+        this._debugManager.render(this._ctx);
+      }
     }
 
     // ----------------------------------------
@@ -209,6 +222,24 @@
       return this._isRunning && this._state === GameState.RUNNING;
     }
 
+    get debugManager() {
+      return this._debugManager;
+    }
+
+    // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugInfo() {
+      return {
+        label: 'Game',
+        entries: [
+          { key: 'State', value: this._state },
+          { key: 'Systems', value: this._systems.length },
+          { key: 'Size', value: GAME_WIDTH + 'x' + GAME_HEIGHT },
+        ],
+      };
+    }
+
     // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
@@ -222,6 +253,11 @@
         }
       }
       this._systems = [];
+
+      if (this._debugManager) {
+        this._debugManager.dispose();
+        this._debugManager = null;
+      }
 
       this._input.dispose();
       events.dispose();
@@ -238,5 +274,4 @@
   Core.GameState = GameState;
   Core.GAME_WIDTH = GAME_WIDTH;
   Core.GAME_HEIGHT = GAME_HEIGHT;
-
 })(window.VampireSurvivors.Core);

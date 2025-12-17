@@ -2,7 +2,7 @@
  * @fileoverview Time management for game loop
  * @module Core/Time
  */
-(function(Core) {
+(function (Core) {
   'use strict';
 
   // ============================================
@@ -129,11 +129,26 @@
     get isPaused() {
       return this._isPaused;
     }
+
+    // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugInfo() {
+      return {
+        label: 'Time',
+        entries: [
+          { key: 'FPS', value: this.fps },
+          { key: 'Delta', value: this._deltaTime.toFixed(4) },
+          { key: 'Elapsed', value: this._elapsed.toFixed(1) + 's' },
+          { key: 'Frames', value: this._frameCount },
+          { key: 'Scale', value: this._timeScale },
+        ],
+      };
+    }
   }
 
   // ============================================
   // Export to Namespace
   // ============================================
   Core.Time = Time;
-
 })(window.VampireSurvivors.Core);

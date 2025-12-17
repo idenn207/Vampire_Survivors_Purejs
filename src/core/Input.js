@@ -2,7 +2,7 @@
  * @fileoverview Input handling for keyboard and mouse
  * @module Core/Input
  */
-(function(Core) {
+(function (Core) {
   'use strict';
 
   // ============================================
@@ -139,10 +139,7 @@
       var scaleX = this._canvas.width / rect.width;
       var scaleY = this._canvas.height / rect.height;
 
-      this._mousePosition.set(
-        (e.clientX - rect.left) * scaleX,
-        (e.clientY - rect.top) * scaleY
-      );
+      this._mousePosition.set((e.clientX - rect.left) * scaleX, (e.clientY - rect.top) * scaleY);
 
       this._updateMouseWorldPosition();
     }
@@ -165,10 +162,7 @@
 
     _updateMouseWorldPosition() {
       if (this._camera) {
-        this._mouseWorldPosition.set(
-          this._mousePosition.x + this._camera.x,
-          this._mousePosition.y + this._camera.y
-        );
+        this._mouseWorldPosition.set(this._mousePosition.x + this._camera.x, this._mousePosition.y + this._camera.y);
       } else {
         this._mouseWorldPosition.copy(this._mousePosition);
       }
@@ -183,6 +177,28 @@
 
     get mouseWorldPosition() {
       return this._mouseWorldPosition;
+    }
+
+    // ----------------------------------------
+    // Debug Interface
+    // ----------------------------------------
+    getDebugInfo() {
+      var pressedKeys = [];
+      var self = this;
+      this._keys.forEach(function (isDown, key) {
+        if (isDown) pressedKeys.push(key);
+      });
+
+      var dir = this.getMovementDirection();
+
+      return {
+        label: 'Input',
+        entries: [
+          { key: 'Keys', value: pressedKeys.join(', ') || 'none' },
+          { key: 'Mouse', value: Math.round(this._mousePosition.x) + ', ' + Math.round(this._mousePosition.y) },
+          { key: 'Direction', value: dir.x.toFixed(2) + ', ' + dir.y.toFixed(2) },
+        ],
+      };
     }
 
     // ----------------------------------------
@@ -212,5 +228,4 @@
   // Export to Namespace
   // ============================================
   Core.Input = Input;
-
 })(window.VampireSurvivors.Core);
