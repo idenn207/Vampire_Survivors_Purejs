@@ -4,7 +4,9 @@
       "Bash(mkdir -p:*)",
       "Bash(git commit:*)",
       "Bash(node --check:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "WebSearch",
+      "Bash(curl:*)"
     ]
   }
 }

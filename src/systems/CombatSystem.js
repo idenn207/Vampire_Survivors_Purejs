@@ -10,7 +10,9 @@
   // ============================================
   var System = Systems.System;
   var Health = window.VampireSurvivors.Components.Health;
+  var ProjectileComponent = window.VampireSurvivors.Components.Projectile;
   var events = window.VampireSurvivors.Core.events;
+  var projectilePool = window.VampireSurvivors.Pool.projectilePool;
 
   // ============================================
   // Constants
@@ -76,17 +78,72 @@
     }
 
     _processCollisions() {
-      if (!this._player || !this._player.isActive) return;
+      // Process player-enemy collisions
+      if (this._player && this._player.isActive) {
+        var playerCollisions = this._collisionSystem.getCollisionsByTags('player', 'enemy');
 
-      // Get player-enemy collisions
-      var collisions = this._collisionSystem.getCollisionsByTags('player', 'enemy');
+        for (var i = 0; i < playerCollisions.length; i++) {
+          var collision = playerCollisions[i];
+          var player = collision.entityA;
+          var enemy = collision.entityB;
 
-      for (var i = 0; i < collisions.length; i++) {
-        var collision = collisions[i];
-        var player = collision.entityA; // getCollisionsByTags ensures 'player' is entityA
+          this._handlePlayerEnemyCollision(player, enemy);
+        }
+      }
+
+      // Process hitbox-enemy collisions (projectiles hitting enemies)
+      this._processHitboxCollisions();
+    }
+
+    _processHitboxCollisions() {
+      // Get all hitbox-enemy collisions
+      var hitboxCollisions = this._collisionSystem.getCollisionsByTags('hitbox', 'enemy');
+
+      for (var i = 0; i < hitboxCollisions.length; i++) {
+        var collision = hitboxCollisions[i];
+        var hitbox = collision.entityA;
         var enemy = collision.entityB;
 
-        this._handlePlayerEnemyCollision(player, enemy);
+        this._handleHitboxEnemyCollision(hitbox, enemy);
+      }
+    }
+
+    _handleHitboxEnemyCollision(hitbox, enemy) {
+      // Check if hitbox is still active
+      if (!hitbox.isActive || !enemy.isActive) return;
+
+      // Get enemy health
+      var enemyHealth = enemy.getComponent(Health);
+      if (!enemyHealth || enemyHealth.isDead) return;
+
+      // Handle projectile collision
+      var projectileComp = hitbox.getComponent(ProjectileComponent);
+      if (projectileComp) {
+        // Check if already hit this enemy
+        if (projectileComp.hasHitEnemy(enemy.id)) {
+          return;
+        }
+
+        var damage = projectileComp.damage;
+
+        // Apply damage
+        enemyHealth.takeDamage(damage);
+        this._damageDealt += damage;
+
+        // Emit weapon hit event
+        events.emit('weapon:hit', {
+          hitbox: hitbox,
+          enemy: enemy,
+          damage: damage,
+          type: 'projectile',
+        });
+
+        // Handle pierce - returns true if projectile should be destroyed
+        var shouldDestroy = projectileComp.onHit(enemy.id);
+
+        if (shouldDestroy) {
+          projectilePool.despawn(hitbox);
+        }
       }
     }
 
@@ -148,6 +205,7 @@
         entries: [
           { key: 'Player HP', value: playerHealth || 'N/A' },
           { key: 'Invincible', value: playerInvincible ? 'Yes' : 'No' },
+          { key: 'Dmg Dealt', value: this._damageDealt },
           { key: 'Dmg Received', value: this._damageReceived },
         ],
       };

@@ -18,6 +18,8 @@
     window.VampireSurvivors = window.VampireSurvivors || {};
     window.VampireSurvivors.Core = {};
     window.VampireSurvivors.Data = {};
+    window.VampireSurvivors.Pool = {};
+    window.VampireSurvivors.Behaviors = {};
     window.VampireSurvivors.Entities = {};
     window.VampireSurvivors.Components = {};
     window.VampireSurvivors.Systems = {};
@@ -29,6 +31,9 @@
 
   <!-- Phase 2: Utilities (No Dependencies) -->
   <script src="src/utils/Vector2.js"></script>
+
+  <!-- Phase 2.5: Object Pools -->
+  <script src="src/pool/ObjectPool.js"></script>
 
   <!-- Phase 3: Core Systems -->
   <script src="src/core/EventBus.js"></script>
@@ -43,11 +48,24 @@
   <script src="src/components/Sprite.js"></script>
   <script src="src/components/Collider.js"></script>
   <script src="src/components/Health.js"></script>
+  <script src="src/components/Projectile.js"></script>
+  <script src="src/components/AreaEffect.js"></script>
+  <script src="src/components/Weapon.js"></script>
+  <script src="src/components/WeaponSlot.js"></script>
 
   <!-- Phase 5: Entities -->
   <script src="src/entities/Entity.js"></script>
   <script src="src/entities/Player.js"></script>
   <script src="src/entities/Enemy.js"></script>
+  <script src="src/entities/Projectile.js"></script>
+  <script src="src/entities/AreaEffect.js"></script>
+
+  <!-- Phase 5.5: Pools (depend on entities) -->
+  <script src="src/pool/ProjectilePool.js"></script>
+  <script src="src/pool/AreaEffectPool.js"></script>
+
+  <!-- Phase 5.7: Data -->
+  <script src="src/data/WeaponData.js"></script>
 
   <!-- Phase 6: Managers -->
   <script src="src/managers/EntityManager.js"></script>
@@ -58,10 +76,23 @@
   <script src="src/systems/PlayerSystem.js"></script>
   <script src="src/systems/EnemySystem.js"></script>
   <script src="src/systems/MovementSystem.js"></script>
+  <script src="src/systems/ProjectileSystem.js"></script>
+  <script src="src/systems/AreaEffectSystem.js"></script>
   <script src="src/systems/CollisionSystem.js"></script>
   <script src="src/systems/CombatSystem.js"></script>
   <script src="src/systems/CameraSystem.js"></script>
   <script src="src/systems/RenderSystem.js"></script>
+
+  <!-- Phase 7.5: Behaviors -->
+  <script src="src/behaviors/WeaponBehavior.js"></script>
+  <script src="src/behaviors/ProjectileBehavior.js"></script>
+  <script src="src/behaviors/LaserBehavior.js"></script>
+  <script src="src/behaviors/MeleeBehavior.js"></script>
+  <script src="src/behaviors/AreaBehavior.js"></script>
+  <script src="src/behaviors/ParticleBehavior.js"></script>
+
+  <!-- Phase 7.7: Weapon System (depends on behaviors) -->
+  <script src="src/systems/WeaponSystem.js"></script>
 
   <!-- Phase 8: Camera -->
   <script src="src/core/Camera.js"></script>

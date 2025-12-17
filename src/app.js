@@ -13,22 +13,31 @@
   var Entities = VampireSurvivors.Entities;
   var Managers = VampireSurvivors.Managers;
   var Systems = VampireSurvivors.Systems;
+  var Pool = VampireSurvivors.Pool;
+  var Data = VampireSurvivors.Data;
 
   var Game = Core.Game;
   var Camera = Core.Camera;
   var events = Core.events;
 
   var Transform = Components.Transform;
+  var Weapon = Components.Weapon;
   var EntityManager = Managers.EntityManager;
   var Player = Entities.Player;
   var BackgroundSystem = Systems.BackgroundSystem;
   var PlayerSystem = Systems.PlayerSystem;
   var EnemySystem = Systems.EnemySystem;
   var MovementSystem = Systems.MovementSystem;
+  var ProjectileSystem = Systems.ProjectileSystem;
+  var AreaEffectSystem = Systems.AreaEffectSystem;
+  var WeaponSystem = Systems.WeaponSystem;
   var CollisionSystem = Systems.CollisionSystem;
   var CombatSystem = Systems.CombatSystem;
   var CameraSystem = Systems.CameraSystem;
   var RenderSystem = Systems.RenderSystem;
+
+  var projectilePool = Pool.projectilePool;
+  var areaEffectPool = Pool.areaEffectPool;
 
   // ============================================
   // Application State
@@ -52,6 +61,10 @@
       entityManager.initialize(game);
       Managers.entityManager = entityManager;
 
+      // Initialize pools
+      projectilePool.initialize(entityManager);
+      areaEffectPool.initialize(entityManager);
+
       // Setup camera
       camera = new Camera(game.width, game.height);
       game.input.setCamera(camera);
@@ -74,6 +87,14 @@
       movementSystem.initialize(game, entityManager);
       game.addSystem(movementSystem);
 
+      var projectileSystem = new ProjectileSystem();
+      projectileSystem.initialize(game, entityManager);
+      game.addSystem(projectileSystem);
+
+      var areaEffectSystem = new AreaEffectSystem();
+      areaEffectSystem.initialize(game, entityManager);
+      game.addSystem(areaEffectSystem);
+
       var collisionSystem = new CollisionSystem();
       collisionSystem.initialize(game, entityManager);
       game.addSystem(collisionSystem);
@@ -82,6 +103,11 @@
       combatSystem.initialize(game, entityManager);
       combatSystem.setCollisionSystem(collisionSystem);
       game.addSystem(combatSystem);
+
+      var weaponSystem = new WeaponSystem();
+      weaponSystem.initialize(game, entityManager);
+      weaponSystem.setInput(game.input);
+      game.addSystem(weaponSystem);
 
       var cameraSystem = new CameraSystem();
       cameraSystem.initialize(game, entityManager);
@@ -99,10 +125,24 @@
       transform.x = game.width / 2 - transform.width / 2;
       transform.y = game.height / 2 - transform.height / 2;
 
+      // Give player starting weapons
+      // Magic Missile - auto-targeting projectile
+      var magicMissileData = Data.getWeaponData('magic_missile');
+      var magicMissile = new Weapon(magicMissileData);
+      player.weaponSlot.addWeapon(magicMissile);
+
+      // Rifle - manual aiming with mouse (click to fire)
+      var rifleData = Data.getWeaponData('rifle');
+      var rifle = new Weapon(rifleData);
+      player.weaponSlot.addWeapon(rifle);
+
       // Set player reference in systems
       playerSystem.setPlayer(player);
       enemySystem.setPlayer(player);
       combatSystem.setPlayer(player);
+      weaponSystem.setPlayer(player);
+      weaponSystem.setCamera(camera);
+      weaponSystem.initializeBehaviors();
 
       // Camera follows player
       camera.follow(player);
@@ -126,6 +166,9 @@
       game.debugManager.register(enemySystem);
       game.debugManager.register(collisionSystem);
       game.debugManager.register(combatSystem);
+      game.debugManager.register(weaponSystem);
+      game.debugManager.register(projectilePool);
+      game.debugManager.register(areaEffectPool);
 
       // Register summary providers for high-priority debug info
       game.debugManager.registerSummary(game);

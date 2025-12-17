@@ -16,7 +16,7 @@
   // ============================================
   // Constants
   // ============================================
-  var SPAWN_INTERVAL = 2; // seconds
+  var SPAWN_INTERVAL = 0.3; // seconds
   var SPAWN_DISTANCE = 300; // pixels from player
   var MAX_ENEMIES = 50;
   var AI_UPDATE_INTERVAL = 0.2; // seconds

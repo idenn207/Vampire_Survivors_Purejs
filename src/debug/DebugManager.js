@@ -65,11 +65,22 @@
     }
 
     toggle() {
-      // Toggle panel visibility only - no game state change
       this._isEnabled = !this._isEnabled;
 
       if (this._isEnabled) {
-        this._console.info('Debug panel opened');
+        // Pause game when debug mode is activated
+        if (this._game && this._game.state === 'running') {
+          this._game.pause();
+          this._console.info('Debug panel opened (game paused)');
+        } else {
+          this._console.info('Debug panel opened');
+        }
+      } else {
+        // Resume game when debug panel is closed
+        if (this._game && this._game.state === 'paused') {
+          this._game.resume();
+          this._console.info('Debug panel closed (game resumed)');
+        }
       }
     }
 

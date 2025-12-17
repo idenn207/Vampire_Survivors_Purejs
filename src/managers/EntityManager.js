@@ -77,6 +77,24 @@
       entity.dispose();
     }
 
+    /**
+     * Remove entity from manager WITHOUT disposing it (for pooled entities)
+     * @param {Entity} entity
+     */
+    remove(entity) {
+      if (!entity || !this._entities.has(entity.id)) return;
+
+      // Remove from tag registry
+      var self = this;
+      entity.getTags().forEach(function (tag) {
+        self._removeEntityFromTag(entity, tag);
+      });
+
+      this._entities.delete(entity.id);
+
+      events.emitSync('entity:removed', { entity: entity });
+    }
+
     getById(id) {
       return this._entities.get(id) || null;
     }

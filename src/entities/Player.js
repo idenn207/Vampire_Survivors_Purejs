@@ -15,6 +15,7 @@
   var Collider = window.VampireSurvivors.Components.Collider;
   var CollisionLayer = window.VampireSurvivors.Components.CollisionLayer;
   var Health = window.VampireSurvivors.Components.Health;
+  var WeaponSlot = window.VampireSurvivors.Components.WeaponSlot;
 
   // ============================================
   // Constants
@@ -52,6 +53,7 @@
         )
       );
       this.addComponent(new Health(DEFAULT_MAX_HEALTH));
+      this.addComponent(new WeaponSlot());
 
       // Add tag
       this.addTag('player');
@@ -99,6 +101,10 @@
 
     get health() {
       return this.getComponent(Health);
+    }
+
+    get weaponSlot() {
+      return this.getComponent(WeaponSlot);
     }
 
     // ----------------------------------------
