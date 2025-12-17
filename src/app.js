@@ -26,6 +26,7 @@
   var EnemySystem = Systems.EnemySystem;
   var MovementSystem = Systems.MovementSystem;
   var CollisionSystem = Systems.CollisionSystem;
+  var CombatSystem = Systems.CombatSystem;
   var CameraSystem = Systems.CameraSystem;
   var RenderSystem = Systems.RenderSystem;
 
@@ -77,6 +78,11 @@
       collisionSystem.initialize(game, entityManager);
       game.addSystem(collisionSystem);
 
+      var combatSystem = new CombatSystem();
+      combatSystem.initialize(game, entityManager);
+      combatSystem.setCollisionSystem(collisionSystem);
+      game.addSystem(combatSystem);
+
       var cameraSystem = new CameraSystem();
       cameraSystem.initialize(game, entityManager);
       cameraSystem.setCamera(camera);
@@ -93,22 +99,24 @@
       transform.x = game.width / 2 - transform.width / 2;
       transform.y = game.height / 2 - transform.height / 2;
 
-      // Set player reference in PlayerSystem and EnemySystem
+      // Set player reference in systems
       playerSystem.setPlayer(player);
       enemySystem.setPlayer(player);
+      combatSystem.setPlayer(player);
 
       // Camera follows player
       camera.follow(player);
 
-      // Listen for collisions
-      events.on('collision:detected', function (collision) {
-        var entityA = collision.entityA;
-        var entityB = collision.entityB;
+      // Listen for player death
+      events.on('player:died', function (data) {
+        console.log('[App] Player died!');
+        game.debugManager.error('Player died!');
+        // TODO: Implement game over screen
+      });
 
-        // Check for player-enemy collision
-        if ((entityA.hasTag('player') && entityB.hasTag('enemy')) || (entityA.hasTag('enemy') && entityB.hasTag('player'))) {
-          console.log('[App] Player-enemy collision detected');
-        }
+      // Listen for player damage
+      events.on('player:damaged', function (data) {
+        game.debugManager.warn('Player hit! HP: ' + data.currentHealth + '/' + data.maxHealth);
       });
 
       // Register debug info
@@ -117,6 +125,7 @@
       game.debugManager.register(camera);
       game.debugManager.register(enemySystem);
       game.debugManager.register(collisionSystem);
+      game.debugManager.register(combatSystem);
 
       // Hook into game loop
       events.on('game:started', function () {

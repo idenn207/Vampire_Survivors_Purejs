@@ -14,6 +14,7 @@
   var Sprite = window.VampireSurvivors.Components.Sprite;
   var Collider = window.VampireSurvivors.Components.Collider;
   var CollisionLayer = window.VampireSurvivors.Components.CollisionLayer;
+  var Health = window.VampireSurvivors.Components.Health;
 
   // ============================================
   // Constants
@@ -22,6 +23,8 @@
   var DEFAULT_WIDTH = 24;
   var DEFAULT_HEIGHT = 24;
   var ENEMY_COLOR = '#FF0000'; // Red
+  var DEFAULT_HEALTH = 1;
+  var DEFAULT_DAMAGE = 10; // Contact damage to player
 
   // ============================================
   // Class Definition
@@ -31,7 +34,7 @@
     // Instance Properties
     // ----------------------------------------
     _speed = DEFAULT_SPEED;
-    _health = 1;
+    _damage = DEFAULT_DAMAGE;
 
     // ----------------------------------------
     // Constructor
@@ -50,19 +53,10 @@
           CollisionLayer.PLAYER | CollisionLayer.HITBOX // mask
         )
       );
+      this.addComponent(new Health(DEFAULT_HEALTH));
 
       // Add tag
       this.addTag('enemy');
-    }
-
-    // ----------------------------------------
-    // Public Methods
-    // ----------------------------------------
-    takeDamage(amount) {
-      this._health -= amount;
-      if (this._health <= 0) {
-        this._isActive = false;
-      }
     }
 
     // ----------------------------------------
@@ -76,12 +70,16 @@
       this._speed = Math.max(0, value);
     }
 
-    get health() {
-      return this._health;
+    get damage() {
+      return this._damage;
     }
 
-    set health(value) {
-      this._health = Math.max(0, value);
+    set damage(value) {
+      this._damage = Math.max(0, value);
+    }
+
+    get health() {
+      return this.getComponent(Health);
     }
 
     get transform() {

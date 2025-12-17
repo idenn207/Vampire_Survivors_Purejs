@@ -14,6 +14,7 @@
   var Sprite = window.VampireSurvivors.Components.Sprite;
   var Collider = window.VampireSurvivors.Components.Collider;
   var CollisionLayer = window.VampireSurvivors.Components.CollisionLayer;
+  var Health = window.VampireSurvivors.Components.Health;
 
   // ============================================
   // Constants
@@ -22,6 +23,7 @@
   var DEFAULT_WIDTH = 32;
   var DEFAULT_HEIGHT = 32;
   var PLAYER_COLOR = '#00FF00'; // Green
+  var DEFAULT_MAX_HEALTH = 100;
 
   // ============================================
   // Class Definition
@@ -49,6 +51,7 @@
           CollisionLayer.ENEMY | CollisionLayer.TERRAIN | CollisionLayer.PICKUP // mask
         )
       );
+      this.addComponent(new Health(DEFAULT_MAX_HEALTH));
 
       // Add tag
       this.addTag('player');
@@ -94,12 +97,17 @@
       return this.getComponent(Collider);
     }
 
+    get health() {
+      return this.getComponent(Health);
+    }
+
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
     getDebugInfo() {
       var transform = this.getComponent(Transform);
       var velocity = this.getComponent(Velocity);
+      var health = this.getComponent(Health);
 
       return {
         label: 'Player',
@@ -107,6 +115,7 @@
           { key: 'Position', value: Math.round(transform.x) + ', ' + Math.round(transform.y) },
           { key: 'Velocity', value: Math.round(velocity.vx) + ', ' + Math.round(velocity.vy) },
           { key: 'Speed', value: this._speed },
+          { key: 'Health', value: health.currentHealth + '/' + health.maxHealth },
         ],
       };
     }
