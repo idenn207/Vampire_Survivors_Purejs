@@ -16,6 +16,7 @@
     _entityManager = null;
     _priority = 0;
     _isEnabled = true;
+    _updatesDuringPause = false; // Set to true for UI systems that need input during pause
 
     // ----------------------------------------
     // Constructor
@@ -63,6 +64,10 @@
 
     set isEnabled(value) {
       this._isEnabled = value;
+    }
+
+    get updatesDuringPause() {
+      return this._updatesDuringPause;
     }
 
     // ----------------------------------------

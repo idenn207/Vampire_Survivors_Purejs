@@ -56,6 +56,7 @@
       size: 8,
       shape: 'circle',
       lifetime: 3.0,
+      icon: 'magic_orb', // Glowing magic orb
 
       // Upgrades per level
       upgrades: {
@@ -86,6 +87,7 @@
       size: 6,
       shape: 'circle',
       lifetime: 2.0,
+      icon: 'rifle', // Rifle barrel
 
       upgrades: {
         2: { damage: 18, cooldown: 0.28 },
@@ -115,6 +117,7 @@
       size: 5,
       shape: 'circle',
       lifetime: 1.5,
+      icon: 'shotgun', // Spread pattern
 
       upgrades: {
         2: { damage: 14, projectileCount: 7 },
@@ -144,6 +147,7 @@
       tickRate: 10,
 
       color: '#00FFFF',
+      icon: 'laser_beam', // Concentrated beam
 
       upgrades: {
         2: { damage: 60, width: 8 },
@@ -170,6 +174,7 @@
       tickRate: 8,
 
       color: '#FF00FF',
+      icon: 'auto_laser', // Auto-targeting laser
 
       upgrades: {
         2: { damage: 45, range: 600 },
@@ -198,6 +203,7 @@
       hitsPerSwing: 1,
 
       color: '#CCCCCC',
+      icon: 'sword', // Sword blade
 
       upgrades: {
         2: { damage: 45, hitsPerSwing: 2 },
@@ -223,6 +229,7 @@
       hitsPerSwing: 1,
 
       color: '#AAAAAA',
+      icon: 'dagger', // Quick blade
 
       upgrades: {
         2: { damage: 32, cooldown: 0.7 },
@@ -252,6 +259,7 @@
       spawnRange: 200,
 
       color: '#00FF00',
+      icon: 'poison', // Toxic cloud
 
       upgrades: {
         2: { damage: 10, duration: 5.0 },
@@ -278,6 +286,7 @@
       spawnRange: 150,
 
       color: '#FF6600',
+      icon: 'fire', // Burning ground
 
       upgrades: {
         2: { damage: 15, tickRate: 4 },
@@ -307,6 +316,7 @@
 
       color: '#CCCCCC',
       size: 12,
+      icon: 'spinning_blade', // Circular blade
 
       upgrades: {
         2: { damage: 32, bladeCount: 5 },
@@ -332,6 +342,7 @@
       range: 400,
 
       color: '#FFFF00',
+      icon: 'lightning', // Electric bolt
 
       upgrades: {
         2: { damage: 38, chainCount: 4 },

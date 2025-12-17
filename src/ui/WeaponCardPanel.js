@@ -267,7 +267,6 @@
 
     _renderIcon(ctx, centerX, centerY, option) {
       var color = '#FFFFFF';
-      var shape = 'circle';
 
       if (option.type === 'stat') {
         color = option.statConfig ? option.statConfig.icon : '#F39C12';
@@ -277,17 +276,14 @@
         ctx.fill();
       } else if (option.weaponData) {
         color = option.weaponData.color || ATTACK_TYPE_COLORS[option.weaponData.attackType] || '#FFFFFF';
-        shape = option.weaponData.shape || 'circle';
+        var icon = option.weaponData.icon;
+        var attackType = option.weaponData.attackType;
 
         ctx.fillStyle = color;
+        ctx.strokeStyle = color;
 
-        if (shape === 'circle') {
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, ICON_SIZE / 2, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (shape === 'rect') {
-          ctx.fillRect(centerX - ICON_SIZE / 2, centerY - ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
-        }
+        // Render specific icon based on weapon icon property
+        this._renderWeaponIcon(ctx, centerX, centerY, icon, attackType, color, ICON_SIZE);
 
         // Attack type indicator ring
         var attackTypeColor = ATTACK_TYPE_COLORS[option.weaponData.attackType];
@@ -295,7 +291,7 @@
           ctx.strokeStyle = attackTypeColor;
           ctx.lineWidth = 3;
           ctx.beginPath();
-          ctx.arc(centerX, centerY, ICON_SIZE / 2 + 3, 0, Math.PI * 2);
+          ctx.arc(centerX, centerY, ICON_SIZE / 2 + 5, 0, Math.PI * 2);
           ctx.stroke();
         }
       } else if (option.type === 'evolution') {
@@ -303,6 +299,200 @@
         ctx.fillStyle = EVOLUTION_BADGE_COLOR;
         this._drawStar(ctx, centerX, centerY, 5, ICON_SIZE / 2, ICON_SIZE / 4);
         ctx.fill();
+      }
+    }
+
+    _renderWeaponIcon(ctx, centerX, centerY, icon, attackType, color, size) {
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2;
+
+      switch (icon) {
+        case 'magic_orb':
+          // Glowing orb with inner highlight
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+          ctx.beginPath();
+          ctx.arc(centerX - 3, centerY - 3, size / 4, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+
+        case 'rifle':
+          // Gun barrel
+          ctx.fillRect(centerX - size / 2, centerY - 3, size * 0.8, 6);
+          ctx.fillRect(centerX - size / 3, centerY - 10, 6, 16);
+          break;
+
+        case 'shotgun':
+          // Double barrel
+          ctx.fillRect(centerX - size / 2, centerY - 4, size * 0.7, 3);
+          ctx.fillRect(centerX - size / 2, centerY + 1, size * 0.7, 3);
+          ctx.fillRect(centerX - size / 3, centerY - 10, 8, 20);
+          break;
+
+        case 'laser_beam':
+          // Concentrated beam with glow
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(centerX - size / 2, centerY);
+          ctx.lineTo(centerX + size / 2, centerY);
+          ctx.stroke();
+          ctx.fillStyle = '#FFFFFF';
+          ctx.beginPath();
+          ctx.arc(centerX + size / 2, centerY, 6, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+
+        case 'auto_laser':
+          // Auto-targeting beam
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(centerX - size / 2, centerY);
+          ctx.lineTo(centerX + size / 3, centerY);
+          ctx.stroke();
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(centerX + size / 3, centerY, 6, 0, Math.PI * 2);
+          ctx.stroke();
+          // Crosshair lines
+          ctx.beginPath();
+          ctx.moveTo(centerX + size / 3 - 8, centerY);
+          ctx.lineTo(centerX + size / 3 + 8, centerY);
+          ctx.moveTo(centerX + size / 3, centerY - 8);
+          ctx.lineTo(centerX + size / 3, centerY + 8);
+          ctx.stroke();
+          break;
+
+        case 'sword':
+          // Sword blade
+          ctx.lineWidth = 4;
+          ctx.beginPath();
+          ctx.moveTo(centerX - size / 2, centerY + size / 3);
+          ctx.lineTo(centerX + size / 2, centerY - size / 3);
+          ctx.stroke();
+          // Guard
+          ctx.lineWidth = 6;
+          ctx.beginPath();
+          ctx.moveTo(centerX - size / 4, centerY + size / 6);
+          ctx.lineTo(centerX + size / 6, centerY - size / 4);
+          ctx.stroke();
+          break;
+
+        case 'dagger':
+          // Quick dagger
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(centerX - size / 3, centerY + size / 4);
+          ctx.lineTo(centerX + size / 3, centerY - size / 4);
+          ctx.stroke();
+          ctx.fillRect(centerX - size / 6, centerY + size / 8, 8, 4);
+          break;
+
+        case 'poison':
+          // Toxic cloud bubbles
+          ctx.globalAlpha = 0.8;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, 10, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX - 10, centerY + 8, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.beginPath();
+          ctx.arc(centerX + 10, centerY + 6, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.globalAlpha = 1.0;
+          break;
+
+        case 'fire':
+          // Flame shape
+          ctx.beginPath();
+          ctx.moveTo(centerX, centerY - size / 2);
+          ctx.quadraticCurveTo(centerX + size / 2.5, centerY - size / 4, centerX + size / 3, centerY + size / 3);
+          ctx.lineTo(centerX, centerY + size / 6);
+          ctx.lineTo(centerX - size / 3, centerY + size / 3);
+          ctx.quadraticCurveTo(centerX - size / 2.5, centerY - size / 4, centerX, centerY - size / 2);
+          ctx.fill();
+          break;
+
+        case 'spinning_blade':
+          // Circular blade
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+          ctx.stroke();
+          // Inner spokes
+          for (var i = 0; i < 4; i++) {
+            var angle = (Math.PI / 2) * i;
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(centerX + Math.cos(angle) * size / 2, centerY + Math.sin(angle) * size / 2);
+            ctx.stroke();
+          }
+          // Center
+          ctx.beginPath();
+          ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+
+        case 'lightning':
+          // Lightning bolt
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(centerX + 5, centerY - size / 2);
+          ctx.lineTo(centerX - 5, centerY - 2);
+          ctx.lineTo(centerX + 5, centerY + 2);
+          ctx.lineTo(centerX - 5, centerY + size / 2);
+          ctx.stroke();
+          break;
+
+        default:
+          // Fallback to type-based icons
+          switch (attackType) {
+            case 'projectile':
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+
+            case 'laser':
+              ctx.lineWidth = 4;
+              ctx.beginPath();
+              ctx.moveTo(centerX - size / 2, centerY);
+              ctx.lineTo(centerX + size / 2, centerY);
+              ctx.stroke();
+              ctx.beginPath();
+              ctx.arc(centerX + size / 2, centerY, 5, 0, Math.PI * 2);
+              ctx.fill();
+              break;
+
+            case 'melee_swing':
+              ctx.lineWidth = 4;
+              ctx.beginPath();
+              ctx.moveTo(centerX - size / 2, centerY + size / 3);
+              ctx.lineTo(centerX + size / 2, centerY - size / 3);
+              ctx.stroke();
+              break;
+
+            case 'area_damage':
+              ctx.globalAlpha = 0.7;
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.globalAlpha = 1.0;
+              break;
+
+            case 'particle':
+              this._drawStar(ctx, centerX, centerY, 5, size / 2, size / 4);
+              ctx.fill();
+              break;
+
+            default:
+              ctx.beginPath();
+              ctx.arc(centerX, centerY, size / 2, 0, Math.PI * 2);
+              ctx.fill();
+          }
       }
     }
 

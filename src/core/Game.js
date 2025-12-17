@@ -168,15 +168,20 @@
     }
 
     _update(deltaTime) {
-      if (this._state !== GameState.RUNNING) return;
+      var isPaused = this._state !== GameState.RUNNING;
 
-      // Track elapsed game time
-      this._elapsedTime += deltaTime;
+      // Track elapsed game time (only when running)
+      if (!isPaused) {
+        this._elapsedTime += deltaTime;
+      }
 
       for (var i = 0; i < this._systems.length; i++) {
         var system = this._systems[i];
         if (system.isEnabled !== false) {
-          system.update(deltaTime);
+          // Update all systems when running, or only updatesDuringPause systems when paused
+          if (!isPaused || system.updatesDuringPause) {
+            system.update(deltaTime);
+          }
         }
       }
     }

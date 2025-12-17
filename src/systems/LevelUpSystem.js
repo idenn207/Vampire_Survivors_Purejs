@@ -42,6 +42,7 @@
     constructor() {
       super();
       this._priority = PRIORITY;
+      this._updatesDuringPause = true; // Process input even when game is paused
       this._screen = new LevelUpScreen();
       this._boundOnLevelUp = this._onLevelUp.bind(this);
       this._boundOnUpgradeKeyPressed = this._onUpgradeKeyPressed.bind(this);
