@@ -74,8 +74,9 @@
      * @param {number} size
      * @param {number} lifetime
      * @param {string} [sourceWeaponId]
+     * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
      */
-    reset(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId) {
+    reset(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet) {
       // Reset transform
       var transform = this.transform;
       transform.x = x;
@@ -100,7 +101,7 @@
 
       // Reset projectile component
       var projectile = this.projectile;
-      projectile.reset(damage, pierce, lifetime, sourceWeaponId);
+      projectile.reset(damage, pierce, lifetime, sourceWeaponId, ricochet);
 
       // Ensure active
       this.isActive = true;

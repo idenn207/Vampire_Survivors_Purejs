@@ -66,9 +66,10 @@
      * @param {number} size - Projectile size
      * @param {number} [lifetime] - Time before despawn (default 3.0)
      * @param {string} [sourceWeaponId] - ID of weapon that fired this
+     * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
      * @returns {Projectile|null}
      */
-    spawn(x, y, angle, speed, damage, pierce, color, size, lifetime, sourceWeaponId) {
+    spawn(x, y, angle, speed, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet) {
       var projectile = this._pool.get();
       if (!projectile) {
         console.warn('[ProjectilePool] Pool exhausted');
@@ -90,7 +91,8 @@
         color,
         size,
         lifetime || 3.0,
-        sourceWeaponId
+        sourceWeaponId,
+        ricochet
       );
 
       // Add to entity manager if available
@@ -113,16 +115,17 @@
      * @param {number} size
      * @param {number} [lifetime]
      * @param {string} [sourceWeaponId]
+     * @param {Object} [ricochet]
      * @returns {Projectile|null}
      */
-    spawnWithVelocity(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId) {
+    spawnWithVelocity(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet) {
       var projectile = this._pool.get();
       if (!projectile) {
         console.warn('[ProjectilePool] Pool exhausted');
         return null;
       }
 
-      projectile.reset(x, y, vx, vy, damage, pierce, color, size, lifetime || 3.0, sourceWeaponId);
+      projectile.reset(x, y, vx, vy, damage, pierce, color, size, lifetime || 3.0, sourceWeaponId, ricochet);
 
       if (this._entityManager) {
         this._entityManager.add(projectile);

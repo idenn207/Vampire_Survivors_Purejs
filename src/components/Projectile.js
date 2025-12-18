@@ -30,6 +30,11 @@
     _hitEnemies = null;
     _sourceWeaponId = null;
 
+    // Ricochet properties
+    _ricochetBounces = 0;      // Remaining bounces
+    _ricochetDamageDecay = 1;  // Damage multiplier per bounce
+    _ricochetRange = 0;        // Max range to find bounce target
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -66,14 +71,26 @@
      * @param {number} pierce
      * @param {number} lifetime
      * @param {string} [sourceWeaponId]
+     * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
      */
-    reset(damage, pierce, lifetime, sourceWeaponId) {
+    reset(damage, pierce, lifetime, sourceWeaponId, ricochet) {
       this._damage = damage || 0;
       this._pierce = pierce !== undefined ? pierce : DEFAULT_PIERCE;
       this._lifetime = lifetime !== undefined ? lifetime : DEFAULT_LIFETIME;
       this._elapsed = 0;
       this._hitEnemies.clear();
       this._sourceWeaponId = sourceWeaponId || null;
+
+      // Reset ricochet
+      if (ricochet) {
+        this._ricochetBounces = ricochet.bounces || 0;
+        this._ricochetDamageDecay = ricochet.damageDecay || 0.7;
+        this._ricochetRange = ricochet.bounceRange || 100;
+      } else {
+        this._ricochetBounces = 0;
+        this._ricochetDamageDecay = 1;
+        this._ricochetRange = 0;
+      }
     }
 
     /**
@@ -106,7 +123,33 @@
       this.recordHit(enemyId);
       this._pierce--;
 
+      // Check if can ricochet instead of being destroyed
+      if (this._pierce < 0 && this._ricochetBounces > 0) {
+        return false; // Don't destroy yet, let combat system handle ricochet
+      }
+
       return this._pierce < 0;
+    }
+
+    /**
+     * Check if projectile can ricochet
+     * @returns {boolean}
+     */
+    canRicochet() {
+      return this._ricochetBounces > 0;
+    }
+
+    /**
+     * Perform a ricochet - reduce bounces and apply damage decay
+     * @returns {boolean} True if ricochet was successful
+     */
+    doRicochet() {
+      if (this._ricochetBounces <= 0) return false;
+
+      this._ricochetBounces--;
+      this._damage = Math.round(this._damage * this._ricochetDamageDecay);
+
+      return true;
     }
 
     // ----------------------------------------
@@ -154,6 +197,18 @@
 
     set sourceWeaponId(value) {
       this._sourceWeaponId = value;
+    }
+
+    get ricochetBounces() {
+      return this._ricochetBounces;
+    }
+
+    get ricochetRange() {
+      return this._ricochetRange;
+    }
+
+    get ricochetDamageDecay() {
+      return this._ricochetDamageDecay;
     }
 
     // ----------------------------------------

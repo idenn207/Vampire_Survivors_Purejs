@@ -45,6 +45,7 @@
   var GameOverSystem = Systems.GameOverSystem;
   var CoreSelectionSystem = Systems.CoreSelectionSystem;
   var TechTreeSystem = Systems.TechTreeSystem;
+  var StatusEffectSystem = Systems.StatusEffectSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
@@ -125,6 +126,10 @@
       var collisionSystem = new CollisionSystem();
       collisionSystem.initialize(game, entityManager);
       game.addSystem(collisionSystem);
+
+      var statusEffectSystem = new StatusEffectSystem();
+      statusEffectSystem.initialize(game, entityManager);
+      game.addSystem(statusEffectSystem);
 
       var combatSystem = new CombatSystem();
       combatSystem.initialize(game, entityManager);
@@ -256,6 +261,7 @@
       game.debugManager.register(traversalEnemySystem);
       game.debugManager.register(bossSystem);
       game.debugManager.register(collisionSystem);
+      game.debugManager.register(statusEffectSystem);
       game.debugManager.register(combatSystem);
       game.debugManager.register(weaponSystem);
       game.debugManager.register(dropSystem);

@@ -49,6 +49,9 @@
       var range = weapon.getStat('range', 400);
       var damage = weapon.damage;
 
+      // Get ricochet config if present
+      var ricochet = weapon.getStat('ricochet', null);
+
       var targetingMode = weapon.targetingMode;
 
       // For auto-targeting modes with no spread, target multiple enemies
@@ -70,7 +73,8 @@
           color,
           size,
           lifetime,
-          range
+          range,
+          ricochet
         );
       }
 
@@ -98,7 +102,8 @@
           color,
           size,
           lifetime,
-          weapon.id
+          weapon.id,
+          ricochet
         );
 
         if (projectile) {
@@ -166,6 +171,7 @@
      * @param {number} size
      * @param {number} lifetime
      * @param {number} range
+     * @param {Object} [ricochet]
      * @returns {Array<Projectile>}
      */
     _spawnMultiTargetProjectiles(
@@ -179,7 +185,8 @@
       color,
       size,
       lifetime,
-      range
+      range,
+      ricochet
     ) {
       var projectiles = [];
       var targetingMode = weapon.targetingMode;
@@ -209,7 +216,8 @@
           color,
           size,
           lifetime,
-          weapon.id
+          weapon.id,
+          ricochet
         );
 
         if (projectile) {
