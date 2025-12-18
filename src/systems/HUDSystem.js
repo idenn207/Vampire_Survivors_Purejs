@@ -22,7 +22,8 @@
   // ============================================
   var ARROW_SIZE = 50; // Larger arrows for better visibility
   var ARROW_MARGIN = 60;
-  var ARROW_PULSE_SPEED = 4;
+  var ARROW_BLINK_BASE_RATE = 2; // Base blinks per second (~0.5s interval)
+  var ARROW_BLINK_MAX_RATE = 3.3; // Max blinks per second (~0.3s interval)
 
   // ============================================
   // Class Definition
@@ -119,14 +120,18 @@
         var color = indicator.color;
         var progress = indicator.progress;
 
-        // Pulsing effect based on progress (faster as spawn approaches)
-        var pulseRate = ARROW_PULSE_SPEED * (1 + progress * 2);
-        var pulse = 0.5 + 0.5 * Math.sin(time * pulseRate);
-        var alpha = 0.4 + 0.6 * progress; // More opaque as spawn approaches
-        var scale = 0.8 + 0.4 * progress; // Larger as spawn approaches
+        // Blinking effect that speeds up as spawn approaches
+        var blinkRate = ARROW_BLINK_BASE_RATE + (ARROW_BLINK_MAX_RATE - ARROW_BLINK_BASE_RATE) * progress;
+        var blinkPhase = (time * blinkRate) % 10.0;
+        var isVisible = blinkPhase < 5.0; // 50% visible, 50% off
+
+        // Skip rendering when not visible (completely transparent)
+        if (!isVisible) continue;
+
+        var scale = 1.0; // Fixed size, no expansion animation
 
         ctx.save();
-        ctx.globalAlpha = alpha * (0.7 + 0.3 * pulse);
+        ctx.globalAlpha = 1.0; // Full opacity when visible
 
         // Draw arrow for each direction
         for (var j = 0; j < indicator.directions.length; j++) {
