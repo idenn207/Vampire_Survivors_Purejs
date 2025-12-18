@@ -6,6 +6,11 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
+
+  // ============================================
   // Constants
   // ============================================
   var TITLE_HEIGHT = 35;
@@ -236,7 +241,10 @@
         // Weapon icon
         this._renderWeaponIcon(ctx, rect, weapon);
 
-        // Level indicator
+        // Tier badge (top-left)
+        this._renderTierBadge(ctx, rect, weapon.tier);
+
+        // Level indicator (bottom-right)
         this._renderLevelBadge(ctx, rect, weapon.level, isMaxLevel);
 
         // Gold cost below slot
@@ -463,6 +471,46 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(level.toString(), badgeX, badgeY);
+    }
+
+    /**
+     * Render tier badge at top-left of slot
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Object} rect - Slot rect
+     * @param {number} tier - Weapon tier
+     */
+    _renderTierBadge(ctx, rect, tier) {
+      if (!tier || tier < 1) return;
+
+      var tierConfig = WeaponTierData ? WeaponTierData.getTierConfig(tier) : null;
+      if (!tierConfig) return;
+
+      var tierColor = tierConfig.color;
+      var tierIcon = tierConfig.icon;
+
+      // Tier badge at top-left of slot
+      var badgeX = rect.x + 2;
+      var badgeY = rect.y + 2;
+      var badgeWidth = 16;
+      var badgeHeight = 12;
+
+      // Badge background
+      ctx.fillStyle = tierColor;
+      ctx.globalAlpha = 0.4;
+      ctx.fillRect(badgeX, badgeY, badgeWidth, badgeHeight);
+      ctx.globalAlpha = 1.0;
+
+      // Badge border
+      ctx.strokeStyle = tierColor;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(badgeX, badgeY, badgeWidth, badgeHeight);
+
+      // Tier text (Roman numeral)
+      ctx.font = 'bold 9px Arial';
+      ctx.fillStyle = tierColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(tierIcon, badgeX + badgeWidth / 2, badgeY + badgeHeight / 2);
     }
 
     _attemptUpgrade(slotIndex) {

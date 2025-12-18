@@ -6,6 +6,11 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
+
+  // ============================================
   // Constants
   // ============================================
   var TITLE_HEIGHT = 40;
@@ -306,6 +311,13 @@
       ctx.font = '11px Arial';
       ctx.fillStyle = DESC_COLOR;
       this._renderWrappedText(ctx, description, rect.x + rect.width / 2, iconY + ICON_SIZE + 30, rect.width - 20, 13);
+
+      // Tier indicator (for weapons with tier property)
+      if (option.weaponData && option.weaponData.tier) {
+        this._renderTierIndicator(ctx, rect, option.weaponData.tier);
+      } else if (option.weaponRef && option.weaponRef.tier) {
+        this._renderTierIndicator(ctx, rect, option.weaponRef.tier);
+      }
     }
 
     _renderIcon(ctx, centerX, centerY, option) {
@@ -551,6 +563,46 @@
               ctx.fill();
           }
       }
+    }
+
+    /**
+     * Render tier indicator on weapon card
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Object} rect - Card rect
+     * @param {number} tier - Weapon tier
+     */
+    _renderTierIndicator(ctx, rect, tier) {
+      if (!tier || tier < 1) return;
+
+      var tierConfig = WeaponTierData ? WeaponTierData.getTierConfig(tier) : null;
+      if (!tierConfig) return;
+
+      var tierColor = tierConfig.color;
+      var tierIcon = tierConfig.icon;
+
+      // Tier badge at bottom-left of card
+      var badgeX = rect.x + 8;
+      var badgeY = rect.y + rect.height - 22;
+      var badgeWidth = 28;
+      var badgeHeight = 16;
+
+      // Badge background
+      ctx.fillStyle = tierColor;
+      ctx.globalAlpha = 0.3;
+      ctx.fillRect(badgeX, badgeY, badgeWidth, badgeHeight);
+      ctx.globalAlpha = 1.0;
+
+      // Badge border
+      ctx.strokeStyle = tierColor;
+      ctx.lineWidth = 1;
+      ctx.strokeRect(badgeX, badgeY, badgeWidth, badgeHeight);
+
+      // Tier text (Roman numeral)
+      ctx.font = 'bold 11px Arial';
+      ctx.fillStyle = tierColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(tierIcon, badgeX + badgeWidth / 2, badgeY + badgeHeight / 2);
     }
 
     _getOptionName(option) {

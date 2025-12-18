@@ -31,6 +31,11 @@
     _upgrades = null;
     _data = null; // Store original weapon data for reference
 
+    // Tier properties
+    _tier = 1;
+    _maxTier = 4;
+    _isExclusive = false;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -58,9 +63,14 @@
       this._maxLevel = weaponData.maxLevel || 5;
       this._upgrades = weaponData.upgrades || {};
 
+      // Tier properties
+      this._tier = weaponData.tier || 1;
+      this._maxTier = weaponData.maxTier || 4;
+      this._isExclusive = weaponData.isExclusive || false;
+
       // Copy all stats (excluding metadata)
       this._stats = {};
-      var excludeKeys = ['id', 'name', 'attackType', 'targetingMode', 'isAuto', 'upgrades', 'maxLevel'];
+      var excludeKeys = ['id', 'name', 'attackType', 'targetingMode', 'isAuto', 'upgrades', 'maxLevel', 'tier', 'maxTier', 'isExclusive'];
       for (var key in weaponData) {
         if (weaponData.hasOwnProperty(key) && excludeKeys.indexOf(key) === -1) {
           this._stats[key] = weaponData[key];
@@ -163,6 +173,9 @@
         name: this._name,
         level: this._level,
         maxLevel: this._maxLevel,
+        tier: this._tier,
+        maxTier: this._maxTier,
+        isExclusive: this._isExclusive,
         damage: this._damage,
         cooldown: this._cooldownMax,
         attackType: this._attackType,
@@ -239,6 +252,30 @@
       return this._data;
     }
 
+    get tier() {
+      return this._tier;
+    }
+
+    set tier(value) {
+      this._tier = Math.max(1, Math.min(value, this._maxTier));
+    }
+
+    get maxTier() {
+      return this._maxTier;
+    }
+
+    get isExclusive() {
+      return this._isExclusive;
+    }
+
+    /**
+     * Check if weapon can evolve to next tier
+     * (at max level and below max tier)
+     */
+    get canEvolveTier() {
+      return this._level >= this._maxLevel && this._tier < this._maxTier;
+    }
+
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
@@ -247,6 +284,7 @@
         label: this._name || this._id,
         entries: [
           { key: 'Level', value: this._level + '/' + this._maxLevel },
+          { key: 'Tier', value: this._tier + '/' + this._maxTier },
           { key: 'Damage', value: this._damage },
           { key: 'Cooldown', value: this._cooldown.toFixed(2) + '/' + this._cooldownMax },
           { key: 'Type', value: this._attackType },

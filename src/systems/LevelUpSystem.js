@@ -13,6 +13,7 @@
   var events = window.VampireSurvivors.Core.events;
   var Data = window.VampireSurvivors.Data;
   var Weapon = window.VampireSurvivors.Components.Weapon;
+  var BlacklistManager = window.VampireSurvivors.Managers.BlacklistManager;
 
   // ============================================
   // Constants
@@ -43,9 +44,14 @@
     // Evolution state
     _evolutionState = EvolutionState.NORMAL;
     _selectedMainWeapon = null;
+    _evolutionEligibility = null;
+
+    // Blacklist manager (weapons used as main in evolution)
+    _blacklistManager = null;
 
     // Event handlers
     _boundOnLevelUp = null;
+    _boundOnGameStart = null;
 
     // ----------------------------------------
     // Constructor
@@ -55,7 +61,9 @@
       this._priority = PRIORITY;
       this._updatesDuringPause = true; // Process input even when game is paused
       this._screen = new LevelUpScreen();
+      this._blacklistManager = new BlacklistManager();
       this._boundOnLevelUp = this._onLevelUp.bind(this);
+      this._boundOnGameStart = this._onGameStart.bind(this);
     }
 
     // ----------------------------------------
@@ -66,6 +74,18 @@
 
       // Listen for level-up events only (no manual access)
       events.on('player:level_up', this._boundOnLevelUp);
+
+      // Listen for game start to reset blacklist
+      events.on('game:start', this._boundOnGameStart);
+    }
+
+    /**
+     * Handle game start - reset blacklist for new run
+     */
+    _onGameStart() {
+      if (this._blacklistManager) {
+        this._blacklistManager.reset();
+      }
     }
 
     /**
@@ -113,14 +133,24 @@
       this._evolutionState = EvolutionState.NORMAL;
       this._selectedMainWeapon = null;
 
+      // Check evolution eligibility (tier-based)
+      this._evolutionEligibility = this._checkEvolutionEligibility();
+
       // Generate weapon options
       var options = this._generateWeaponOptions();
 
-      // Show screen with evolution state
-      this._screen.show(this._player, options, this._game.width, this._game.height, {
-        evolutionState: this._evolutionState,
-        selectedMainWeapon: this._selectedMainWeapon,
-      });
+      // Show screen with evolution state and eligibility
+      this._screen.show(
+        this._player,
+        options,
+        this._game.width,
+        this._game.height,
+        {
+          evolutionState: this._evolutionState,
+          selectedMainWeapon: this._selectedMainWeapon,
+        },
+        this._evolutionEligibility
+      );
     }
 
     _generateWeaponOptions() {
@@ -158,18 +188,9 @@
           return w.isMaxLevel;
         });
 
-      // 1. Check for evolution main weapon options FIRST (HIGHEST PRIORITY)
-      var evolutionMainOptions = this._generateEvolutionMainOptions(equippedWeapons);
-      for (var e = 0; e < evolutionMainOptions.length && options.length < OPTIONS_COUNT; e++) {
-        options.push(evolutionMainOptions[e]);
-      }
+      // Note: Old evolution_main options removed - now using tier-based evolution via EVOLVE WEAPON button
 
-      // If we already have enough options from evolution mains, return early
-      if (options.length >= OPTIONS_COUNT) {
-        return options;
-      }
-
-      // 2. If all slots full AND all max level -> add stat boosts
+      // 1. If all slots full AND all max level -> add stat boosts
       if (allWeaponsMaxLevel) {
         var statOrder = Data.StatUpgradeData.getStatOrder();
         for (var s = 0; s < statOrder.length; s++) {
@@ -191,9 +212,15 @@
         return options;
       }
 
-      // 3. New weapons (if player has empty slots)
+      // 2. New weapons (if player has empty slots)
       if (!allSlotsFull) {
         var allWeaponIds = Data.getAllWeaponIds();
+
+        // Filter out blacklisted weapons
+        if (this._blacklistManager) {
+          allWeaponIds = this._blacklistManager.filterBlacklisted(allWeaponIds);
+        }
+
         for (var i = 0; i < allWeaponIds.length; i++) {
           var weaponId = allWeaponIds[i];
           if (equippedIds.indexOf(weaponId) === -1) {
@@ -209,7 +236,7 @@
         }
       }
 
-      // 4. Existing weapon upgrades (for weapons not at max level)
+      // 3. Existing weapon upgrades (for weapons not at max level)
       for (var j = 0; j < equippedWeapons.length; j++) {
         var weapon = equippedWeapons[j];
         if (!weapon.isMaxLevel) {
@@ -282,58 +309,6 @@
       return options;
     }
 
-    /**
-     * Generate evolution main weapon options from max-level weapons
-     * Only shows weapons that have a valid evolution partner also at max level
-     * @param {Array<Weapon>} equippedWeapons
-     * @returns {Array<Object>}
-     */
-    _generateEvolutionMainOptions(equippedWeapons) {
-      var WeaponEvolutionData = Data.WeaponEvolutionData;
-      if (!WeaponEvolutionData) {
-        return [];
-      }
-
-      var options = [];
-      var maxLevelWeapons = [];
-      var addedWeaponIds = {};
-
-      // Find all max-level weapons
-      for (var i = 0; i < equippedWeapons.length; i++) {
-        if (equippedWeapons[i].isMaxLevel) {
-          maxLevelWeapons.push(equippedWeapons[i]);
-        }
-      }
-
-      // For each max-level weapon, check if it has a valid evolution partner (also max level)
-      for (var j = 0; j < maxLevelWeapons.length; j++) {
-        var weapon = maxLevelWeapons[j];
-
-        // Skip if already added
-        if (addedWeaponIds[weapon.id]) continue;
-
-        // Check if this weapon can evolve with any other max-level weapon
-        var partnerIds = WeaponEvolutionData.getEvolutionPartners(weapon.id);
-
-        for (var k = 0; k < maxLevelWeapons.length; k++) {
-          var potentialPartner = maxLevelWeapons[k];
-          if (potentialPartner.id !== weapon.id && partnerIds.indexOf(potentialPartner.id) !== -1) {
-            // Found a valid partner, add this weapon as a main weapon option
-            options.push({
-              type: 'evolution_main',
-              weaponId: weapon.id,
-              weaponData: weapon.data,
-              weaponRef: weapon,
-            });
-            addedWeaponIds[weapon.id] = true;
-            break;
-          }
-        }
-      }
-
-      return options;
-    }
-
     _shuffle(array) {
       for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -341,6 +316,52 @@
         array[i] = array[j];
         array[j] = temp;
       }
+    }
+
+    /**
+     * Check if tier-based evolution is available
+     * Returns weapons grouped by tier that are at max level and can evolve
+     * @returns {Object} { canEvolve: boolean, eligibleTiers: { [tier]: Weapon[] } }
+     */
+    _checkEvolutionEligibility() {
+      var result = {
+        canEvolve: false,
+        eligibleTiers: {},
+      };
+
+      if (!this._player || !this._player.weaponSlot) {
+        return result;
+      }
+
+      var weapons = this._player.weaponSlot.weapons || [];
+
+      // Group weapons by tier that are at max level and below max tier
+      for (var i = 0; i < weapons.length; i++) {
+        var weapon = weapons[i];
+        if (!weapon) continue;
+
+        // Must be at max level
+        if (weapon.level < weapon.maxLevel) continue;
+
+        // Must be below max tier
+        if (weapon.tier >= weapon.maxTier) continue;
+
+        var tier = weapon.tier;
+        if (!result.eligibleTiers[tier]) {
+          result.eligibleTiers[tier] = [];
+        }
+        result.eligibleTiers[tier].push(weapon);
+      }
+
+      // Check if any tier has 2+ weapons
+      for (var t in result.eligibleTiers) {
+        if (result.eligibleTiers[t].length >= 2) {
+          result.canEvolve = true;
+          break;
+        }
+      }
+
+      return result;
     }
 
     _handleAction(result) {
@@ -358,6 +379,13 @@
 
         case 'weapon_upgrade':
           this._handleWeaponUpgrade(result.result);
+          break;
+
+        case 'evolution':
+          this._handleTierEvolution(result.result);
+          if (result.closesScreen) {
+            this._closeScreen();
+          }
           break;
       }
     }
@@ -539,6 +567,90 @@
       });
     }
 
+    /**
+     * Handle tier-based evolution from the EvolutionPopup
+     * @param {Object} popupResult - Result from EvolutionPopup
+     */
+    _handleTierEvolution(popupResult) {
+      if (!this._player || !this._player.weaponSlot) return;
+
+      var weaponSlot = this._player.weaponSlot;
+      var mainWeapon = popupResult.mainWeapon;
+      var materialWeapon = popupResult.materialWeapon;
+      var isKnownRecipe = popupResult.isKnownRecipe;
+      var evolutionResult = popupResult.evolutionResult;
+
+      if (!mainWeapon || !materialWeapon) {
+        console.warn('[LevelUpSystem] Tier evolution failed - missing weapons');
+        return;
+      }
+
+      // Add main weapon to blacklist (won't appear in level-up options again this run)
+      if (this._blacklistManager) {
+        this._blacklistManager.addToBlacklist(mainWeapon.id);
+      }
+
+      // Remove source weapons (by ID)
+      weaponSlot.removeWeapon(mainWeapon.id);
+      weaponSlot.removeWeapon(materialWeapon.id);
+
+      // Determine the evolved weapon
+      var evolvedWeaponData;
+
+      if (isKnownRecipe && evolutionResult && !evolutionResult.isRandom) {
+        // Known recipe - use the predefined evolved weapon
+        evolvedWeaponData = evolutionResult;
+      } else {
+        // Unknown recipe - get a random weapon of the next tier that player doesn't own
+        var currentTier = mainWeapon.tier;
+        var nextTier = currentTier + 1;
+
+        // Get currently owned weapon IDs
+        var ownedIds = weaponSlot.weapons.map(function (w) {
+          return w.id;
+        });
+        ownedIds.push(mainWeapon.id);
+        ownedIds.push(materialWeapon.id);
+
+        var WeaponEvolutionData = Data.WeaponEvolutionData;
+        evolvedWeaponData = WeaponEvolutionData.getRandomUnownedWeaponOfTier(ownedIds, nextTier);
+
+        if (!evolvedWeaponData) {
+          // Fallback - get any weapon of the next tier
+          var tierWeapons = WeaponEvolutionData.getAllWeaponsOfTier(nextTier);
+          if (tierWeapons.length > 0) {
+            evolvedWeaponData = tierWeapons[Math.floor(Math.random() * tierWeapons.length)];
+          }
+        }
+      }
+
+      if (!evolvedWeaponData) {
+        console.warn('[LevelUpSystem] Tier evolution failed - no evolved weapon data');
+        return;
+      }
+
+      // Create and add evolved weapon
+      var evolvedWeapon = new Weapon(evolvedWeaponData);
+      weaponSlot.addWeapon(evolvedWeapon);
+
+      // Reset evolution state
+      this._evolutionState = EvolutionState.NORMAL;
+      this._selectedMainWeapon = null;
+
+      // Emit evolution completed event
+      events.emitSync('upgrade:tier_evolution_completed', {
+        mainWeapon: mainWeapon.id,
+        materialWeapon: materialWeapon.id,
+        result: evolvedWeaponData.id,
+        evolvedWeapon: evolvedWeapon,
+        isKnownRecipe: isKnownRecipe,
+        fromTier: mainWeapon.tier,
+        toTier: evolvedWeapon.tier,
+      });
+
+      console.log('[LevelUpSystem] Tier evolution completed:', mainWeapon.id, '+', materialWeapon.id, '->', evolvedWeaponData.id);
+    }
+
     _handleWeaponUpgrade(result) {
       if (result.success) {
         events.emitSync('upgrade:weapon_purchased', {
@@ -587,14 +699,22 @@
     // ----------------------------------------
     dispose() {
       events.off('player:level_up', this._boundOnLevelUp);
+      events.off('game:start', this._boundOnGameStart);
 
       if (this._screen) {
         this._screen.dispose();
         this._screen = null;
       }
 
+      if (this._blacklistManager) {
+        this._blacklistManager.dispose();
+        this._blacklistManager = null;
+      }
+
       this._player = null;
       this._boundOnLevelUp = null;
+      this._boundOnGameStart = null;
+      this._evolutionEligibility = null;
 
       super.dispose();
     }

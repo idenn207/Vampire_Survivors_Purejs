@@ -12,6 +12,7 @@
   var WeaponCardPanel = UI.WeaponCardPanel;
   var WeaponGridPanel = UI.WeaponGridPanel;
   var UpgradeTooltip = UI.UpgradeTooltip;
+  var EvolutionPopup = UI.EvolutionPopup;
 
   // ============================================
   // Constants
@@ -20,6 +21,13 @@
   var SCREEN_PADDING = 40;
   var LEFT_PANEL_RATIO = 0.35; // Left panel takes 35% of width
   var TOP_RIGHT_RATIO = 0.55; // Top-right takes 55% of right section height
+
+  // Evolution button
+  var EVOLVE_BUTTON_WIDTH = 160;
+  var EVOLVE_BUTTON_HEIGHT = 36;
+  var EVOLVE_BUTTON_COLOR = '#9B59B6';
+  var EVOLVE_BUTTON_HOVER_COLOR = '#8E44AD';
+  var EVOLVE_BUTTON_TEXT_COLOR = '#FFFFFF';
 
   // ============================================
   // Class Definition
@@ -38,6 +46,7 @@
     _weaponCardPanel = null;
     _weaponGridPanel = null;
     _tooltip = null;
+    _evolutionPopup = null;
 
     // Weapon options
     _weaponOptions = [];
@@ -45,6 +54,11 @@
     // Evolution state
     _evolutionState = 'normal';
     _selectedMainWeapon = null;
+    _evolutionEligibility = null; // { canEvolve: boolean, eligibleTiers: { [tier]: Weapon[] } }
+
+    // Evolution button
+    _evolveButtonRect = null;
+    _isEvolveButtonHovered = false;
 
     // Mouse state
     _mouseX = 0;
@@ -58,6 +72,7 @@
       this._weaponCardPanel = new WeaponCardPanel();
       this._weaponGridPanel = new WeaponGridPanel();
       this._tooltip = new UpgradeTooltip();
+      this._evolutionPopup = new EvolutionPopup();
     }
 
     // ----------------------------------------
@@ -70,8 +85,9 @@
      * @param {number} canvasWidth
      * @param {number} canvasHeight
      * @param {Object} [evolutionInfo] - Optional evolution state info
+     * @param {Object} [evolutionEligibility] - Optional { canEvolve: boolean, eligibleTiers: {} }
      */
-    show(player, weaponOptions, canvasWidth, canvasHeight, evolutionInfo) {
+    show(player, weaponOptions, canvasWidth, canvasHeight, evolutionInfo, evolutionEligibility) {
       this._isVisible = true;
       this._player = player;
       this._weaponOptions = weaponOptions || [];
@@ -86,6 +102,9 @@
         this._evolutionState = 'normal';
         this._selectedMainWeapon = null;
       }
+
+      // Set evolution eligibility
+      this._evolutionEligibility = evolutionEligibility || null;
 
       // Set player on panels
       this._statPanel.setPlayer(player);
@@ -107,7 +126,12 @@
       this._weaponOptions = [];
       this._evolutionState = 'normal';
       this._selectedMainWeapon = null;
+      this._evolutionEligibility = null;
+      this._isEvolveButtonHovered = false;
       this._tooltip.hide();
+      if (this._evolutionPopup) {
+        this._evolutionPopup.hide();
+      }
     }
 
     /**
@@ -123,7 +147,25 @@
       this._mouseX = mousePos.x;
       this._mouseY = mousePos.y;
 
-      // Handle hover for tooltips
+      // If evolution popup is open, delegate to it
+      if (this._evolutionPopup && this._evolutionPopup.isVisible) {
+        var popupResult = this._evolutionPopup.handleInput(input);
+        if (popupResult) {
+          if (popupResult.action === 'close') {
+            this._evolutionPopup.hide();
+            return null;
+          } else if (popupResult.action === 'evolve') {
+            return {
+              type: 'evolution',
+              result: popupResult,
+              closesScreen: true,
+            };
+          }
+        }
+        return null;
+      }
+
+      // Handle hover for tooltips and evolve button
       this._handleHover();
 
       // Handle click
@@ -150,8 +192,18 @@
       this._weaponCardPanel.render(ctx);
       this._weaponGridPanel.render(ctx);
 
+      // Render evolution button if eligible
+      if (this._evolutionEligibility && this._evolutionEligibility.canEvolve) {
+        this._renderEvolutionButton(ctx);
+      }
+
       // Render tooltip last (on top)
       this._tooltip.render(ctx, this._canvasWidth, this._canvasHeight);
+
+      // Render evolution popup on top of everything
+      if (this._evolutionPopup && this._evolutionPopup.isVisible) {
+        this._evolutionPopup.render(ctx);
+      }
     }
 
     /**
@@ -199,10 +251,26 @@
         rightWidth,
         bottomRightHeight
       );
+
+      // Evolution button (top-right corner, above weapon card panel)
+      this._evolveButtonRect = {
+        x: this._canvasWidth - SCREEN_PADDING - EVOLVE_BUTTON_WIDTH,
+        y: SCREEN_PADDING - EVOLVE_BUTTON_HEIGHT - 5,
+        width: EVOLVE_BUTTON_WIDTH,
+        height: EVOLVE_BUTTON_HEIGHT,
+      };
     }
 
     _handleHover() {
       var tooltipContent = null;
+
+      // Check evolution button hover
+      this._isEvolveButtonHovered = false;
+      if (this._evolutionEligibility && this._evolutionEligibility.canEvolve && this._evolveButtonRect) {
+        if (this._isPointInRect(this._mouseX, this._mouseY, this._evolveButtonRect)) {
+          this._isEvolveButtonHovered = true;
+        }
+      }
 
       // Check stat panel hover
       var statTooltip = this._statPanel.handleMouseMove(this._mouseX, this._mouseY);
@@ -231,6 +299,20 @@
     }
 
     _handleClick() {
+      // Check evolution button click
+      if (this._evolutionEligibility && this._evolutionEligibility.canEvolve && this._evolveButtonRect) {
+        if (this._isPointInRect(this._mouseX, this._mouseY, this._evolveButtonRect)) {
+          // Open evolution popup
+          this._evolutionPopup.show(
+            this._player,
+            this._canvasWidth,
+            this._canvasHeight,
+            { eligibleTiers: this._evolutionEligibility.eligibleTiers }
+          );
+          return null;
+        }
+      }
+
       // Check stat panel click (gold upgrade)
       var statResult = this._statPanel.handleClick(this._mouseX, this._mouseY);
       if (statResult) {
@@ -269,6 +351,66 @@
       return null;
     }
 
+    _renderEvolutionButton(ctx) {
+      var rect = this._evolveButtonRect;
+      if (!rect) return;
+
+      // Button background
+      ctx.fillStyle = this._isEvolveButtonHovered ? EVOLVE_BUTTON_HOVER_COLOR : EVOLVE_BUTTON_COLOR;
+      ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+
+      // Button border
+      ctx.strokeStyle = '#8E44AD';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+      // Button text
+      ctx.font = 'bold 14px Arial';
+      ctx.fillStyle = EVOLVE_BUTTON_TEXT_COLOR;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('EVOLVE WEAPON', rect.x + rect.width / 2, rect.y + rect.height / 2);
+
+      // Pulse effect indicator (small star)
+      var pulseAlpha = 0.5 + 0.5 * Math.sin(Date.now() / 300);
+      ctx.globalAlpha = pulseAlpha;
+      ctx.fillStyle = '#F1C40F';
+      ctx.beginPath();
+      var starX = rect.x + 15;
+      var starY = rect.y + rect.height / 2;
+      this._drawStar(ctx, starX, starY, 5, 6, 3);
+      ctx.fill();
+      ctx.globalAlpha = 1.0;
+    }
+
+    _drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {
+      var rot = (Math.PI / 2) * 3;
+      var step = Math.PI / spikes;
+
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - outerRadius);
+
+      for (var i = 0; i < spikes; i++) {
+        var x = cx + Math.cos(rot) * outerRadius;
+        var y = cy + Math.sin(rot) * outerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+
+        x = cx + Math.cos(rot) * innerRadius;
+        y = cy + Math.sin(rot) * innerRadius;
+        ctx.lineTo(x, y);
+        rot += step;
+      }
+
+      ctx.lineTo(cx, cy - outerRadius);
+      ctx.closePath();
+    }
+
+    _isPointInRect(x, y, rect) {
+      if (!rect) return false;
+      return x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height;
+    }
+
     // ----------------------------------------
     // Getters
     // ----------------------------------------
@@ -296,8 +438,13 @@
         this._tooltip.dispose();
         this._tooltip = null;
       }
+      if (this._evolutionPopup) {
+        this._evolutionPopup.dispose();
+        this._evolutionPopup = null;
+      }
       this._player = null;
       this._weaponOptions = [];
+      this._evolutionEligibility = null;
     }
   }
 

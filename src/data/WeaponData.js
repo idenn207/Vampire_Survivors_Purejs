@@ -42,6 +42,11 @@
       targetingMode: TargetingMode.NEAREST,
       isAuto: true,
 
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
       // Base stats (level 1)
       damage: 20,
       cooldown: 1.0,
@@ -75,6 +80,11 @@
       targetingMode: TargetingMode.MOUSE,
       isAuto: false,
 
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
       damage: 15,
       cooldown: 0.33,
       projectileCount: 1,
@@ -104,6 +114,11 @@
       attackType: AttackType.PROJECTILE,
       targetingMode: TargetingMode.MOUSE,
       isAuto: false,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
 
       damage: 12,
       cooldown: 1.2,
@@ -138,6 +153,11 @@
       targetingMode: TargetingMode.MOUSE,
       isAuto: false,
 
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
       damage: 50,
       cooldown: 2.0,
       duration: 0.5,
@@ -164,6 +184,11 @@
       attackType: AttackType.LASER,
       targetingMode: TargetingMode.NEAREST,
       isAuto: true,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
 
       damage: 35,
       cooldown: 1.5,
@@ -195,6 +220,11 @@
       targetingMode: TargetingMode.MOUSE,
       isAuto: false,
 
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
       damage: 35,
       cooldown: 1.0,
       range: 60,
@@ -220,6 +250,11 @@
       attackType: AttackType.MELEE_SWING,
       targetingMode: TargetingMode.NEAREST,
       isAuto: true,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
 
       damage: 25,
       cooldown: 0.8,
@@ -250,6 +285,11 @@
       targetingMode: TargetingMode.RANDOM,
       isAuto: true,
 
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
       damage: 8,
       cooldown: 3.0,
       radius: 60,
@@ -276,6 +316,11 @@
       attackType: AttackType.AREA_DAMAGE,
       targetingMode: TargetingMode.NEAREST,
       isAuto: true,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
 
       damage: 12,
       cooldown: 2.5,
@@ -307,6 +352,11 @@
       targetingMode: TargetingMode.ROTATING,
       isAuto: true,
 
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
       damage: 25,
       cooldown: 0,
       bladeCount: 4,
@@ -333,6 +383,11 @@
       attackType: AttackType.PARTICLE,
       targetingMode: TargetingMode.CHAIN,
       isAuto: true,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
 
       damage: 30,
       cooldown: 1.5,
@@ -417,6 +472,62 @@
     return Object.keys(WeaponData);
   }
 
+  /**
+   * Get all weapons of a specific tier
+   * @param {number} tier - Tier number (1-5)
+   * @returns {Array<Object>}
+   */
+  function getWeaponsByTier(tier) {
+    var result = [];
+    for (var id in WeaponData) {
+      if (WeaponData.hasOwnProperty(id) && WeaponData[id].tier === tier) {
+        result.push(WeaponData[id]);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Get all exclusive weapons (can reach Tier 5)
+   * @returns {Array<Object>}
+   */
+  function getExclusiveWeapons() {
+    var result = [];
+    for (var id in WeaponData) {
+      if (WeaponData.hasOwnProperty(id) && WeaponData[id].isExclusive) {
+        result.push(WeaponData[id]);
+      }
+    }
+    return result;
+  }
+
+  /**
+   * Check if weapon can evolve to a specific tier
+   * @param {string} weaponId
+   * @param {number} targetTier
+   * @returns {boolean}
+   */
+  function canWeaponEvolveToTier(weaponId, targetTier) {
+    var weapon = WeaponData[weaponId];
+    if (!weapon) return false;
+    return targetTier <= weapon.maxTier;
+  }
+
+  /**
+   * Get weapon IDs by tier
+   * @param {number} tier - Tier number (1-5)
+   * @returns {Array<string>}
+   */
+  function getWeaponIdsByTier(tier) {
+    var result = [];
+    for (var id in WeaponData) {
+      if (WeaponData.hasOwnProperty(id) && WeaponData[id].tier === tier) {
+        result.push(id);
+      }
+    }
+    return result;
+  }
+
   // ============================================
   // Export to Namespace
   // ============================================
@@ -428,4 +539,8 @@
   Data.getAutoWeapons = getAutoWeapons;
   Data.getManualWeapons = getManualWeapons;
   Data.getAllWeaponIds = getAllWeaponIds;
+  Data.getWeaponsByTier = getWeaponsByTier;
+  Data.getExclusiveWeapons = getExclusiveWeapons;
+  Data.canWeaponEvolveToTier = canWeaponEvolveToTier;
+  Data.getWeaponIdsByTier = getWeaponIdsByTier;
 })(window.VampireSurvivors.Data = window.VampireSurvivors.Data || {});

@@ -8,14 +8,42 @@
   // ============================================
   // Evolution Recipes
   // ============================================
-  // Keys are sorted weapon IDs joined by '+', values are evolved weapon IDs
+  // Recipe structure with tier information
+  // Keys are ORDERED: 'mainWeaponId+materialWeaponId' (order matters!)
+  // The first weapon is the MAIN weapon, second is the MATERIAL weapon
   var EVOLUTION_RECIPES = {
-    'magic_missile+rifle': 'arcane_cannon',
-    'auto_laser+laser_gun': 'death_ray',
-    'auto_blade+sword_slash': 'blade_storm',
-    'fire_zone+poison_cloud': 'toxic_inferno',
-    'chain_lightning+rotating_blade': 'storm_blades',
-    'magic_missile+shotgun': 'spread_seeker',
+    // Tier 1 -> Tier 2 recipes (known)
+    // Format: 'main+material': { result, resultTier, isKnown }
+    'magic_missile+rifle': {
+      result: 'arcane_cannon',
+      resultTier: 2,
+      isKnown: true,
+    },
+    'laser_gun+auto_laser': {
+      result: 'death_ray',
+      resultTier: 2,
+      isKnown: true,
+    },
+    'sword_slash+auto_blade': {
+      result: 'blade_storm',
+      resultTier: 2,
+      isKnown: true,
+    },
+    'fire_zone+poison_cloud': {
+      result: 'toxic_inferno',
+      resultTier: 2,
+      isKnown: true,
+    },
+    'rotating_blade+chain_lightning': {
+      result: 'storm_blades',
+      resultTier: 2,
+      isKnown: true,
+    },
+    'shotgun+magic_missile': {
+      result: 'spread_seeker',
+      resultTier: 2,
+      isKnown: true,
+    },
   };
 
   // ============================================
@@ -33,10 +61,19 @@
       projectileSpeed: 400,
       projectileSize: 12,
       range: 500,
-      maxLevel: 1,
+      maxLevel: 5,
       icon: 'arcane_cannon',
       isEvolved: true,
-      upgrades: {},
+      // Tier properties
+      tier: 2,
+      isExclusive: false,
+      maxTier: 4,
+      upgrades: {
+        2: { damage: 65, projectileCount: 4 },
+        3: { damage: 80, projectileSpeed: 450, range: 550 },
+        4: { damage: 100, projectileCount: 5, cooldown: 0.7 },
+        5: { damage: 130, projectileCount: 6, range: 600 },
+      },
     },
     death_ray: {
       id: 'death_ray',
@@ -47,10 +84,19 @@
       cooldown: 0.05,
       range: 600,
       laserWidth: 12,
-      maxLevel: 1,
+      maxLevel: 5,
       icon: 'death_ray',
       isEvolved: true,
-      upgrades: {},
+      // Tier properties
+      tier: 2,
+      isExclusive: false,
+      maxTier: 4,
+      upgrades: {
+        2: { damage: 20, laserWidth: 15 },
+        3: { damage: 25, range: 700 },
+        4: { damage: 32, laserWidth: 18, cooldown: 0.04 },
+        5: { damage: 42, range: 800, laserWidth: 22 },
+      },
     },
     blade_storm: {
       id: 'blade_storm',
@@ -62,10 +108,19 @@
       range: 120,
       arcAngle: 360,
       swingDuration: 0.2,
-      maxLevel: 1,
+      maxLevel: 5,
       icon: 'blade_storm',
       isEvolved: true,
-      upgrades: {},
+      // Tier properties
+      tier: 2,
+      isExclusive: false,
+      maxTier: 4,
+      upgrades: {
+        2: { damage: 52, range: 140 },
+        3: { damage: 65, cooldown: 0.35 },
+        4: { damage: 82, range: 160, swingDuration: 0.15 },
+        5: { damage: 105, range: 180, cooldown: 0.3 },
+      },
     },
     toxic_inferno: {
       id: 'toxic_inferno',
@@ -78,10 +133,19 @@
       areaRadius: 150,
       duration: 5.0,
       tickRate: 0.3,
-      maxLevel: 1,
+      maxLevel: 5,
       icon: 'toxic_inferno',
       isEvolved: true,
-      upgrades: {},
+      // Tier properties
+      tier: 2,
+      isExclusive: false,
+      maxTier: 4,
+      upgrades: {
+        2: { damage: 32, areaRadius: 170 },
+        3: { damage: 40, duration: 6.0, tickRate: 0.25 },
+        4: { damage: 52, areaRadius: 190, cooldown: 1.8 },
+        5: { damage: 68, areaRadius: 220, duration: 7.0 },
+      },
     },
     storm_blades: {
       id: 'storm_blades',
@@ -93,10 +157,19 @@
       particleCount: 6,
       orbitRadius: 120,
       orbitSpeed: 4.0,
-      maxLevel: 1,
+      maxLevel: 5,
       icon: 'storm_blades',
       isEvolved: true,
-      upgrades: {},
+      // Tier properties
+      tier: 2,
+      isExclusive: false,
+      maxTier: 4,
+      upgrades: {
+        2: { damage: 26, particleCount: 7 },
+        3: { damage: 33, orbitRadius: 140, orbitSpeed: 4.5 },
+        4: { damage: 42, particleCount: 8, cooldown: 0.08 },
+        5: { damage: 55, particleCount: 10, orbitRadius: 160 },
+      },
     },
     spread_seeker: {
       id: 'spread_seeker',
@@ -110,10 +183,19 @@
       projectileSize: 8,
       spread: 45,
       range: 400,
-      maxLevel: 1,
+      maxLevel: 5,
       icon: 'spread_seeker',
       isEvolved: true,
-      upgrades: {},
+      // Tier properties
+      tier: 2,
+      isExclusive: false,
+      maxTier: 4,
+      upgrades: {
+        2: { damage: 32, projectileCount: 10 },
+        3: { damage: 40, spread: 55, projectileSpeed: 380 },
+        4: { damage: 52, projectileCount: 12, cooldown: 0.9 },
+        5: { damage: 68, projectileCount: 15, spread: 65, range: 450 },
+      },
     },
   };
 
@@ -121,7 +203,18 @@
   // Helper Functions
   // ============================================
   /**
+   * Generate an ordered key from main and material weapon IDs (order matters!)
+   * @param {string} mainWeaponId - The main weapon ID
+   * @param {string} materialWeaponId - The material weapon ID
+   * @returns {string}
+   */
+  function getOrderedEvolutionKey(mainWeaponId, materialWeaponId) {
+    return mainWeaponId + '+' + materialWeaponId;
+  }
+
+  /**
    * Generate a consistent key from two weapon IDs (sorted alphabetically)
+   * @deprecated Use getOrderedEvolutionKey for recipe lookups
    * @param {string} weaponId1
    * @param {string} weaponId2
    * @returns {string}
@@ -132,15 +225,134 @@
   }
 
   /**
-   * Find an evolution recipe for two weapons
-   * @param {string} weaponId1
-   * @param {string} weaponId2
+   * Find an evolution recipe for two weapons (order matters!)
+   * @param {string} mainWeaponId - The main weapon ID
+   * @param {string} materialWeaponId - The material weapon ID
    * @returns {Object|null} Evolved weapon data or null if no recipe exists
    */
-  function findEvolution(weaponId1, weaponId2) {
-    var key = getEvolutionKey(weaponId1, weaponId2);
-    var evolvedId = EVOLUTION_RECIPES[key];
-    return evolvedId ? EVOLVED_WEAPONS[evolvedId] : null;
+  function findEvolution(mainWeaponId, materialWeaponId) {
+    var key = getOrderedEvolutionKey(mainWeaponId, materialWeaponId);
+    var recipe = EVOLUTION_RECIPES[key];
+    if (!recipe) return null;
+    return EVOLVED_WEAPONS[recipe.result] || null;
+  }
+
+  /**
+   * Find tier evolution result for two weapons (order matters!)
+   * @param {string} mainWeaponId - The main weapon ID
+   * @param {string} materialWeaponId - The material weapon ID
+   * @param {number} currentTier - Current tier of the weapons
+   * @returns {Object} { result: string|null, isKnown: boolean, resultTier: number, weaponData: Object|null }
+   */
+  function findTierEvolution(mainWeaponId, materialWeaponId, currentTier) {
+    var key = getOrderedEvolutionKey(mainWeaponId, materialWeaponId);
+    var nextTier = currentTier + 1;
+
+    // Check for known recipe (order matters!)
+    var recipe = EVOLUTION_RECIPES[key];
+    if (recipe && recipe.isKnown) {
+      var weaponData = EVOLVED_WEAPONS[recipe.result];
+      return {
+        result: recipe.result,
+        isKnown: true,
+        resultTier: recipe.resultTier || nextTier,
+        weaponData: weaponData,
+      };
+    }
+
+    // Unknown recipe (wrong order or no recipe exists)
+    return {
+      result: null,
+      isKnown: false,
+      resultTier: nextTier,
+      weaponData: null,
+    };
+  }
+
+  /**
+   * Check if a recipe is known (order matters!)
+   * @param {string} mainWeaponId - The main weapon ID
+   * @param {string} materialWeaponId - The material weapon ID
+   * @returns {boolean}
+   */
+  function isKnownRecipe(mainWeaponId, materialWeaponId) {
+    var key = getOrderedEvolutionKey(mainWeaponId, materialWeaponId);
+    var recipe = EVOLUTION_RECIPES[key];
+    return recipe ? recipe.isKnown : false;
+  }
+
+  /**
+   * Get a random weapon of specified tier that player doesn't own
+   * @param {Array<string>} ownedWeaponIds - IDs of weapons player has
+   * @param {number} targetTier - Tier to find weapon for
+   * @returns {Object|null} Weapon data or null if none available
+   */
+  function getRandomUnownedWeaponOfTier(ownedWeaponIds, targetTier) {
+    var Data = window.VampireSurvivors.Data;
+    var allWeaponIds = Data.getAllWeaponIds();
+    var candidates = [];
+
+    // Check base weapons
+    for (var i = 0; i < allWeaponIds.length; i++) {
+      var weaponId = allWeaponIds[i];
+      var weaponData = Data.getWeaponData(weaponId);
+
+      // Skip if wrong tier
+      if (weaponData.tier !== targetTier) continue;
+
+      // Skip if already owned
+      if (ownedWeaponIds.indexOf(weaponId) !== -1) continue;
+
+      candidates.push(weaponData);
+    }
+
+    // Also check evolved weapons
+    for (var evolvedId in EVOLVED_WEAPONS) {
+      if (!EVOLVED_WEAPONS.hasOwnProperty(evolvedId)) continue;
+
+      var evolvedData = EVOLVED_WEAPONS[evolvedId];
+
+      // Skip if wrong tier
+      if (evolvedData.tier !== targetTier) continue;
+
+      // Skip if already owned
+      if (ownedWeaponIds.indexOf(evolvedId) !== -1) continue;
+
+      candidates.push(evolvedData);
+    }
+
+    if (candidates.length === 0) {
+      // Fallback: return any weapon of that tier (even if owned)
+      var fallbackCandidates = Data.getWeaponsByTier(targetTier);
+      if (fallbackCandidates.length > 0) {
+        return fallbackCandidates[Math.floor(Math.random() * fallbackCandidates.length)];
+      }
+      return null;
+    }
+
+    // Random selection
+    var randomIndex = Math.floor(Math.random() * candidates.length);
+    return candidates[randomIndex];
+  }
+
+  /**
+   * Get all weapons of a specific tier (including evolved)
+   * @param {number} tier
+   * @returns {Array<Object>}
+   */
+  function getAllWeaponsOfTier(tier) {
+    var Data = window.VampireSurvivors.Data;
+    var result = Data.getWeaponsByTier(tier).slice();
+
+    // Add evolved weapons of this tier
+    for (var evolvedId in EVOLVED_WEAPONS) {
+      if (!EVOLVED_WEAPONS.hasOwnProperty(evolvedId)) continue;
+      if (EVOLVED_WEAPONS[evolvedId].tier === tier) {
+        result.push(EVOLVED_WEAPONS[evolvedId]);
+      }
+    }
+
+    return result;
   }
 
   /**
@@ -225,8 +437,13 @@
   // ============================================
   Data.WeaponEvolutionData = {
     findEvolution: findEvolution,
+    findTierEvolution: findTierEvolution,
+    isKnownRecipe: isKnownRecipe,
+    getRandomUnownedWeaponOfTier: getRandomUnownedWeaponOfTier,
+    getAllWeaponsOfTier: getAllWeaponsOfTier,
     getEvolvedWeaponData: getEvolvedWeaponData,
     getEvolutionKey: getEvolutionKey,
+    getOrderedEvolutionKey: getOrderedEvolutionKey,
     getAllEvolutionRecipes: getAllEvolutionRecipes,
     getAllEvolvedWeapons: getAllEvolvedWeapons,
     isEvolvedWeapon: isEvolvedWeapon,
