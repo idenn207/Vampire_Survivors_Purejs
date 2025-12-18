@@ -35,6 +35,19 @@
       xpMultiplier: 2.0,
       goldMultiplier: 1.5,
     },
+    // Traversal enemies - higher rewards
+    traversal_circular: {
+      xpMultiplier: 3.0,
+      goldMultiplier: 2.0,
+    },
+    traversal_dash: {
+      xpMultiplier: 2.5,
+      goldMultiplier: 2.5,
+    },
+    traversal_laser: {
+      xpMultiplier: 4.0,
+      goldMultiplier: 3.0,
+    },
   };
 
   // ============================================
@@ -69,6 +82,22 @@
       { type: 'exp', minValue: 5, maxValue: 15, chance: 1.0 }, // Tier 1-2 XP
       { type: 'gold', minValue: 5, maxValue: 15, chance: 0.5 }, // 50% gold
       { type: 'health', minValue: 15, maxValue: 25, chance: 0.1 }, // 10% health
+    ],
+    // Traversal enemies - higher rewards
+    traversal_circular: [
+      { type: 'exp', minValue: 10, maxValue: 25, chance: 1.0 }, // Always XP
+      { type: 'gold', minValue: 8, maxValue: 20, chance: 0.7 }, // 70% gold
+      { type: 'health', minValue: 15, maxValue: 25, chance: 0.1 }, // 10% health
+    ],
+    traversal_dash: [
+      { type: 'exp', minValue: 8, maxValue: 20, chance: 1.0 }, // Always XP
+      { type: 'gold', minValue: 10, maxValue: 25, chance: 0.8 }, // 80% gold
+      { type: 'health', minValue: 20, maxValue: 30, chance: 0.15 }, // 15% health
+    ],
+    traversal_laser: [
+      { type: 'exp', minValue: 15, maxValue: 35, chance: 1.0 }, // Always XP
+      { type: 'gold', minValue: 15, maxValue: 30, chance: 0.9 }, // 90% gold
+      { type: 'health', minValue: 25, maxValue: 40, chance: 0.2 }, // 20% health
     ],
   };
 

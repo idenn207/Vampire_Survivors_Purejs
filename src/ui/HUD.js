@@ -13,6 +13,8 @@
   var PlayerOverhead = UI.PlayerOverhead;
   var EntityHealthBars = UI.EntityHealthBars;
   var DamageNumbers = UI.DamageNumbers;
+  var WaveAnnouncement = UI.WaveAnnouncement;
+  var events = window.VampireSurvivors.Core.events;
 
   // ============================================
   // Constants
@@ -36,6 +38,10 @@
   var KILL_COUNTER_X_OFFSET = 10;
   var KILL_COUNTER_Y = 60;
 
+  // Wave info
+  var WAVE_INFO_X = 10;
+  var WAVE_INFO_Y = 90;
+
   // ============================================
   // Class Definition
   // ============================================
@@ -48,12 +54,21 @@
     _camera = null;
     _killCount = 0;
 
+    // Wave system reference
+    _waveSystem = null;
+    _currentWave = 1;
+
     // UI Components
     _statusPanel = null;
     _weaponSlots = null;
     _playerOverhead = null;
     _entityHealthBars = null;
     _damageNumbers = null;
+    _waveAnnouncement = null;
+
+    // Event handlers
+    _boundOnWaveAnnouncing = null;
+    _boundOnWaveStarted = null;
 
     // ----------------------------------------
     // Constructor
@@ -64,6 +79,15 @@
       this._playerOverhead = new PlayerOverhead();
       this._entityHealthBars = new EntityHealthBars();
       this._damageNumbers = new DamageNumbers();
+      this._waveAnnouncement = new WaveAnnouncement();
+
+      // Bind event handlers
+      this._boundOnWaveAnnouncing = this._onWaveAnnouncing.bind(this);
+      this._boundOnWaveStarted = this._onWaveStarted.bind(this);
+
+      // Subscribe to wave events
+      events.on('wave:announcing', this._boundOnWaveAnnouncing);
+      events.on('wave:started', this._boundOnWaveStarted);
     }
 
     // ----------------------------------------
@@ -101,6 +125,10 @@
       this._damageNumbers.setCamera(camera);
     }
 
+    setWaveSystem(waveSystem) {
+      this._waveSystem = waveSystem;
+    }
+
     incrementKillCount() {
       this._killCount++;
     }
@@ -110,6 +138,7 @@
       this._playerOverhead.update(deltaTime);
       this._entityHealthBars.update(deltaTime);
       this._damageNumbers.update(deltaTime);
+      this._waveAnnouncement.update(deltaTime);
     }
 
     render(ctx) {
@@ -132,9 +161,15 @@
       // Render kill counter at top right
       this._renderKillCounter(ctx, canvasWidth);
 
+      // Render wave info at top left (below EXP bar)
+      this._renderWaveInfo(ctx, canvasWidth);
+
       // Render sub-components (screen space)
       this._statusPanel.render(ctx);
       this._weaponSlots.render(ctx);
+
+      // Render wave announcement on top
+      this._waveAnnouncement.render(ctx, canvasWidth, canvasHeight);
     }
 
     // ----------------------------------------
@@ -222,6 +257,39 @@
       ctx.fillText('Kills: ' + this._killCount, x, y);
     }
 
+    _renderWaveInfo(ctx, canvasWidth) {
+      if (!this._waveSystem) return;
+
+      var x = WAVE_INFO_X;
+      var y = WAVE_INFO_Y;
+
+      ctx.font = 'bold 16px Arial';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+
+      // Wave number
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 3;
+      ctx.strokeText('Wave: ' + this._currentWave, x, y);
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText('Wave: ' + this._currentWave, x, y);
+
+      // Time remaining until next wave
+      var timeRemaining = this._waveSystem.timeRemaining;
+      var timeStr = this._formatTime(timeRemaining);
+      ctx.strokeText('Next: ' + timeStr, x, y + 20);
+      ctx.fillStyle = '#AAAAAA';
+      ctx.fillText('Next: ' + timeStr, x, y + 20);
+    }
+
+    _onWaveAnnouncing(data) {
+      this._waveAnnouncement.show(data.wave, data.duration, data.specialWave);
+    }
+
+    _onWaveStarted(data) {
+      this._currentWave = data.wave;
+    }
+
     _formatTime(seconds) {
       var mins = Math.floor(seconds / 60);
       var secs = Math.floor(seconds % 60);
@@ -243,6 +311,10 @@
     // Lifecycle
     // ----------------------------------------
     dispose() {
+      // Unsubscribe from events
+      events.off('wave:announcing', this._boundOnWaveAnnouncing);
+      events.off('wave:started', this._boundOnWaveStarted);
+
       if (this._statusPanel) {
         this._statusPanel.dispose();
         this._statusPanel = null;
@@ -263,10 +335,17 @@
         this._damageNumbers.dispose();
         this._damageNumbers = null;
       }
+      if (this._waveAnnouncement) {
+        this._waveAnnouncement.dispose();
+        this._waveAnnouncement = null;
+      }
 
       this._player = null;
       this._game = null;
       this._camera = null;
+      this._waveSystem = null;
+      this._boundOnWaveAnnouncing = null;
+      this._boundOnWaveStarted = null;
     }
   }
 

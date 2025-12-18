@@ -25,8 +25,10 @@
   var EntityManager = Managers.EntityManager;
   var Player = Entities.Player;
   var BackgroundSystem = Systems.BackgroundSystem;
+  var WaveSystem = Systems.WaveSystem;
   var PlayerSystem = Systems.PlayerSystem;
   var EnemySystem = Systems.EnemySystem;
+  var TraversalEnemySystem = Systems.TraversalEnemySystem;
   var MovementSystem = Systems.MovementSystem;
   var ProjectileSystem = Systems.ProjectileSystem;
   var AreaEffectSystem = Systems.AreaEffectSystem;
@@ -85,6 +87,10 @@
       backgroundSystem.setCamera(camera);
       game.addSystem(backgroundSystem);
 
+      var waveSystem = new WaveSystem();
+      waveSystem.initialize(game, entityManager);
+      game.addSystem(waveSystem);
+
       var playerSystem = new PlayerSystem();
       playerSystem.initialize(game, entityManager);
       game.addSystem(playerSystem);
@@ -92,6 +98,10 @@
       var enemySystem = new EnemySystem();
       enemySystem.initialize(game, entityManager);
       game.addSystem(enemySystem);
+
+      var traversalEnemySystem = new TraversalEnemySystem();
+      traversalEnemySystem.initialize(game, entityManager);
+      game.addSystem(traversalEnemySystem);
 
       var movementSystem = new MovementSystem();
       movementSystem.initialize(game, entityManager);
@@ -170,11 +180,14 @@
       // Set player reference in systems
       playerSystem.setPlayer(player);
       enemySystem.setPlayer(player);
+      traversalEnemySystem.setPlayer(player);
+      traversalEnemySystem.setCamera(camera);
       combatSystem.setPlayer(player);
       weaponSystem.setPlayer(player);
       pickupSystem.setPlayer(player);
       hudSystem.setPlayer(player);
       hudSystem.setCamera(camera);
+      hudSystem.setWaveSystem(waveSystem);
       weaponSystem.setCamera(camera);
       weaponSystem.initializeBehaviors();
       levelUpSystem.setPlayer(player);
@@ -215,7 +228,9 @@
       game.debugManager.register(entityManager);
       game.debugManager.register(player);
       game.debugManager.register(camera);
+      game.debugManager.register(waveSystem);
       game.debugManager.register(enemySystem);
+      game.debugManager.register(traversalEnemySystem);
       game.debugManager.register(collisionSystem);
       game.debugManager.register(combatSystem);
       game.debugManager.register(weaponSystem);

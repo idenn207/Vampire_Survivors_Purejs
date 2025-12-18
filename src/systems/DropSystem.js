@@ -28,7 +28,9 @@
     // ----------------------------------------
     _priority = 26; // After CombatSystem (25)
     _itemsDropped = 0;
+    _currentWave = 1;
     _boundHandleEntityDeath = null;
+    _boundOnWaveStarted = null;
 
     // ----------------------------------------
     // Constructor
@@ -36,6 +38,7 @@
     constructor() {
       super();
       this._boundHandleEntityDeath = this._handleEntityDeath.bind(this);
+      this._boundOnWaveStarted = this._onWaveStarted.bind(this);
     }
 
     // ----------------------------------------
@@ -51,6 +54,9 @@
 
       // Listen for entity death events
       events.on('entity:died', this._boundHandleEntityDeath);
+
+      // Listen for wave events to track current wave
+      events.on('wave:started', this._boundOnWaveStarted);
     }
 
     /**
@@ -100,8 +106,11 @@
         enemyType = 'tank';
       }
 
-      // Roll drops based on enemy type with multipliers
-      var drops = DropTable.rollDrops(enemyType);
+      // Calculate wave-based XP bonus (+10% per wave)
+      var xpMultiplier = 1 + (this._currentWave - 1) * 0.1;
+
+      // Roll drops based on enemy type with wave multiplier
+      var drops = DropTable.rollDrops(enemyType, { bonusXpMultiplier: xpMultiplier });
 
       // Spawn each drop with slight position offset
       for (var i = 0; i < drops.length; i++) {
@@ -133,6 +142,14 @@
       }
     }
 
+    /**
+     * Handle wave started event
+     * @param {Object} data - Event data with wave number
+     */
+    _onWaveStarted(data) {
+      this._currentWave = data.wave;
+    }
+
     // ----------------------------------------
     // Getters
     // ----------------------------------------
@@ -155,7 +172,9 @@
     // ----------------------------------------
     dispose() {
       events.off('entity:died', this._boundHandleEntityDeath);
+      events.off('wave:started', this._boundOnWaveStarted);
       this._boundHandleEntityDeath = null;
+      this._boundOnWaveStarted = null;
       super.dispose();
     }
   }

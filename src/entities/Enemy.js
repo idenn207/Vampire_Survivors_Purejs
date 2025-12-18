@@ -23,7 +23,7 @@
   var DEFAULT_WIDTH = 24;
   var DEFAULT_HEIGHT = 24;
   var ENEMY_COLOR = '#FF0000'; // Red
-  var DEFAULT_HEALTH = 1;
+  var DEFAULT_HEALTH = 30;
   var DEFAULT_DAMAGE = 10; // Contact damage to player
 
   // ============================================

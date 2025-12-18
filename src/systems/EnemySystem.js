@@ -11,14 +11,16 @@
   var System = Systems.System;
   var Transform = window.VampireSurvivors.Components.Transform;
   var Velocity = window.VampireSurvivors.Components.Velocity;
+  var Health = window.VampireSurvivors.Components.Health;
   var Enemy = window.VampireSurvivors.Entities.Enemy;
+  var events = window.VampireSurvivors.Core.events;
 
   // ============================================
-  // Constants
+  // Constants (Base values - modified by wave system)
   // ============================================
-  var SPAWN_INTERVAL = 0.3; // seconds
+  var BASE_SPAWN_INTERVAL = 0.3; // seconds
   var SPAWN_DISTANCE = 300; // pixels from player
-  var MAX_ENEMIES = 50;
+  var BASE_MAX_ENEMIES = 50;
   var AI_UPDATE_INTERVAL = 0.2; // seconds
 
   // ============================================
@@ -33,16 +35,30 @@
     _spawnTimer = 0;
     _aiUpdateTimer = 0;
 
+    // Wave difficulty modifiers
+    _difficultyModifiers = null;
+
+    // Event handlers
+    _boundOnWaveStarted = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
     constructor() {
       super();
+      this._boundOnWaveStarted = this._onWaveStarted.bind(this);
     }
 
     // ----------------------------------------
     // Public Methods
     // ----------------------------------------
+    initialize(game, entityManager) {
+      super.initialize(game, entityManager);
+
+      // Subscribe to wave events
+      events.on('wave:started', this._boundOnWaveStarted);
+    }
+
     setPlayer(player) {
       this._player = player;
     }
@@ -50,9 +66,13 @@
     update(deltaTime) {
       if (!this._entityManager || !this._player || !this._player.isActive) return;
 
+      // Calculate spawn interval based on difficulty modifiers
+      var modifiers = this._difficultyModifiers || {};
+      var spawnInterval = BASE_SPAWN_INTERVAL / (modifiers.spawnRateMultiplier || 1);
+
       // Update spawn timer
       this._spawnTimer += deltaTime;
-      if (this._spawnTimer >= SPAWN_INTERVAL) {
+      if (this._spawnTimer >= spawnInterval) {
         this._spawnTimer = 0;
         this._spawnEnemy();
       }
@@ -72,8 +92,12 @@
     // Private Methods
     // ----------------------------------------
     _spawnEnemy() {
+      // Calculate max enemies based on difficulty modifiers
+      var modifiers = this._difficultyModifiers || {};
+      var maxEnemies = Math.floor(BASE_MAX_ENEMIES * (modifiers.maxEnemiesMultiplier || 1));
+
       var enemyCount = this._entityManager.getCountByTag('enemy');
-      if (enemyCount >= MAX_ENEMIES) {
+      if (enemyCount >= maxEnemies) {
         return;
       }
 
@@ -90,6 +114,23 @@
       var transform = enemy.getComponent(Transform);
       transform.x = x - transform.width / 2;
       transform.y = y - transform.height / 2;
+
+      // Apply difficulty modifiers to enemy stats
+      if (modifiers.enemyDamageMultiplier) {
+        enemy.damage = Math.floor(enemy.damage * modifiers.enemyDamageMultiplier);
+      }
+      if (modifiers.enemyHealthMultiplier) {
+        var health = enemy.getComponent(Health);
+        if (health) {
+          var newMaxHealth = Math.max(1, Math.floor(health.maxHealth * modifiers.enemyHealthMultiplier));
+          health.setMaxHealth(newMaxHealth, true);
+        }
+      }
+    }
+
+    _onWaveStarted(data) {
+      this._difficultyModifiers = data.modifiers;
+      console.log('[EnemySystem] Wave ' + data.wave + ' started, modifiers:', data.modifiers);
     }
 
     _updateEnemyAI() {
@@ -105,6 +146,9 @@
       for (var i = 0; i < enemies.length; i++) {
         var enemy = enemies[i];
         if (!enemy.isActive) continue;
+
+        // Skip traversal enemies - they have their own movement patterns
+        if (enemy.hasTag('traversal')) continue;
 
         var transform = enemy.getComponent(Transform);
         var velocity = enemy.getComponent(Velocity);
@@ -144,10 +188,15 @@
         count = this._entityManager.getCountByTag('enemy');
       }
 
+      var modifiers = this._difficultyModifiers || {};
+      var maxEnemies = Math.floor(BASE_MAX_ENEMIES * (modifiers.maxEnemiesMultiplier || 1));
+      var spawnInterval = BASE_SPAWN_INTERVAL / (modifiers.spawnRateMultiplier || 1);
+
       return {
         label: 'Enemies',
         entries: [
-          { key: 'Count', value: count + '/' + MAX_ENEMIES },
+          { key: 'Count', value: count + '/' + maxEnemies },
+          { key: 'Spawn Rate', value: spawnInterval.toFixed(2) + 's' },
           { key: 'Spawn Timer', value: this._spawnTimer.toFixed(1) + 's' },
         ],
       };
@@ -157,7 +206,12 @@
     // Lifecycle
     // ----------------------------------------
     dispose() {
+      events.off('wave:started', this._boundOnWaveStarted);
+
       this._player = null;
+      this._difficultyModifiers = null;
+      this._boundOnWaveStarted = null;
+
       super.dispose();
     }
   }

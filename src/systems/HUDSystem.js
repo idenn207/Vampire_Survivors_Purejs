@@ -67,6 +67,12 @@
       }
     }
 
+    setWaveSystem(waveSystem) {
+      if (this._hud) {
+        this._hud.setWaveSystem(waveSystem);
+      }
+    }
+
     update(deltaTime) {
       // Update HUD components (health bar visibility, damage numbers, etc.)
       if (this._hud) {
