@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var Vector2 = window.VampireSurvivors.Utils.Vector2;
+  var events = window.VampireSurvivors.Core.events;
 
   // ============================================
   // Class Definition
@@ -27,6 +28,10 @@
     _mouseButtonsReleased = new Set();
     _canvas = null;
     _camera = null;
+
+    // Auto/Manual mode toggle
+    _isAutoMode = true;
+    _lastMovementDirection = { x: 1, y: 0 };
 
     _boundHandleKeyDown = null;
     _boundHandleKeyUp = null;
@@ -96,6 +101,11 @@
       return this._mouseButtonsReleased.has(button);
     }
 
+    toggleAutoMode() {
+      this._isAutoMode = !this._isAutoMode;
+      events.emit('targeting:modeChanged', { isAutoMode: this._isAutoMode });
+    }
+
     getMovementDirection() {
       var direction = new Vector2();
 
@@ -114,6 +124,8 @@
 
       if (direction.lengthSquared() > 0) {
         direction.normalize();
+        // Store last non-zero movement direction for auto mode targeting
+        this._lastMovementDirection = { x: direction.x, y: direction.y };
       }
 
       return direction;
@@ -127,6 +139,11 @@
         this._keysPressed.add(e.code);
       }
       this._keys.set(e.code, true);
+
+      // Q key toggles auto/manual targeting mode
+      if (e.code === 'KeyQ') {
+        this.toggleAutoMode();
+      }
     }
 
     _handleKeyUp(e) {
@@ -177,6 +194,14 @@
 
     get mouseWorldPosition() {
       return this._mouseWorldPosition;
+    }
+
+    get isAutoMode() {
+      return this._isAutoMode;
+    }
+
+    get lastMovementDirection() {
+      return this._lastMovementDirection;
     }
 
     // ----------------------------------------

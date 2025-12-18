@@ -17,6 +17,7 @@
   var Gold = window.VampireSurvivors.Components.Gold;
   var Health = window.VampireSurvivors.Components.Health;
   var pickupPool = window.VampireSurvivors.Pool.pickupPool;
+  var PickupConfig = window.VampireSurvivors.Data.PickupConfig;
 
   // ============================================
   // Class Definition
@@ -111,6 +112,27 @@
       var distanceSquared = dx * dx + dy * dy;
       var distance = Math.sqrt(distanceSquared);
 
+      // Check if player has magnet active - ALL pickups magnetize regardless of distance
+      if (this._player.isMagnetActive) {
+        if (!pickupComp.isMagnetized) {
+          pickupComp.startMagnetizing();
+        }
+
+        // Apply velocity toward player with max speed cap
+        if (distance > 1) {
+          var dirX = dx / distance;
+          var dirY = dy / distance;
+          var speed = Math.min(this._player.magnetMaxSpeed, pickupComp.magnetSpeed * 2);
+          velocity.vx = dirX * speed;
+          velocity.vy = dirY * speed;
+        } else {
+          velocity.vx = 0;
+          velocity.vy = 0;
+        }
+        return; // Skip normal magnetization logic
+      }
+
+      // Normal magnetization (only within pickup's magnetRadius)
       var magnetRadius = pickupComp.magnetRadius;
 
       // Check if within magnet radius
@@ -181,6 +203,11 @@
         var health = player.getComponent(Health);
         if (health) {
           health.heal(value);
+        }
+      } else if (type === 'magnet') {
+        var config = PickupConfig.getPickupConfig('magnet');
+        if (config && player.activateMagnet) {
+          player.activateMagnet(config.duration, config.maxPullSpeed);
         }
       }
 

@@ -255,6 +255,23 @@
     }
 
     /**
+     * Get direction based on auto mode (uses last movement direction)
+     * @returns {{x: number, y: number, angle: number}}
+     */
+    getAutoModeDirection() {
+      if (!this._input) {
+        return { x: 1, y: 0, angle: 0 };
+      }
+
+      var lastDir = this._input.lastMovementDirection;
+      return {
+        x: lastDir.x,
+        y: lastDir.y,
+        angle: Math.atan2(lastDir.y, lastDir.x),
+      };
+    }
+
+    /**
      * Get direction from player to a target entity
      * @param {Entity} player
      * @param {Entity} target

@@ -23,7 +23,7 @@
   // ============================================
   // Constants
   // ============================================
-  var DEFAULT_INVINCIBILITY_DURATION = 1; // seconds
+  var CONTACT_DAMAGE_COOLDOWN = 0.2; // seconds per enemy
 
   // ============================================
   // Class Definition
@@ -40,6 +40,9 @@
     _criticalHits = 0;
     _lifestealHealed = 0;
     _statusEffectsApplied = 0;
+
+    // Per-enemy collision cooldown tracking
+    _enemyCollisionCooldowns = new Map();
 
     // ----------------------------------------
     // Constructor
@@ -65,6 +68,9 @@
       // Update all health components' invincibility timers
       this._updateHealthTimers(deltaTime);
 
+      // Update per-enemy collision cooldowns
+      this._updateCollisionCooldowns(deltaTime);
+
       // Process collisions
       this._processCollisions();
     }
@@ -83,6 +89,24 @@
         if (health) {
           health.update(deltaTime);
         }
+      }
+    }
+
+    _updateCollisionCooldowns(deltaTime) {
+      // Iterate through all cooldowns and decrease them
+      var toRemove = [];
+      this._enemyCollisionCooldowns.forEach(function (cooldown, enemyId) {
+        var newCooldown = cooldown - deltaTime;
+        if (newCooldown <= 0) {
+          toRemove.push(enemyId);
+        } else {
+          this._enemyCollisionCooldowns.set(enemyId, newCooldown);
+        }
+      }, this);
+
+      // Remove expired cooldowns
+      for (var i = 0; i < toRemove.length; i++) {
+        this._enemyCollisionCooldowns.delete(toRemove[i]);
       }
     }
 
@@ -559,40 +583,63 @@
 
     _handlePlayerEnemyCollision(player, enemy) {
       var playerHealth = player.getComponent(Health);
-      if (!playerHealth || playerHealth.isDead || playerHealth.isInvincible) {
+      var enemyHealth = enemy.getComponent(Health);
+
+      // Check if this enemy is on cooldown
+      if (this._enemyCollisionCooldowns.has(enemy.id)) {
         return;
       }
 
-      // Get enemy damage (from _damage property or default)
-      var damage = enemy.damage !== undefined ? enemy.damage : 10;
+      // Player takes damage (NO invincibility check, NO invincibility frames)
+      if (playerHealth && !playerHealth.isDead) {
+        var enemyDamage = enemy.damage !== undefined ? enemy.damage : 10;
+        var damageApplied = playerHealth.takeDamage(enemyDamage);
 
-      // Apply damage
-      var damageApplied = playerHealth.takeDamage(damage);
+        if (damageApplied) {
+          // Track stats
+          this._damageReceived += enemyDamage;
 
-      if (damageApplied) {
-        // Set invincibility
-        playerHealth.setInvincible(DEFAULT_INVINCIBILITY_DURATION);
-
-        // Track stats
-        this._damageReceived += damage;
-
-        // Emit player-specific event
-        events.emit('player:damaged', {
-          player: player,
-          enemy: enemy,
-          amount: damage,
-          currentHealth: playerHealth.currentHealth,
-          maxHealth: playerHealth.maxHealth,
-        });
-
-        // Check for player death
-        if (playerHealth.isDead) {
-          events.emit('player:died', {
+          // Emit player-specific event
+          events.emit('player:damaged', {
             player: player,
-            killer: enemy,
+            enemy: enemy,
+            amount: enemyDamage,
+            currentHealth: playerHealth.currentHealth,
+            maxHealth: playerHealth.maxHealth,
           });
+
+          // Check for player death
+          if (playerHealth.isDead) {
+            events.emit('player:died', {
+              player: player,
+              killer: enemy,
+            });
+          }
         }
       }
+
+      // Player deals contact damage to enemy
+      if (enemyHealth && !enemyHealth.isDead) {
+        var contactDamage = player.contactDamage;
+        var wasAlive = !enemyHealth.isDead;
+        enemyHealth.takeDamage(contactDamage);
+        this._damageDealt += contactDamage;
+
+        // Emit damage event
+        events.emit('enemy:damaged', {
+          entity: enemy,
+          damage: contactDamage,
+          source: 'contact',
+        });
+
+        // Check if enemy died
+        if (wasAlive && enemyHealth.isDead) {
+          events.emit('entity:died', { entity: enemy, killer: player });
+        }
+      }
+
+      // Set cooldown for this enemy
+      this._enemyCollisionCooldowns.set(enemy.id, CONTACT_DAMAGE_COOLDOWN);
     }
 
     // ----------------------------------------

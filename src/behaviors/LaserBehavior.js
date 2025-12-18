@@ -186,6 +186,10 @@
           return null;
 
         case TargetingMode.MOUSE:
+          // In auto mode, use movement direction; in manual mode, use mouse
+          if (this._input && this._input.isAutoMode) {
+            return this.getAutoModeDirection();
+          }
           return this.getMouseDirection(player);
 
         case TargetingMode.RANDOM:
@@ -196,6 +200,10 @@
           return this.getRandomDirection();
 
         default:
+          // In auto mode, use movement direction; in manual mode, use mouse
+          if (this._input && this._input.isAutoMode) {
+            return this.getAutoModeDirection();
+          }
           return this.getMouseDirection(player);
       }
     }

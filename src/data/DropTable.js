@@ -73,6 +73,7 @@
       { type: 'exp', minValue: 200, maxValue: 500, chance: 1.0 }, // Tier 4 XP (gold gem)
       { type: 'gold', minValue: 100, maxValue: 200, chance: 1.0 }, // Always gold
       { type: 'health', minValue: 50, maxValue: 100, chance: 1.0 }, // Always health
+      { type: 'magnet', minValue: 1, maxValue: 1, chance: 1.0 }, // Always magnet
     ],
     swarm: [
       { type: 'exp', minValue: 1, maxValue: 2, chance: 0.8 }, // Small XP, 80% chance

@@ -39,6 +39,14 @@
     // ----------------------------------------
     _speed = DEFAULT_SPEED;
 
+    // Contact damage
+    _contactDamageMultiplier = 1.0;
+
+    // Magnet state
+    _magnetActive = false;
+    _magnetTimer = 0;
+    _magnetMaxSpeed = 600;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -77,6 +85,31 @@
       var velocity = this.getComponent(Velocity);
       velocity.vx = direction.x * this._speed;
       velocity.vy = direction.y * this._speed;
+    }
+
+    /**
+     * Activate magnet effect
+     * @param {number} duration - Duration in seconds
+     * @param {number} maxSpeed - Maximum pull speed
+     */
+    activateMagnet(duration, maxSpeed) {
+      this._magnetActive = true;
+      this._magnetTimer = duration;
+      this._magnetMaxSpeed = maxSpeed || 600;
+    }
+
+    /**
+     * Update magnet timer (call each frame)
+     * @param {number} deltaTime
+     */
+    updateMagnet(deltaTime) {
+      if (this._magnetActive) {
+        this._magnetTimer -= deltaTime;
+        if (this._magnetTimer <= 0) {
+          this._magnetActive = false;
+          this._magnetTimer = 0;
+        }
+      }
     }
 
     // ----------------------------------------
@@ -129,6 +162,32 @@
     get techTree() {
       var TechTree = window.VampireSurvivors.Components.TechTree;
       return TechTree ? this.getComponent(TechTree) : null;
+    }
+
+    /**
+     * Get contact damage based on equipped weapons
+     * @returns {number}
+     */
+    get contactDamage() {
+      var weaponSlot = this.getComponent(WeaponSlot);
+      if (!weaponSlot) return 10;
+
+      var weapons = weaponSlot.getWeapons();
+      if (weapons.length === 0) return 10;
+
+      var totalDamage = 0;
+      for (var i = 0; i < weapons.length; i++) {
+        totalDamage += weapons[i].damage;
+      }
+      return Math.floor((totalDamage / weapons.length) * this._contactDamageMultiplier);
+    }
+
+    get isMagnetActive() {
+      return this._magnetActive;
+    }
+
+    get magnetMaxSpeed() {
+      return this._magnetMaxSpeed;
     }
 
     // ----------------------------------------

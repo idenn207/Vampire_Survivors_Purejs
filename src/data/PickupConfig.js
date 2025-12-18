@@ -66,6 +66,14 @@
       magnetRadius: 60,
       magnetSpeed: 180,
     },
+    magnet: {
+      color: '#FF00FF', // Magenta
+      size: 16,
+      magnetRadius: 100,
+      magnetSpeed: 300,
+      duration: 10, // Seconds the effect lasts
+      maxPullSpeed: 600, // Maximum speed pickups can move toward player
+    },
   };
 
   // ============================================
@@ -105,7 +113,7 @@
    * @returns {Array<string>}
    */
   function getPickupTypes() {
-    return ['exp', 'gold', 'health'];
+    return ['exp', 'gold', 'health', 'magnet'];
   }
 
   /**

@@ -20,7 +20,7 @@
   // ============================================
   var BASE_SPAWN_INTERVAL = 0.3; // seconds
   var SPAWN_DISTANCE = 300; // pixels from player
-  var BASE_MAX_ENEMIES = 50;
+  var BASE_MAX_ENEMIES = 100;
   var AI_UPDATE_INTERVAL = 0.2; // seconds
 
   // ============================================

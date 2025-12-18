@@ -205,6 +205,7 @@
         pickupSystem.setPlayer(player);
         hudSystem.setPlayer(player);
         hudSystem.setCamera(camera);
+        hudSystem.setInput(game.input);
         hudSystem.setWaveSystem(waveSystem);
         hudSystem.setTraversalSystem(traversalEnemySystem);
         bossSystem.setHUDSystem(hudSystem);

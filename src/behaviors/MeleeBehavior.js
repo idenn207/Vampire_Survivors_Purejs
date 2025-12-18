@@ -178,20 +178,26 @@
     _getSwingDirection(weapon, player, range) {
       var targetingMode = weapon.targetingMode;
 
+      // In auto mode, melee weapons use movement direction
+      if (this._input && this._input.isAutoMode) {
+        return this.getAutoModeDirection();
+      }
+
+      // Manual mode - use targeting mode logic
       switch (targetingMode) {
         case TargetingMode.NEAREST:
           var nearestEnemy = this.findNearestEnemy(player, range * 2);
           if (nearestEnemy) {
             return this.getDirectionToTarget(player, nearestEnemy);
           }
-          return this.getRandomDirection();
+          return this.getMouseDirection(player);
 
         case TargetingMode.WEAKEST:
           var weakestEnemy = this.findWeakestEnemy(player, range * 2);
           if (weakestEnemy) {
             return this.getDirectionToTarget(player, weakestEnemy);
           }
-          return this.getRandomDirection();
+          return this.getMouseDirection(player);
 
         case TargetingMode.MOUSE:
           return this.getMouseDirection(player);

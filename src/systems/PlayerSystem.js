@@ -39,6 +39,9 @@
       if (!this._game || !this._game.input) return;
 
       this._player.update(deltaTime, this._game.input);
+
+      // Update magnet timer
+      this._player.updateMagnet(deltaTime);
     }
 
     // ----------------------------------------
