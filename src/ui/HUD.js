@@ -14,6 +14,7 @@
   var EntityHealthBars = UI.EntityHealthBars;
   var DamageNumbers = UI.DamageNumbers;
   var WaveAnnouncement = UI.WaveAnnouncement;
+  var BossHealthBar = UI.BossHealthBar;
   var events = window.VampireSurvivors.Core.events;
 
   // ============================================
@@ -56,6 +57,7 @@
     _entityHealthBars = null;
     _damageNumbers = null;
     _waveAnnouncement = null;
+    _bossHealthBar = null;
 
     // Event handlers
     _boundOnWaveAnnouncing = null;
@@ -71,6 +73,7 @@
       this._entityHealthBars = new EntityHealthBars();
       this._damageNumbers = new DamageNumbers();
       this._waveAnnouncement = new WaveAnnouncement();
+      this._bossHealthBar = new BossHealthBar();
 
       // Bind event handlers
       this._boundOnWaveAnnouncing = this._onWaveAnnouncing.bind(this);
@@ -130,6 +133,19 @@
       this._entityHealthBars.update(deltaTime);
       this._damageNumbers.update(deltaTime);
       this._waveAnnouncement.update(deltaTime);
+      this._bossHealthBar.update(deltaTime);
+    }
+
+    setBoss(boss) {
+      if (this._bossHealthBar) {
+        this._bossHealthBar.setBoss(boss);
+      }
+    }
+
+    clearBoss() {
+      if (this._bossHealthBar) {
+        this._bossHealthBar.clearBoss();
+      }
     }
 
     render(ctx) {
@@ -145,6 +161,9 @@
 
       // Render EXP bar at top (full width)
       this._renderEXPBar(ctx, canvasWidth);
+
+      // Render boss health bar (below EXP bar)
+      this._bossHealthBar.render(ctx, canvasWidth);
 
       // Render info bar at top right (timer, wave, kills on same line)
       this._renderInfoBar(ctx, canvasWidth);
@@ -289,6 +308,10 @@
       if (this._waveAnnouncement) {
         this._waveAnnouncement.dispose();
         this._waveAnnouncement = null;
+      }
+      if (this._bossHealthBar) {
+        this._bossHealthBar.dispose();
+        this._bossHealthBar = null;
       }
 
       this._player = null;

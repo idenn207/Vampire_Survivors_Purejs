@@ -29,6 +29,7 @@
   var PlayerSystem = Systems.PlayerSystem;
   var EnemySystem = Systems.EnemySystem;
   var TraversalEnemySystem = Systems.TraversalEnemySystem;
+  var BossSystem = Systems.BossSystem;
   var MovementSystem = Systems.MovementSystem;
   var ProjectileSystem = Systems.ProjectileSystem;
   var AreaEffectSystem = Systems.AreaEffectSystem;
@@ -102,6 +103,10 @@
       var traversalEnemySystem = new TraversalEnemySystem();
       traversalEnemySystem.initialize(game, entityManager);
       game.addSystem(traversalEnemySystem);
+
+      var bossSystem = new BossSystem();
+      bossSystem.initialize(game, entityManager);
+      game.addSystem(bossSystem);
 
       var movementSystem = new MovementSystem();
       movementSystem.initialize(game, entityManager);
@@ -182,6 +187,8 @@
       enemySystem.setPlayer(player);
       traversalEnemySystem.setPlayer(player);
       traversalEnemySystem.setCamera(camera);
+      bossSystem.setPlayer(player);
+      bossSystem.setCamera(camera);
       combatSystem.setPlayer(player);
       weaponSystem.setPlayer(player);
       pickupSystem.setPlayer(player);
@@ -189,6 +196,7 @@
       hudSystem.setCamera(camera);
       hudSystem.setWaveSystem(waveSystem);
       hudSystem.setTraversalSystem(traversalEnemySystem);
+      bossSystem.setHUDSystem(hudSystem);
       weaponSystem.setCamera(camera);
       weaponSystem.initializeBehaviors();
       levelUpSystem.setPlayer(player);
@@ -232,6 +240,7 @@
       game.debugManager.register(waveSystem);
       game.debugManager.register(enemySystem);
       game.debugManager.register(traversalEnemySystem);
+      game.debugManager.register(bossSystem);
       game.debugManager.register(collisionSystem);
       game.debugManager.register(combatSystem);
       game.debugManager.register(weaponSystem);

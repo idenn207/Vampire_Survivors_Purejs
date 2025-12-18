@@ -12,7 +12,7 @@
     BASE_SPAWN_INTERVAL: 12.0, // seconds between spawns (longer for group spawns)
     MIN_SPAWN_INTERVAL: 6.0, // minimum interval
     SPAWN_INTERVAL_DECAY: 0.5, // reduce per wave
-    START_WAVE: 2, // Start spawning from wave 2
+    START_WAVE: 1, // Start spawning from wave 2
     WARNING_TIME: 3.0, // seconds before spawn to show arrow indicator
   };
 

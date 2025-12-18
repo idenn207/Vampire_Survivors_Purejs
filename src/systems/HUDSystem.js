@@ -11,6 +11,7 @@
   var System = Systems.System;
   var HUD = window.VampireSurvivors.UI.HUD;
   var events = window.VampireSurvivors.Core.events;
+  var TraversalEnemyData = window.VampireSurvivors.Data.TraversalEnemyData;
 
   // ============================================
   // Constants
@@ -86,6 +87,18 @@
       this._traversalSystem = traversalSystem;
     }
 
+    setBoss(boss) {
+      if (this._hud) {
+        this._hud.setBoss(boss);
+      }
+    }
+
+    clearBoss() {
+      if (this._hud) {
+        this._hud.clearBoss();
+      }
+    }
+
     update(deltaTime) {
       // Update HUD components (health bar visibility, damage numbers, etc.)
       if (this._hud) {
@@ -113,17 +126,20 @@
 
       var width = this._game.width;
       var height = this._game.height;
-      var time = this._game.elapsedTime;
+      var warningTime = TraversalEnemyData.TraversalConfig.WARNING_TIME;
 
       for (var i = 0; i < indicators.length; i++) {
         var indicator = indicators[i];
         var color = indicator.color;
         var progress = indicator.progress;
 
+        // Calculate time elapsed since this indicator started (relative to indicator, not global time)
+        var indicatorElapsed = progress * warningTime;
+
         // Blinking effect that speeds up as spawn approaches
         var blinkRate = ARROW_BLINK_BASE_RATE + (ARROW_BLINK_MAX_RATE - ARROW_BLINK_BASE_RATE) * progress;
-        var blinkPhase = (time * blinkRate) % 10.0;
-        var isVisible = blinkPhase < 5.0; // 50% visible, 50% off
+        var blinkPhase = (indicatorElapsed * blinkRate) % 1.0;
+        var isVisible = blinkPhase < 0.5; // 50% visible, 50% off
 
         // Skip rendering when not visible (completely transparent)
         if (!isVisible) continue;
