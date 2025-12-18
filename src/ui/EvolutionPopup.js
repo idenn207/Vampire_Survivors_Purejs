@@ -225,7 +225,7 @@
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
       ctx.textAlign = 'center';
-      ctx.fillText('Select MAIN weapon first, then MATERIAL (order matters!)', this._x + POPUP_WIDTH / 2, this._y + POPUP_HEIGHT - 15);
+      ctx.fillText('Select MAIN weapon first, then MATERIAL. ★ = Core (MAIN only, recipe required)', this._x + POPUP_WIDTH / 2, this._y + POPUP_HEIGHT - 15);
     }
 
     // ----------------------------------------
@@ -398,7 +398,7 @@
 
       // Check evolve button
       if (this._isPointInRect(mouseX, mouseY, this._evolveButtonRect)) {
-        if (this._mainSlot && this._materialSlot) {
+        if (this._mainSlot && this._materialSlot && this._canEvolve()) {
           return {
             action: 'evolve',
             mainWeapon: this._mainSlot,
@@ -438,13 +438,23 @@
             return null;
           }
 
+          // Check if weapon can be used as material (core weapons cannot)
+          var isCoreWeapon = WeaponEvolutionData.isCoreWeapon(weapon.id);
+
           // Fill main slot first, then material
           if (!this._mainSlot) {
             this._mainSlot = weapon;
           } else if (!this._materialSlot) {
+            // Core weapons cannot be used as material
+            if (isCoreWeapon) {
+              return null; // Reject selection
+            }
             this._materialSlot = weapon;
           } else {
-            // Both filled, replace material
+            // Both filled, replace material (only if not core weapon)
+            if (isCoreWeapon) {
+              return null; // Reject selection
+            }
             this._materialSlot = weapon;
           }
 
@@ -456,6 +466,21 @@
       return null;
     }
 
+    /**
+     * Check if evolution can proceed
+     * Core weapons require a known recipe
+     */
+    _canEvolve() {
+      if (!this._mainSlot || !this._materialSlot) return false;
+
+      // If main weapon is a core weapon, require a known recipe
+      if (WeaponEvolutionData.isCoreWeapon(this._mainSlot.id)) {
+        return this._isKnownRecipe;
+      }
+
+      return true;
+    }
+
     _updateEvolutionPreview() {
       this._evolutionResult = null;
       this._isKnownRecipe = false;
@@ -464,6 +489,7 @@
 
       var mainId = this._mainSlot.id;
       var materialId = this._materialSlot.id;
+      var isCoreWeapon = WeaponEvolutionData.isCoreWeapon(mainId);
 
       // Check for known recipe
       var tierEvolution = WeaponEvolutionData.findTierEvolution(mainId, materialId, this._selectedTier);
@@ -471,8 +497,17 @@
       if (tierEvolution && tierEvolution.isKnown) {
         this._isKnownRecipe = true;
         this._evolutionResult = tierEvolution.weaponData;
+      } else if (isCoreWeapon) {
+        // Core weapon with no recipe - cannot evolve
+        this._isKnownRecipe = false;
+        this._evolutionResult = {
+          name: 'Recipe Required',
+          tier: this._selectedTier + 1,
+          isRandom: false,
+          requiresRecipe: true,
+        };
       } else {
-        // Unknown recipe - will be random
+        // Unknown recipe - will be random (only for non-core weapons)
         this._isKnownRecipe = false;
         this._evolutionResult = {
           name: 'Random Tier ' + (this._selectedTier + 1) + ' Weapon',
@@ -675,6 +710,20 @@
           ctx.textAlign = 'left';
           ctx.textBaseline = 'top';
           ctx.fillText(tierConfig.icon, rect.x + 5, rect.y + 5);
+        } else if (this._evolutionResult && this._evolutionResult.requiresRecipe) {
+          // Core weapon with no recipe - show X
+          ctx.font = 'bold 40px Arial';
+          ctx.fillStyle = '#E74C3C';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText('✕', centerX, centerY - 5);
+
+          // Recipe required text
+          ctx.font = '9px Arial';
+          ctx.fillStyle = '#E74C3C';
+          ctx.textBaseline = 'top';
+          ctx.fillText('Recipe', centerX, centerY + 20);
+          ctx.fillText('Required', centerX, centerY + 32);
         } else {
           // Unknown recipe - show '?'
           var nextTierConfig = WeaponTierData.getTierConfig(this._selectedTier + 1);
@@ -747,6 +796,7 @@
     _renderWeaponInGridSlot(ctx, rect, weapon, isSelected) {
       var centerX = rect.x + rect.width / 2;
       var centerY = rect.y + rect.height / 2 - 5;
+      var isCoreWeapon = WeaponEvolutionData.isCoreWeapon(weapon.id);
 
       // Dim if selected (already in a slot)
       if (isSelected) {
@@ -775,6 +825,15 @@
 
       ctx.globalAlpha = 1.0;
 
+      // Core weapon indicator (star badge) - shows this weapon can only be MAIN
+      if (isCoreWeapon && !isSelected) {
+        ctx.font = 'bold 10px Arial';
+        ctx.fillStyle = '#F1C40F';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillText('★', rect.x + 2, rect.y + 2);
+      }
+
       // Selection indicator
       if (isSelected) {
         var indicator = this._mainSlot === weapon ? 'M' : 'S';
@@ -789,7 +848,7 @@
     }
 
     _renderButtons(ctx) {
-      var canEvolve = this._mainSlot && this._materialSlot;
+      var canEvolve = this._canEvolve();
 
       // Evolve button
       var evolveRect = this._evolveButtonRect;

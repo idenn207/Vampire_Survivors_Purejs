@@ -41,6 +41,9 @@
     _isActive = false;
     _openedManually = false;
 
+    // Pending level-ups queue (for multi-level scenarios)
+    _pendingLevelUps = 0;
+
     // Evolution state
     _evolutionState = EvolutionState.NORMAL;
     _selectedMainWeapon = null;
@@ -80,12 +83,13 @@
     }
 
     /**
-     * Handle game start - reset blacklist for new run
+     * Handle game start - reset blacklist and pending level-ups for new run
      */
     _onGameStart() {
       if (this._blacklistManager) {
         this._blacklistManager.reset();
       }
+      this._pendingLevelUps = 0;
     }
 
     /**
@@ -118,7 +122,12 @@
     // ----------------------------------------
     _onLevelUp(data) {
       if (!this._player) return;
-      if (this._isActive) return; // Already showing
+
+      // Queue level-up (support for multi-level scenarios like boss kills)
+      this._pendingLevelUps++;
+
+      // If already showing, just queue the level-up
+      if (this._isActive) return;
 
       this._openedManually = false;
       this._openScreen();
@@ -387,6 +396,10 @@
             this._closeScreen();
           }
           break;
+
+        case 'tech_upgrade':
+          this._handleTechUpgrade(result.result);
+          break;
       }
     }
 
@@ -395,6 +408,17 @@
         events.emitSync('upgrade:stat_purchased', {
           statId: result.statId,
           cost: result.cost,
+        });
+      }
+    }
+
+    _handleTechUpgrade(result) {
+      if (result.success) {
+        events.emitSync('upgrade:tech_purchased', {
+          techId: result.techId,
+          cost: result.cost,
+          oldLevel: result.oldLevel,
+          newLevel: result.newLevel,
         });
       }
     }
@@ -669,9 +693,19 @@
       this._evolutionState = EvolutionState.NORMAL;
       this._selectedMainWeapon = null;
 
-      this._game.resume();
+      // Decrement pending level-ups counter
+      this._pendingLevelUps--;
 
       events.emitSync('levelup:screen_closed', {});
+
+      // Check if there are more pending level-ups (multi-level scenario)
+      if (this._pendingLevelUps > 0) {
+        // Show screen again for the next level-up
+        this._openScreen();
+      } else {
+        // No more pending level-ups, resume game
+        this._game.resume();
+      }
     }
 
     // ----------------------------------------
@@ -690,6 +724,7 @@
         entries: [
           { key: 'Active', value: this._isActive ? 'Yes' : 'No' },
           { key: 'Manual Open', value: this._openedManually ? 'Yes' : 'No' },
+          { key: 'Pending', value: this._pendingLevelUps },
         ],
       };
     }

@@ -104,6 +104,8 @@
         contentY = this._renderWeaponTooltip(ctx, x + PADDING, contentY);
       } else if (this._content.type === 'newWeapon') {
         contentY = this._renderNewWeaponTooltip(ctx, x + PADDING, contentY);
+      } else if (this._content.type === 'tech') {
+        contentY = this._renderTechTooltip(ctx, x + PADDING, contentY);
       }
     }
 
@@ -120,6 +122,11 @@
         lines = 5; // Title + level + stats + cost
       } else if (this._content.type === 'newWeapon') {
         lines = 4; // Title + type + description + NEW
+      } else if (this._content.type === 'tech') {
+        lines = 4; // Title + depth + level + cost
+        if (this._content.effects && this._content.effects.length > 0) {
+          lines += Math.min(this._content.effects.length, 3); // Up to 3 effects
+        }
       }
 
       this._width = MAX_WIDTH;
@@ -231,6 +238,70 @@
       y += LINE_HEIGHT;
 
       return y;
+    }
+
+    _renderTechTooltip(ctx, x, y) {
+      var content = this._content;
+
+      // Title (tech name)
+      ctx.font = 'bold 14px Arial';
+      ctx.fillStyle = TITLE_COLOR;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(content.title, x, y);
+      y += LINE_HEIGHT;
+
+      // Depth indicator
+      ctx.font = '12px Arial';
+      var depthColors = { 0: '#FFFFFF', 1: '#3498DB', 2: '#9B59B6', 3: '#F39C12' };
+      ctx.fillStyle = depthColors[content.depth] || DESC_COLOR;
+      ctx.fillText('Depth ' + content.depth, x, y);
+      y += LINE_HEIGHT;
+
+      // Level
+      ctx.fillStyle = DESC_COLOR;
+      ctx.fillText('Level: ' + content.level + ' / ' + content.maxLevel, x, y);
+      y += LINE_HEIGHT;
+
+      // Effects (up to 3)
+      if (content.effects && content.effects.length > 0) {
+        ctx.fillStyle = VALUE_COLOR;
+        for (var i = 0; i < Math.min(content.effects.length, 3); i++) {
+          var effect = content.effects[i];
+          var effectText = this._formatTechEffect(effect);
+          ctx.fillText(effectText, x, y);
+          y += LINE_HEIGHT;
+        }
+      }
+
+      // Cost
+      if (content.level >= content.maxLevel) {
+        ctx.fillStyle = DESC_COLOR;
+        ctx.fillText('MAX LEVEL', x, y);
+      } else if (content.cost !== null) {
+        ctx.fillStyle = content.canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
+        ctx.fillText('Cost: ' + content.cost + ' Gold', x, y);
+      }
+      y += LINE_HEIGHT;
+
+      return y;
+    }
+
+    _formatTechEffect(effect) {
+      if (!effect) return '';
+      var value = effect.valuePerLevel || effect.baseValue || 0;
+      var valueStr = value < 1 ? Math.round(value * 100) + '%' : value;
+
+      if (effect.type === 'stat_bonus') {
+        return '+' + valueStr + ' ' + (effect.stat || 'stat') + '/lv';
+      } else if (effect.type === 'unique_mechanic') {
+        return (effect.mechanic || 'mechanic') + ': +' + valueStr + '/lv';
+      } else if (effect.type === 'weapon_modifier') {
+        return 'Weapon ' + (effect.stat || 'stat') + ': +' + valueStr + '/lv';
+      } else if (effect.type === 'passive_proc') {
+        return (effect.procType || 'proc') + ': +' + valueStr + '/lv';
+      }
+      return 'Effect: +' + valueStr + '/lv';
     }
 
     _wrapText(ctx, text, maxWidth) {

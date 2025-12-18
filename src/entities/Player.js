@@ -19,6 +19,7 @@
   var Experience = window.VampireSurvivors.Components.Experience;
   var Gold = window.VampireSurvivors.Components.Gold;
   var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
+  // TechTree imported lazily in getter (loaded after Player.js)
 
   // ============================================
   // Constants
@@ -123,6 +124,11 @@
 
     get playerStats() {
       return this.getComponent(PlayerStats);
+    }
+
+    get techTree() {
+      var TechTree = window.VampireSurvivors.Components.TechTree;
+      return TechTree ? this.getComponent(TechTree) : null;
     }
 
     // ----------------------------------------

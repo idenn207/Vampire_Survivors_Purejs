@@ -13,6 +13,7 @@
   var WeaponGridPanel = UI.WeaponGridPanel;
   var UpgradeTooltip = UI.UpgradeTooltip;
   var EvolutionPopup = UI.EvolutionPopup;
+  var TechUpgradePanel = UI.TechUpgradePanel;
 
   // ============================================
   // Constants
@@ -43,6 +44,7 @@
 
     // Sub-panels
     _statPanel = null;
+    _techUpgradePanel = null;
     _weaponCardPanel = null;
     _weaponGridPanel = null;
     _tooltip = null;
@@ -69,6 +71,7 @@
     // ----------------------------------------
     constructor() {
       this._statPanel = new StatUpgradePanel();
+      this._techUpgradePanel = TechUpgradePanel ? new TechUpgradePanel() : null;
       this._weaponCardPanel = new WeaponCardPanel();
       this._weaponGridPanel = new WeaponGridPanel();
       this._tooltip = new UpgradeTooltip();
@@ -106,8 +109,19 @@
       // Set evolution eligibility
       this._evolutionEligibility = evolutionEligibility || null;
 
+      // Lazy initialization of TechUpgradePanel (in case it wasn't available at constructor time)
+      if (!this._techUpgradePanel) {
+        var TechUpgradePanelClass = TechUpgradePanel || window.VampireSurvivors.UI.TechUpgradePanel;
+        if (TechUpgradePanelClass) {
+          this._techUpgradePanel = new TechUpgradePanelClass();
+        }
+      }
+
       // Set player on panels
       this._statPanel.setPlayer(player);
+      if (this._techUpgradePanel) {
+        this._techUpgradePanel.setPlayer(player);
+      }
       this._weaponGridPanel.setPlayer(player);
 
       // Set weapon options with evolution state
@@ -189,6 +203,9 @@
 
       // Render panels
       this._statPanel.render(ctx);
+      if (this._techUpgradePanel) {
+        this._techUpgradePanel.render(ctx);
+      }
       this._weaponCardPanel.render(ctx);
       this._weaponGridPanel.render(ctx);
 
@@ -225,10 +242,7 @@
       var leftWidth = Math.floor(totalWidth * LEFT_PANEL_RATIO);
       var rightWidth = totalWidth - leftWidth - 10; // 10px gap
 
-      var topRightHeight = Math.floor(totalHeight * TOP_RIGHT_RATIO);
-      var bottomRightHeight = totalHeight - topRightHeight - 10; // 10px gap
-
-      // Left panel (stats)
+      // Left panel: Stats only (full height)
       this._statPanel.setBounds(
         SCREEN_PADDING,
         SCREEN_PADDING,
@@ -236,21 +250,38 @@
         totalHeight
       );
 
+      // Right panel split into 3 sections: cards (40%), weapons (30%), tech (30%)
+      var weaponCardHeight = Math.floor(totalHeight * 0.40);
+      var weaponGridHeight = Math.floor(totalHeight * 0.30);
+      var techPanelHeight = totalHeight - weaponCardHeight - weaponGridHeight - 20; // 10px gaps
+
+      var rightX = SCREEN_PADDING + leftWidth + 10;
+
       // Top-right panel (weapon selection)
       this._weaponCardPanel.setBounds(
-        SCREEN_PADDING + leftWidth + 10,
+        rightX,
         SCREEN_PADDING,
         rightWidth,
-        topRightHeight
+        weaponCardHeight
       );
 
-      // Bottom-right panel (weapon grid)
+      // Middle-right panel (weapon grid)
       this._weaponGridPanel.setBounds(
-        SCREEN_PADDING + leftWidth + 10,
-        SCREEN_PADDING + topRightHeight + 10,
+        rightX,
+        SCREEN_PADDING + weaponCardHeight + 10,
         rightWidth,
-        bottomRightHeight
+        weaponGridHeight
       );
+
+      // Bottom-right panel (tech upgrades - below weapons)
+      if (this._techUpgradePanel) {
+        this._techUpgradePanel.setBounds(
+          rightX,
+          SCREEN_PADDING + weaponCardHeight + 10 + weaponGridHeight + 10,
+          rightWidth,
+          techPanelHeight
+        );
+      }
 
       // Evolution button (top-right corner, above weapon card panel)
       this._evolveButtonRect = {
@@ -276,6 +307,14 @@
       var statTooltip = this._statPanel.handleMouseMove(this._mouseX, this._mouseY);
       if (statTooltip) {
         tooltipContent = statTooltip;
+      }
+
+      // Check tech upgrade panel hover
+      if (this._techUpgradePanel) {
+        var techTooltip = this._techUpgradePanel.handleMouseMove(this._mouseX, this._mouseY);
+        if (techTooltip) {
+          tooltipContent = techTooltip;
+        }
       }
 
       // Check weapon card panel hover
@@ -321,6 +360,18 @@
           result: statResult,
           closesScreen: false,
         };
+      }
+
+      // Check tech upgrade panel click (gold tech upgrade)
+      if (this._techUpgradePanel) {
+        var techResult = this._techUpgradePanel.handleClick(this._mouseX, this._mouseY);
+        if (techResult) {
+          return {
+            type: 'tech_upgrade',
+            result: techResult,
+            closesScreen: false,
+          };
+        }
       }
 
       // Check weapon card panel click (weapon selection)
@@ -425,6 +476,9 @@
       if (this._statPanel) {
         this._statPanel.dispose();
         this._statPanel = null;
+      }
+      if (this._techUpgradePanel) {
+        this._techUpgradePanel = null;
       }
       if (this._weaponCardPanel) {
         this._weaponCardPanel.dispose();

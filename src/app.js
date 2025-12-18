@@ -43,6 +43,8 @@
   var HUDSystem = Systems.HUDSystem;
   var LevelUpSystem = Systems.LevelUpSystem;
   var GameOverSystem = Systems.GameOverSystem;
+  var CoreSelectionSystem = Systems.CoreSelectionSystem;
+  var TechTreeSystem = Systems.TechTreeSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
@@ -165,46 +167,59 @@
       gameOverSystem.initialize(game, entityManager);
       game.addSystem(gameOverSystem);
 
-      // Create player at center
-      player = entityManager.create(Player);
-      var transform = player.getComponent(Transform);
-      transform.x = game.width / 2 - transform.width / 2;
-      transform.y = game.height / 2 - transform.height / 2;
+      // Create core selection system (priority 1 - very early)
+      var coreSelectionSystem = new CoreSelectionSystem();
+      coreSelectionSystem.initialize(game, entityManager);
+      game.addSystem(coreSelectionSystem);
 
-      // Give player starting weapons
-      // Magic Missile - auto-targeting projectile
-      var magicMissileData = Data.getWeaponData('magic_missile');
-      var magicMissile = new Weapon(magicMissileData);
-      player.weaponSlot.addWeapon(magicMissile);
+      // Create tech tree system (priority 112)
+      var techTreeSystem = new TechTreeSystem();
+      techTreeSystem.initialize(game, entityManager);
+      game.addSystem(techTreeSystem);
 
-      // Rifle - manual aiming with mouse (click to fire)
-      var rifleData = Data.getWeaponData('rifle');
-      var rifle = new Weapon(rifleData);
-      player.weaponSlot.addWeapon(rifle);
+      // Helper function to setup player after core selection
+      function setupPlayer(coreId) {
+        // Create player at center
+        player = entityManager.create(Player);
+        var transform = player.getComponent(Transform);
+        transform.x = game.width / 2 - transform.width / 2;
+        transform.y = game.height / 2 - transform.height / 2;
 
-      // Set player reference in systems
-      playerSystem.setPlayer(player);
-      enemySystem.setPlayer(player);
-      traversalEnemySystem.setPlayer(player);
-      traversalEnemySystem.setCamera(camera);
-      bossSystem.setPlayer(player);
-      bossSystem.setCamera(camera);
-      combatSystem.setPlayer(player);
-      weaponSystem.setPlayer(player);
-      pickupSystem.setPlayer(player);
-      hudSystem.setPlayer(player);
-      hudSystem.setCamera(camera);
-      hudSystem.setWaveSystem(waveSystem);
-      hudSystem.setTraversalSystem(traversalEnemySystem);
-      bossSystem.setHUDSystem(hudSystem);
-      weaponSystem.setCamera(camera);
-      weaponSystem.initializeBehaviors();
-      levelUpSystem.setPlayer(player);
-      gameOverSystem.setPlayer(player);
-      gameOverSystem.setHUDSystem(hudSystem);
+        // Setup player with selected core (adds TechTree component and starting weapon)
+        coreSelectionSystem.setupPlayerWithCore(player, coreId);
 
-      // Camera follows player
-      camera.follow(player);
+        // Set player reference in systems
+        playerSystem.setPlayer(player);
+        enemySystem.setPlayer(player);
+        traversalEnemySystem.setPlayer(player);
+        traversalEnemySystem.setCamera(camera);
+        bossSystem.setPlayer(player);
+        bossSystem.setCamera(camera);
+        combatSystem.setPlayer(player);
+        weaponSystem.setPlayer(player);
+        pickupSystem.setPlayer(player);
+        hudSystem.setPlayer(player);
+        hudSystem.setCamera(camera);
+        hudSystem.setWaveSystem(waveSystem);
+        hudSystem.setTraversalSystem(traversalEnemySystem);
+        bossSystem.setHUDSystem(hudSystem);
+        weaponSystem.setCamera(camera);
+        weaponSystem.initializeBehaviors();
+        levelUpSystem.setPlayer(player);
+        techTreeSystem.setPlayer(player);
+        gameOverSystem.setPlayer(player);
+        gameOverSystem.setHUDSystem(hudSystem);
+
+        // Camera follows player
+        camera.follow(player);
+
+        // Register player debug info
+        game.debugManager.register(player);
+        game.debugManager.registerSummary(player);
+
+        // Resume game after core selection
+        game.resume();
+      }
 
       // Listen for player death (handled by GameOverSystem)
       events.on('player:died', function (data) {
@@ -235,7 +250,6 @@
 
       // Register debug info
       game.debugManager.register(entityManager);
-      game.debugManager.register(player);
       game.debugManager.register(camera);
       game.debugManager.register(waveSystem);
       game.debugManager.register(enemySystem);
@@ -249,6 +263,8 @@
       game.debugManager.register(hudSystem);
       game.debugManager.register(levelUpSystem);
       game.debugManager.register(gameOverSystem);
+      game.debugManager.register(coreSelectionSystem);
+      game.debugManager.register(techTreeSystem);
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
       game.debugManager.register(pickupPool);
@@ -256,7 +272,6 @@
       // Register summary providers for high-priority debug info
       game.debugManager.registerSummary(game);
       game.debugManager.registerSummary(events);
-      game.debugManager.registerSummary(player);
       game.debugManager.registerSummary(camera);
       game.debugManager.registerSummary(entityManager);
 
@@ -267,6 +282,9 @@
       });
 
       await game.start();
+
+      // Start core selection flow (game pauses until selection is made)
+      coreSelectionSystem.startSelection(setupPlayer);
 
       console.log('[App] Game running with ECS');
     } catch (error) {

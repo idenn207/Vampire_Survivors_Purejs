@@ -7,7 +7,12 @@
       "Bash(git add:*)",
       "WebSearch",
       "Bash(curl:*)",
-      "Bash(npx http-server -p 8080 -o)"
+      "Bash(npx http-server -p 8080 -o)",
+      "Bash(grep:*)",
+      "Bash(for f in src/data/TechEffectData.js src/data/TechCoreData.js src/data/CoreWeaponData.js src/components/TechTree.js src/ui/CoreSelectionScreen.js src/ui/TechUnlockPopup.js src/ui/TechUpgradePanel.js src/ui/UpgradeTooltip.js src/ui/LevelUpScreen.js src/systems/CoreSelectionSystem.js src/systems/TechTreeSystem.js src/systems/LevelUpSystem.js src/entities/Player.js src/app.js)",
+      "Bash(do node --check \"$f\")",
+      "Bash(echo:*)",
+      "Bash(done)"
     ]
   }
 }

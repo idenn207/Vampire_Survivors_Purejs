@@ -6,6 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Vampire Survivors-inspired roguelike game built in **pure JavaScript** with Canvas 2D rendering. No build tools or bundlers - files are loaded via `<script>` tags in dependency order.
 
+## Development
+
+### Running
+
+Open `index.html` directly in a browser, or use a local server:
+```bash
+npx http-server -p 8080 -o
+```
+
+### Debug Mode
+
+Press **F3** to toggle debug panel (shows FPS, entity counts, collision info, console logs).
+
 ## Architecture
 
 ### Module Pattern: IIFE + Namespace
@@ -27,12 +40,16 @@ All code uses IIFE (Immediately Invoked Function Expression) with a global names
 **Namespace hierarchy:**
 
 - `VampireSurvivors.Core` - Game, EventBus, Time, Input, Camera
-- `VampireSurvivors.Components` - Transform, Velocity, Sprite, Collider
-- `VampireSurvivors.Entities` - Entity, Player, Enemy
+- `VampireSurvivors.Components` - Transform, Velocity, Sprite, Collider, Health, Weapon, etc.
+- `VampireSurvivors.Entities` - Entity, Player, Enemy, Boss, Projectile, Pickup
 - `VampireSurvivors.Systems` - All game systems
-- `VampireSurvivors.Managers` - EntityManager
+- `VampireSurvivors.Behaviors` - Weapon behaviors (ProjectileBehavior, LaserBehavior, etc.)
+- `VampireSurvivors.Managers` - EntityManager, BlacklistManager
+- `VampireSurvivors.Data` - WeaponData, WaveData, BossData, DropTable configs
+- `VampireSurvivors.Pool` - Object pools (projectilePool, areaEffectPool, pickupPool)
+- `VampireSurvivors.UI` - HUD components (StatusPanel, WeaponSlots, LevelUpScreen, etc.)
 - `VampireSurvivors.Utils` - Vector2
-- `VampireSurvivors.Debug` - Debug tools
+- `VampireSurvivors.Debug` - DebugConfig, DebugPanel, DebugConsole, DebugManager
 
 ### ECS (Entity Component System)
 
@@ -44,50 +61,47 @@ All code uses IIFE (Immediately Invoked Function Expression) with a global names
 | Priority | System | Purpose |
 |----------|--------|---------|
 | 0 | BackgroundSystem | Draw grid |
+| 4 | WaveSystem | Wave progression |
 | 5 | PlayerSystem | Input → Velocity |
 | 8 | EnemySystem | Spawn + AI |
+| 8 | TraversalEnemySystem | Screen-crossing enemies |
+| 8 | BossSystem | Boss spawning + patterns |
 | 10 | MovementSystem | Velocity → Position |
+| 15 | ProjectileSystem | Projectile lifecycle |
+| 15 | AreaEffectSystem | Area damage zones |
 | 20 | CollisionSystem | Detect collisions |
+| 25 | CombatSystem | Damage dealing |
+| 30 | DropSystem | Loot spawning |
+| 35 | PickupSystem | Collect items |
+| 40 | WeaponSystem | Fire weapons |
 | 50 | CameraSystem | Follow player |
 | 100 | RenderSystem | Draw entities |
+| 110 | HUDSystem | UI overlay |
+| 115 | LevelUpSystem | Level-up screen |
+| 120 | GameOverSystem | Death screen |
+
+### Weapon System (Behavior Pattern)
+
+Weapons are data-driven via `src/data/WeaponData.js`. Each weapon has:
+- `attackType`: PROJECTILE, LASER, MELEE_SWING, AREA_DAMAGE, PARTICLE
+- `targetingMode`: NEAREST, RANDOM, MOUSE, ROTATING, CHAIN
+- `isAuto`: true for auto-fire, false for manual (mouse click)
+
+Weapon behaviors in `src/behaviors/` execute the attack logic based on type.
 
 ### Collision Layers (Bitmask)
 
 ```javascript
-CollisionLayer.PLAYER = 1; // 0b00001
-CollisionLayer.ENEMY = 2; // 0b00010
-CollisionLayer.TERRAIN = 4; // 0b00100
-CollisionLayer.HITBOX = 8; // 0b01000
-CollisionLayer.PICKUP = 16; // 0b10000
+CollisionLayer.PLAYER = 1;   // 0b00001
+CollisionLayer.ENEMY = 2;    // 0b00010
+CollisionLayer.TERRAIN = 4;  // 0b00100
+CollisionLayer.HITBOX = 8;   // 0b01000
+CollisionLayer.PICKUP = 16;  // 0b10000
 ```
 
 ### Script Loading Order (index.html)
 
-10 phases in strict dependency order:
-
-1. Namespace initialization
-2. Utilities (Vector2)
-3. Core (EventBus, Time, Input, Game)
-4. Components
-5. Entities
-6. Managers
-7. Systems
-8. Camera
-9. Debug
-10. Entry point (app.js)
-
-## Development
-
-### Running
-
-Open `index.html` in a browser. No build step required.
-
-### Debug Mode
-
-Press **F3** to toggle debug panel (shows FPS, entity counts, collision info).
-
-### Adding New Files
-
+10 phases in strict dependency order. When adding new files:
 1. Create file using IIFE pattern
 2. Add `<script>` tag in `index.html` in correct phase
 3. Register with namespace: `Namespace.ClassName = ClassName;`
@@ -151,10 +165,13 @@ events.emit('player:damaged', { amount: 10 });
 
 ## Key Files
 
-- `src/app.js` - Entry point, wires up all systems
+- `src/app.js` - Entry point, wires systems and creates player
 - `src/core/Game.js` - Game loop, state management
 - `src/managers/EntityManager.js` - Entity creation/querying
 - `src/entities/Entity.js` - Base entity class with component/tag system
+- `src/data/WeaponData.js` - All weapon definitions and stats
+- `src/data/WaveData.js` - Enemy wave configurations
+- `src/systems/WeaponSystem.js` - Weapon firing orchestration
 
 ## Project Versions
 

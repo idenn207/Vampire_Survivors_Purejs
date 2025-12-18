@@ -6,6 +6,12 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var TechTree = window.VampireSurvivors.Components.TechTree;
+  var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
+
+  // ============================================
   // Constants
   // ============================================
   var SLOTS_X = 10;
@@ -41,7 +47,34 @@
     particle: '#9B59B6', // Purple
   };
 
-  // Tech type colors for icons
+  // Tech depth colors for icons
+  var DEPTH_COLORS = {
+    0: '#FFFFFF',
+    1: '#3498DB',
+    2: '#9B59B6',
+    3: '#F39C12',
+  };
+
+  // Tech icons based on core icons
+  var TECH_ICONS = {
+    flame: '🔥',
+    snowflake: '❄',
+    bolt: '⚡',
+    moon: '🌙',
+    droplet: '💧',
+    star: '✦',
+    leaf: '🍃',
+    shield: '🛡',
+    wind: '💨',
+    mountain: '⛰',
+    void: '◉',
+    sun: '☀',
+    gear: '⚙',
+    paw: '🐾',
+    clock: '⏱',
+  };
+
+  // Tech type colors for icons (legacy, kept for fallback)
   var TECH_COLORS = {
     passive: '#27AE60', // Green
     buff: '#F1C40F', // Yellow
@@ -114,13 +147,46 @@
     }
 
     _getTechItems() {
-      // Tech tree items - for future implementation
-      // Could be passives, buffs, or upgrades
       if (!this._player) {
         return [];
       }
-      // Placeholder: return empty array until tech tree is implemented
-      return [];
+
+      // Get TechTree component (lazy import for circular dependency)
+      var TechTreeComponent = TechTree || window.VampireSurvivors.Components.TechTree;
+      if (!TechTreeComponent) {
+        return [];
+      }
+
+      var techTree = this._player.getComponent(TechTreeComponent);
+      if (!techTree) {
+        return [];
+      }
+
+      var coreData = techTree.getCoreData();
+      if (!coreData) {
+        return [];
+      }
+
+      var displayInfo = techTree.getDisplayInfo();
+      var techItems = [];
+
+      for (var i = 0; i < displayInfo.length && techItems.length < TECH_SLOTS; i++) {
+        var info = displayInfo[i];
+        techItems.push({
+          name: info.name,
+          level: info.level,
+          depth: info.depth,
+          coreIcon: coreData.icon,
+          coreColor: coreData.color,
+        });
+      }
+
+      // Sort by depth for display priority
+      techItems.sort(function (a, b) {
+        return a.depth - b.depth;
+      });
+
+      return techItems;
     }
 
     _renderEmptySlot(ctx, x, y, type) {
@@ -178,8 +244,9 @@
     }
 
     _renderFilledTechSlot(ctx, x, y, tech) {
-      var techType = tech.type || 'passive';
-      var borderColor = TECH_COLORS[techType] || '#27AE60';
+      // Use depth color for border
+      var depthColor = DEPTH_COLORS[tech.depth] || DEPTH_COLORS[0];
+      var borderColor = tech.coreColor || depthColor;
 
       ctx.fillStyle = borderColor;
       ctx.fillRect(x, y, SLOT_SIZE, SLOT_SIZE);
@@ -192,8 +259,27 @@
         SLOT_SIZE - SLOT_BORDER * 2
       );
 
-      this._renderTechIcon(ctx, x, y, tech, techType);
+      this._renderTechIcon(ctx, x, y, tech);
       this._renderLevel(ctx, x, y, tech.level || 1);
+
+      // Render depth indicator (small colored dot in top-left)
+      this._renderDepthIndicator(ctx, x, y, tech.depth);
+    }
+
+    _renderDepthIndicator(ctx, x, y, depth) {
+      var depthColor = DEPTH_COLORS[depth] || DEPTH_COLORS[0];
+      var dotX = x + 6;
+      var dotY = y + 6;
+      var dotRadius = 4;
+
+      ctx.fillStyle = depthColor;
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, dotRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = '#000000';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
 
     _getWeaponType(weapon) {
@@ -400,48 +486,21 @@
       }
     }
 
-    _renderTechIcon(ctx, x, y, tech, techType) {
-      var iconColor = TECH_COLORS[techType] || '#27AE60';
+    _renderTechIcon(ctx, x, y, tech) {
       var centerX = x + SLOT_SIZE / 2;
       var centerY = y + SLOT_SIZE / 2;
-      var iconSize = 16;
+      var depthColor = DEPTH_COLORS[tech.depth] || '#FFFFFF';
 
-      ctx.fillStyle = iconColor;
+      // Get core icon character
+      var coreIcon = tech.coreIcon || 'star';
+      var iconChar = TECH_ICONS[coreIcon] || '✦';
 
-      switch (techType) {
-        case 'passive':
-          // Shield shape
-          ctx.beginPath();
-          ctx.moveTo(centerX, centerY - iconSize / 2);
-          ctx.lineTo(centerX + iconSize / 2, centerY - iconSize / 4);
-          ctx.lineTo(centerX + iconSize / 2, centerY + iconSize / 4);
-          ctx.lineTo(centerX, centerY + iconSize / 2);
-          ctx.lineTo(centerX - iconSize / 2, centerY + iconSize / 4);
-          ctx.lineTo(centerX - iconSize / 2, centerY - iconSize / 4);
-          ctx.closePath();
-          ctx.fill();
-          break;
-
-        case 'buff':
-          // Arrow up
-          ctx.beginPath();
-          ctx.moveTo(centerX, centerY - iconSize / 2);
-          ctx.lineTo(centerX + iconSize / 2, centerY);
-          ctx.lineTo(centerX + iconSize / 4, centerY);
-          ctx.lineTo(centerX + iconSize / 4, centerY + iconSize / 2);
-          ctx.lineTo(centerX - iconSize / 4, centerY + iconSize / 2);
-          ctx.lineTo(centerX - iconSize / 4, centerY);
-          ctx.lineTo(centerX - iconSize / 2, centerY);
-          ctx.closePath();
-          ctx.fill();
-          break;
-
-        default:
-          // Circle
-          ctx.beginPath();
-          ctx.arc(centerX, centerY, iconSize / 2, 0, Math.PI * 2);
-          ctx.fill();
-      }
+      // Draw icon with depth color
+      ctx.font = '16px Arial';
+      ctx.fillStyle = depthColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(iconChar, centerX, centerY);
     }
 
     _drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {

@@ -432,6 +432,45 @@
     return getEvolutionPartners(weaponId).length > 0;
   }
 
+  /**
+   * Check if a weapon is a core weapon (from CoreWeaponData)
+   * Core weapons can only evolve via recipes, not random evolution
+   * @param {string} weaponId
+   * @returns {boolean}
+   */
+  function isCoreWeapon(weaponId) {
+    var CoreWeaponData = window.VampireSurvivors.Data.CoreWeaponData;
+    if (!CoreWeaponData) return false;
+    return CoreWeaponData.hasOwnProperty(weaponId);
+  }
+
+  /**
+   * Check if a weapon can be used as evolution material
+   * Core weapons CANNOT be used as material - only as main weapon
+   * @param {string} weaponId
+   * @returns {boolean}
+   */
+  function canBeUsedAsMaterial(weaponId) {
+    // Core weapons cannot be used as materials
+    return !isCoreWeapon(weaponId);
+  }
+
+  /**
+   * Check if a weapon can undergo random evolution (unknown recipe)
+   * Core weapons can ONLY evolve via known recipes
+   * @param {string} mainWeaponId
+   * @param {string} materialWeaponId
+   * @returns {boolean}
+   */
+  function canDoRandomEvolution(mainWeaponId, materialWeaponId) {
+    // If main weapon is a core weapon, it must use a known recipe
+    if (isCoreWeapon(mainWeaponId)) {
+      return isKnownRecipe(mainWeaponId, materialWeaponId);
+    }
+    // Non-core weapons can do random evolution
+    return true;
+  }
+
   // ============================================
   // Export to Namespace
   // ============================================
@@ -450,5 +489,8 @@
     getSourceWeapons: getSourceWeapons,
     getEvolutionPartners: getEvolutionPartners,
     canEvolve: canEvolve,
+    isCoreWeapon: isCoreWeapon,
+    canBeUsedAsMaterial: canBeUsedAsMaterial,
+    canDoRandomEvolution: canDoRandomEvolution,
   };
 })(window.VampireSurvivors.Data);
