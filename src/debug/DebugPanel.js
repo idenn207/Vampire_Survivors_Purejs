@@ -70,6 +70,11 @@
       var lineHeight = Config.LINE_HEIGHT;
       var fontSize = Config.FONT_SIZE;
 
+      // Reset text properties to ensure consistent rendering
+      // (other UI components may have changed these)
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+
       // Calculate total height
       var totalHeight = this._calculateTotalHeight();
 
