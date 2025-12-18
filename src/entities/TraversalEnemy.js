@@ -87,7 +87,13 @@
       var color = config.color || DEFAULT_COLOR;
       var health = config.health || DEFAULT_HEALTH;
 
-      this._speed = config.moveSpeed || config.dashSpeed || DEFAULT_SPEED;
+      // Handle zero speed for CIRCULAR pattern (use !== undefined to allow 0)
+      this._speed =
+        config.moveSpeed !== undefined
+          ? config.moveSpeed
+          : config.dashSpeed !== undefined
+            ? config.dashSpeed
+            : DEFAULT_SPEED;
       this._damage = config.damage || DEFAULT_DAMAGE;
       this._decayTimer = config.decayTime || DEFAULT_DECAY_TIME;
       this._maxDecayTime = this._decayTimer;
@@ -107,6 +113,15 @@
 
       var healthComp = this.getComponent(Health);
       healthComp.setMaxHealth(health, true);
+
+      // Reset velocity (important for CIRCULAR pattern and entity pooling)
+      var velocity = this.getComponent(Velocity);
+      velocity.vx = 0;
+      velocity.vy = 0;
+
+      // Reset charging state
+      this._isCharging = false;
+      this._chargeTimer = 0;
 
       // Add pattern-specific tag
       this.addTag('traversal_' + this._patternType.toLowerCase());

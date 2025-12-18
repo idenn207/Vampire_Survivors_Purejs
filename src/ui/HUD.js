@@ -27,20 +27,11 @@
   var EXP_BAR_BORDER = '#1A252F';
   var EXP_TEXT_COLOR = '#FFFFFF';
 
-  // Timer
-  var TIMER_Y = 60;
-  var TIMER_FONT = 'bold 48px Arial';
-  var TIMER_COLOR = '#FFFFFF';
-  var TIMER_OUTLINE_COLOR = '#000000';
-  var TIMER_OUTLINE_WIDTH = 4;
-
-  // Kill counter
-  var KILL_COUNTER_X_OFFSET = 10;
-  var KILL_COUNTER_Y = 60;
-
-  // Wave info
-  var WAVE_INFO_X = 10;
-  var WAVE_INFO_Y = 90;
+  // Top-right info bar (timer, wave, kills on same line)
+  var INFO_BAR_Y = 30;
+  var INFO_BAR_X_OFFSET = 10;
+  var INFO_BAR_FONT = 'bold 18px Arial';
+  var INFO_BAR_SPACING = 20; // Space between items
 
   // ============================================
   // Class Definition
@@ -155,14 +146,8 @@
       // Render EXP bar at top (full width)
       this._renderEXPBar(ctx, canvasWidth);
 
-      // Render timer at top center
-      this._renderTimer(ctx, canvasWidth);
-
-      // Render kill counter at top right
-      this._renderKillCounter(ctx, canvasWidth);
-
-      // Render wave info at top left (below EXP bar)
-      this._renderWaveInfo(ctx, canvasWidth);
+      // Render info bar at top right (timer, wave, kills on same line)
+      this._renderInfoBar(ctx, canvasWidth);
 
       // Render sub-components (screen space)
       this._statusPanel.render(ctx);
@@ -213,73 +198,39 @@
       ctx.fillText(Math.floor(current) + ' / ' + Math.floor(required), canvasWidth - 10, EXP_BAR_Y + EXP_BAR_HEIGHT / 2);
     }
 
-    _renderTimer(ctx, canvasWidth) {
-      if (!this._game) return;
+    _renderInfoBar(ctx, canvasWidth) {
+      var x = canvasWidth - INFO_BAR_X_OFFSET;
+      var y = INFO_BAR_Y;
 
-      var elapsedTime = this._game.elapsedTime || 0;
-      var timeStr = this._formatTime(elapsedTime);
-
-      var x = canvasWidth / 2;
-      var y = TIMER_Y;
-
-      // Text style
-      ctx.font = TIMER_FONT;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'top';
-
-      // Outline
-      ctx.strokeStyle = TIMER_OUTLINE_COLOR;
-      ctx.lineWidth = TIMER_OUTLINE_WIDTH;
-      ctx.strokeText(timeStr, x, y);
-
-      // Fill
-      ctx.fillStyle = TIMER_COLOR;
-      ctx.fillText(timeStr, x, y);
-    }
-
-    _renderKillCounter(ctx, canvasWidth) {
-      var x = canvasWidth - KILL_COUNTER_X_OFFSET;
-      var y = KILL_COUNTER_Y;
-
-      // Label
-      ctx.font = 'bold 16px Arial';
-      ctx.fillStyle = '#FFFFFF';
+      ctx.font = INFO_BAR_FONT;
       ctx.textAlign = 'right';
       ctx.textBaseline = 'top';
-
-      // Outline
-      ctx.strokeStyle = '#000000';
       ctx.lineWidth = 3;
-      ctx.strokeText('Kills: ' + this._killCount, x, y);
-
-      // Fill
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillText('Kills: ' + this._killCount, x, y);
-    }
-
-    _renderWaveInfo(ctx, canvasWidth) {
-      if (!this._waveSystem) return;
-
-      var x = WAVE_INFO_X;
-      var y = WAVE_INFO_Y;
-
-      ctx.font = 'bold 16px Arial';
-      ctx.textAlign = 'left';
-      ctx.textBaseline = 'top';
-
-      // Wave number
       ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 3;
-      ctx.strokeText('Wave: ' + this._currentWave, x, y);
-      ctx.fillStyle = '#FFFFFF';
-      ctx.fillText('Wave: ' + this._currentWave, x, y);
 
-      // Time remaining until next wave
-      var timeRemaining = this._waveSystem.timeRemaining;
-      var timeStr = this._formatTime(timeRemaining);
-      ctx.strokeText('Next: ' + timeStr, x, y + 20);
-      ctx.fillStyle = '#AAAAAA';
-      ctx.fillText('Next: ' + timeStr, x, y + 20);
+      // Build info string: Timer | Wave X | Kills: X
+      var parts = [];
+
+      // Timer
+      if (this._game) {
+        var elapsedTime = this._game.elapsedTime || 0;
+        parts.push(this._formatTime(elapsedTime));
+      }
+
+      // Wave
+      parts.push('Wave ' + this._currentWave);
+
+      // Kills
+      parts.push('Kills: ' + this._killCount);
+
+      var infoText = parts.join('  |  ');
+
+      // Draw outline
+      ctx.strokeText(infoText, x, y);
+
+      // Draw fill
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(infoText, x, y);
     }
 
     _onWaveAnnouncing(data) {

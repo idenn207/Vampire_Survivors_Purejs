@@ -188,6 +188,7 @@
       hudSystem.setPlayer(player);
       hudSystem.setCamera(camera);
       hudSystem.setWaveSystem(waveSystem);
+      hudSystem.setTraversalSystem(traversalEnemySystem);
       weaponSystem.setCamera(camera);
       weaponSystem.initializeBehaviors();
       levelUpSystem.setPlayer(player);

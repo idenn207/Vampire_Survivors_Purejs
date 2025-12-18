@@ -35,18 +35,18 @@
       xpMultiplier: 2.0,
       goldMultiplier: 1.5,
     },
-    // Traversal enemies - higher rewards
+    // Traversal enemies - reduced multipliers (more enemies now)
     traversal_circular: {
-      xpMultiplier: 3.0,
-      goldMultiplier: 2.0,
+      xpMultiplier: 1.0,
+      goldMultiplier: 1.0,
     },
     traversal_dash: {
-      xpMultiplier: 2.5,
-      goldMultiplier: 2.5,
+      xpMultiplier: 1.0,
+      goldMultiplier: 1.2,
     },
     traversal_laser: {
-      xpMultiplier: 4.0,
-      goldMultiplier: 3.0,
+      xpMultiplier: 1.5,
+      goldMultiplier: 1.2,
     },
   };
 
@@ -83,21 +83,21 @@
       { type: 'gold', minValue: 5, maxValue: 15, chance: 0.5 }, // 50% gold
       { type: 'health', minValue: 15, maxValue: 25, chance: 0.1 }, // 10% health
     ],
-    // Traversal enemies - higher rewards
+    // Traversal enemies - reduced per-enemy rewards (more enemies now)
     traversal_circular: [
-      { type: 'exp', minValue: 10, maxValue: 25, chance: 1.0 }, // Always XP
-      { type: 'gold', minValue: 8, maxValue: 20, chance: 0.7 }, // 70% gold
-      { type: 'health', minValue: 15, maxValue: 25, chance: 0.1 }, // 10% health
+      { type: 'exp', minValue: 3, maxValue: 8, chance: 0.8 }, // 80% XP
+      { type: 'gold', minValue: 2, maxValue: 5, chance: 0.4 }, // 40% gold
+      { type: 'health', minValue: 10, maxValue: 15, chance: 0.05 }, // 5% health
     ],
     traversal_dash: [
-      { type: 'exp', minValue: 8, maxValue: 20, chance: 1.0 }, // Always XP
-      { type: 'gold', minValue: 10, maxValue: 25, chance: 0.8 }, // 80% gold
-      { type: 'health', minValue: 20, maxValue: 30, chance: 0.15 }, // 15% health
+      { type: 'exp', minValue: 2, maxValue: 6, chance: 0.7 }, // 70% XP
+      { type: 'gold', minValue: 3, maxValue: 8, chance: 0.5 }, // 50% gold
+      { type: 'health', minValue: 10, maxValue: 20, chance: 0.08 }, // 8% health
     ],
     traversal_laser: [
-      { type: 'exp', minValue: 15, maxValue: 35, chance: 1.0 }, // Always XP
-      { type: 'gold', minValue: 15, maxValue: 30, chance: 0.9 }, // 90% gold
-      { type: 'health', minValue: 25, maxValue: 40, chance: 0.2 }, // 20% health
+      { type: 'exp', minValue: 4, maxValue: 10, chance: 0.9 }, // 90% XP
+      { type: 'gold', minValue: 3, maxValue: 7, chance: 0.6 }, // 60% gold
+      { type: 'health', minValue: 10, maxValue: 20, chance: 0.1 }, // 10% health
     ],
   };
 
