@@ -64,6 +64,7 @@
       shape: 'circle',
       lifetime: 3.0,
       icon: 'magic_orb', // Glowing magic orb
+      imageId: 'weapon_magic_missile',
 
       // Upgrades per level
       upgrades: {
@@ -100,6 +101,7 @@
       shape: 'circle',
       lifetime: 2.0,
       icon: 'rifle', // Rifle barrel
+      imageId: 'weapon_rifle',
 
       upgrades: {
         2: { damage: 18, cooldown: 0.28 },
@@ -135,6 +137,7 @@
       shape: 'circle',
       lifetime: 1.5,
       icon: 'shotgun', // Spread pattern
+      imageId: 'weapon_shotgun',
 
       upgrades: {
         2: { damage: 14, projectileCount: 7 },
@@ -170,6 +173,7 @@
 
       color: '#00FFFF',
       icon: 'laser_beam', // Concentrated beam
+      imageId: 'weapon_laser_gun',
 
       upgrades: {
         2: { damage: 60, width: 8 },
@@ -202,6 +206,7 @@
 
       color: '#FF00FF',
       icon: 'auto_laser', // Auto-targeting laser
+      imageId: 'weapon_auto_laser',
 
       upgrades: {
         2: { damage: 45, range: 600 },
@@ -237,6 +242,7 @@
 
       color: '#CCCCCC',
       icon: 'sword', // Sword blade
+      imageId: 'weapon_sword_slash',
 
       upgrades: {
         2: { damage: 45, hitsPerSwing: 2 },
@@ -269,6 +275,7 @@
 
       color: '#AAAAAA',
       icon: 'dagger', // Quick blade
+      imageId: 'weapon_auto_blade',
 
       upgrades: {
         2: { damage: 32, cooldown: 0.7 },
@@ -304,6 +311,7 @@
 
       color: '#00FF00',
       icon: 'poison', // Toxic cloud
+      imageId: 'weapon_poison_cloud',
 
       upgrades: {
         2: { damage: 10, duration: 5.0 },
@@ -336,6 +344,7 @@
 
       color: '#FF6600',
       icon: 'fire', // Burning ground
+      imageId: 'weapon_fire_zone',
 
       upgrades: {
         2: { damage: 15, tickRate: 4 },
@@ -371,6 +380,7 @@
       color: '#CCCCCC',
       size: 12,
       icon: 'spinning_blade', // Circular blade
+      imageId: 'weapon_rotating_blade',
 
       upgrades: {
         2: { damage: 32, bladeCount: 5 },
@@ -402,6 +412,7 @@
 
       color: '#FFFF00',
       icon: 'lightning', // Electric bolt
+      imageId: 'weapon_chain_lightning',
 
       upgrades: {
         2: { damage: 38, chainCount: 4 },
@@ -437,6 +448,7 @@
 
       color: '#FF4444',
       icon: 'mine', // Explosive trap
+      imageId: 'weapon_proximity_mine',
 
       upgrades: {
         2: { damage: 100, mineCount: 2 },
@@ -473,6 +485,7 @@
 
       color: '#88CCFF',
       icon: 'spirit', // Ghostly companion
+      imageId: 'weapon_spirit_companion',
 
       upgrades: {
         2: { damage: 28, summonHealth: 70, summonCount: 2 },

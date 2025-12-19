@@ -63,6 +63,7 @@
       shape: 'circle',
       lifetime: 3.0,
       icon: 'inferno_bolt',
+      imageId: 'weapon_inferno_bolt',
 
       // Upgrades
       upgrades: {
@@ -123,6 +124,7 @@
       shape: 'diamond',
       lifetime: 3.0,
       icon: 'frost_shard',
+      imageId: 'weapon_frost_shard',
 
       upgrades: {
         2: { damage: 20, statusEffects: [{ type: StatusEffectType.SLOW, chance: 1.0, duration: 2, speedModifier: 0.65 }, { type: StatusEffectType.FREEZE, chance: 0.15, duration: 1.5 }] },
@@ -167,6 +169,7 @@
       color: '#FFD700',
       size: 8,
       icon: 'thunder_strike',
+      imageId: 'weapon_thunder_strike',
 
       upgrades: {
         2: { damage: 36, chainCount: 4, statusEffects: [{ type: StatusEffectType.STUN, chance: 0.2, duration: 0.8 }] },
@@ -209,6 +212,7 @@
 
       color: '#4B0082',
       icon: 'shadow_blade',
+      imageId: 'weapon_shadow_blade',
 
       upgrades: {
         2: { damage: 52, critChance: 0.35 },
@@ -257,6 +261,7 @@
 
       color: '#8B0000',
       icon: 'blood_scythe',
+      imageId: 'weapon_blood_scythe',
 
       upgrades: {
         2: { damage: 40, lifesteal: 0.18 },
@@ -298,6 +303,7 @@
       shape: 'circle',
       lifetime: 2.5,
       icon: 'arcane_barrage',
+      imageId: 'weapon_arcane_barrage',
 
       upgrades: {
         2: { damage: 15, passiveCDR: 0.12 },
@@ -347,6 +353,7 @@
 
       color: '#228B22',
       icon: 'venom_spore',
+      imageId: 'weapon_venom_spore',
 
       upgrades: {
         2: { damage: 8, statusEffects: [{ type: StatusEffectType.POISON, chance: 1.0, duration: 5, tickRate: 1, damagePerTick: 3 }] },
@@ -387,6 +394,7 @@
 
       color: '#708090',
       icon: 'steel_hammer',
+      imageId: 'weapon_steel_hammer',
 
       upgrades: {
         2: { damage: 72, knockback: 380 },
@@ -431,6 +439,7 @@
       shape: 'arc',
       lifetime: 2.0,
       icon: 'wind_cutter',
+      imageId: 'weapon_wind_cutter',
 
       upgrades: {
         2: { damage: 28, knockback: 180, passiveSpeedBoost: 0.18 },
@@ -475,6 +484,7 @@
 
       color: '#8B4513',
       icon: 'earth_spike',
+      imageId: 'weapon_earth_spike',
 
       upgrades: {
         2: { damage: 46, radius: 95 },
@@ -526,6 +536,7 @@
 
       color: '#2F0032',
       icon: 'void_rift',
+      imageId: 'weapon_void_rift',
 
       upgrades: {
         2: { damage: 11, statusEffects: [{ type: StatusEffectType.WEAKNESS, chance: 1.0, duration: 4, damageMultiplier: 1.3 }, { type: StatusEffectType.PULL, chance: 1.0, duration: 4, pullForce: 60 }] },
@@ -570,6 +581,7 @@
 
       color: '#FFD700',
       icon: 'holy_lance',
+      imageId: 'weapon_holy_lance',
 
       upgrades: {
         2: { damage: 52, healOnHit: 3 },
@@ -615,6 +627,7 @@
       shape: 'square',
       lifetime: 2.0,
       icon: 'tech_turret',
+      imageId: 'weapon_tech_turret',
 
       upgrades: {
         2: { damage: 13, ricochet: { bounces: 2, damageDecay: 0.75, bounceRange: 110 } },
@@ -667,6 +680,7 @@
 
       color: '#FF6347',
       icon: 'beast_claw',
+      imageId: 'weapon_beast_claw',
 
       upgrades: {
         2: { damage: 26, frenzy: { attackSpeedPerKill: 0.06, maxStacks: 10, decayTime: 5 } },
@@ -721,6 +735,7 @@
 
       color: '#DDA0DD',
       icon: 'chrono_beam',
+      imageId: 'weapon_chrono_beam',
 
       upgrades: {
         2: { damage: 46, passiveCDR: 0.18 },
