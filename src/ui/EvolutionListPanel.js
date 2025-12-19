@@ -329,7 +329,8 @@
         // Get weapon data (check regular weapons, core weapons, and evolved weapons)
         var mainData = Data.getWeaponData(mainId) || Data.getCoreWeaponData(mainId) || WeaponEvolutionData.getEvolvedWeaponData(mainId);
         var materialData = Data.getWeaponData(materialId) || Data.getCoreWeaponData(materialId) || WeaponEvolutionData.getEvolvedWeaponData(materialId);
-        var resultData = WeaponEvolutionData.getEvolvedWeaponData(resultId);
+        // Check evolved weapons first, then regular weapons (for basic evolved weapons)
+        var resultData = WeaponEvolutionData.getEvolvedWeaponData(resultId) || Data.getWeaponData(resultId);
 
         if (!resultData) continue;
 

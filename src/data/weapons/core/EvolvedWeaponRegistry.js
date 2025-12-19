@@ -5,8 +5,8 @@
 (function (Data) {
   'use strict';
 
-  // Initialize the unified evolved weapon registry
-  Data.EvolvedWeaponRegistry = {};
+  // Initialize the unified evolved weapon registry (preserve existing entries)
+  Data.EvolvedWeaponRegistry = Data.EvolvedWeaponRegistry || {};
 
   // Backwards compatibility alias
   Data.CoreEvolvedRegistry = Data.EvolvedWeaponRegistry;
