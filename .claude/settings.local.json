@@ -23,7 +23,10 @@
       "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\summons\"/*.js)",
       "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\traversalenemies\"/*.js \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\bosses\"/*.js)",
       "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\systems\\\\combat\"/*.js)",
-      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\systems\\\\levelup\"/*.js)"
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\systems\\\\levelup\"/*.js)",
+      "Bash(for dir in C:_projectmyVampire_Survivors_Purejssrc/data/weapons/evolved/*/)",
+      "Bash(ls:*)",
+      "Bash(find:*)"
     ]
   }
 }

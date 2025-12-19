@@ -326,9 +326,9 @@
           }
         }
 
-        // Get weapon data
-        var mainData = Data.getWeaponData(mainId) || WeaponEvolutionData.getEvolvedWeaponData(mainId);
-        var materialData = Data.getWeaponData(materialId) || WeaponEvolutionData.getEvolvedWeaponData(materialId);
+        // Get weapon data (check regular weapons, core weapons, and evolved weapons)
+        var mainData = Data.getWeaponData(mainId) || Data.getCoreWeaponData(mainId) || WeaponEvolutionData.getEvolvedWeaponData(mainId);
+        var materialData = Data.getWeaponData(materialId) || Data.getCoreWeaponData(materialId) || WeaponEvolutionData.getEvolvedWeaponData(materialId);
         var resultData = WeaponEvolutionData.getEvolvedWeaponData(resultId);
 
         if (!resultData) continue;

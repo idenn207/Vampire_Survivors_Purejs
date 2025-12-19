@@ -11,8 +11,8 @@
   Data.CoreWeaponRegistry = Data.CoreWeaponRegistry || {};
 
   // Note: Uses wind_cutter_core id to avoid conflict with common wind_cutter weapon
-  Data.CoreWeaponRegistry.wind_cutter = {
-    id: 'wind_cutter',
+  Data.CoreWeaponRegistry.wind_cutter_core = {
+    id: 'wind_cutter_core',
     name: 'Wind Cutter',
     coreId: 'wind_core',
     attackType: AttackType.PROJECTILE,

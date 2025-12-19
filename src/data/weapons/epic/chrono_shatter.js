@@ -19,7 +19,7 @@
     rarity: Rarity.EPIC,
 
     // Tier properties
-    tier: 1,
+    tier: 4,
     isExclusive: true,
     maxTier: 5,
 
