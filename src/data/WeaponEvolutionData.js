@@ -101,7 +101,7 @@
     chrono_master: { coreId: 'time_core', baseWeaponId: 'chrono_beam', evolutionChain: 'time', isCore: true },
     eternity_weaver: { coreId: 'time_core', baseWeaponId: 'chrono_beam', evolutionChain: 'time', isCore: true },
 
-    // Basic Evolved Weapons (non-core)
+    // Uncommon Evolved Weapons (Tier 2, non-core)
     arcane_cannon: { coreId: null, baseWeaponId: 'arcane_dart', evolutionChain: null, isCore: false },
     death_ray: { coreId: null, baseWeaponId: 'light_ray', evolutionChain: null, isCore: false },
     blade_storm: { coreId: null, baseWeaponId: 'rusty_blade', evolutionChain: null, isCore: false },
@@ -126,6 +126,40 @@
     elemental_clash: { coreId: null, baseWeaponId: 'frost_circle', evolutionChain: null, isCore: false },
     inferno_swarm: { coreId: null, baseWeaponId: 'ember_field', evolutionChain: null, isCore: false },
     arcane_scatter: { coreId: null, baseWeaponId: 'scatter_shot', evolutionChain: null, isCore: false },
+
+    // Rare Evolved Weapons (Tier 3, non-core)
+    constellation_arrow: { coreId: null, baseWeaponId: 'mystic_arrow', evolutionChain: null, isCore: false },
+    singularity_orb: { coreId: null, baseWeaponId: 'arcane_cannon', evolutionChain: null, isCore: false },
+    phoenix_feather: { coreId: null, baseWeaponId: 'blazing_bolt', evolutionChain: null, isCore: false },
+    temporal_bolt: { coreId: null, baseWeaponId: 'death_ray', evolutionChain: null, isCore: false },
+    dragonbreath_volley: { coreId: null, baseWeaponId: 'inferno_swarm', evolutionChain: null, isCore: false },
+    void_reaver: { coreId: null, baseWeaponId: 'umbral_wave', evolutionChain: null, isCore: false },
+    storm_caller: { coreId: null, baseWeaponId: 'lightning_lash', evolutionChain: null, isCore: false },
+    mirrorblade: { coreId: null, baseWeaponId: 'blade_storm', evolutionChain: null, isCore: false },
+    soulrender: { coreId: null, baseWeaponId: 'blood_cleaver', evolutionChain: null, isCore: false },
+    aurora_field: { coreId: null, baseWeaponId: 'elemental_clash', evolutionChain: null, isCore: false },
+    dimensional_rift: { coreId: null, baseWeaponId: 'arcane_scatter', evolutionChain: null, isCore: false },
+    supernova_core: { coreId: null, baseWeaponId: 'blazing_bolt', evolutionChain: null, isCore: false },
+    celestial_orbit: { coreId: null, baseWeaponId: 'rock_storm', evolutionChain: null, isCore: false },
+    cascade_lightning: { coreId: null, baseWeaponId: 'storm_scatter', evolutionChain: null, isCore: false },
+    orbital_bombardment: { coreId: null, baseWeaponId: 'explosive_trap', evolutionChain: null, isCore: false },
+    quantum_mine: { coreId: null, baseWeaponId: 'explosive_trap', evolutionChain: null, isCore: false },
+    void_anchor: { coreId: null, baseWeaponId: 'umbral_wave', evolutionChain: null, isCore: false },
+    sunbeam: { coreId: null, baseWeaponId: 'radiant_ground', evolutionChain: null, isCore: false },
+    moonlight_slash: { coreId: null, baseWeaponId: 'phantom_volley', evolutionChain: null, isCore: false },
+    phoenix_guardian: { coreId: null, baseWeaponId: 'inferno_swarm', evolutionChain: null, isCore: false },
+
+    // Epic Evolved Weapons (Tier 4, non-core)
+    ragnarok: { coreId: null, baseWeaponId: 'soulrender', evolutionChain: null, isCore: false },
+    cosmic_annihilator: { coreId: null, baseWeaponId: 'supernova_core', evolutionChain: null, isCore: false },
+    world_serpent: { coreId: null, baseWeaponId: 'void_reaver', evolutionChain: null, isCore: false },
+    infinity_gauntlet: { coreId: null, baseWeaponId: 'dimensional_rift', evolutionChain: null, isCore: false },
+    chrono_shatter: { coreId: null, baseWeaponId: 'temporal_bolt', evolutionChain: null, isCore: false },
+    void_emperor: { coreId: null, baseWeaponId: 'void_anchor', evolutionChain: null, isCore: false },
+    heavens_wrath: { coreId: null, baseWeaponId: 'sunbeam', evolutionChain: null, isCore: false },
+    soul_nexus: { coreId: null, baseWeaponId: 'soulrender', evolutionChain: null, isCore: false },
+    apocalypse_engine: { coreId: null, baseWeaponId: 'orbital_bombardment', evolutionChain: null, isCore: false },
+    genesis_blade: { coreId: null, baseWeaponId: 'mirrorblade', evolutionChain: null, isCore: false },
   };
 
   // ============================================
@@ -283,6 +317,46 @@
     'temporal_ray+prismatic_ray': { result: 'time_distortion', resultTier: 3, isKnown: true },
     'time_distortion+crystal_lance': { result: 'chrono_master', resultTier: 4, isKnown: true },
     'chrono_master+chrono_shatter': { result: 'eternity_weaver', resultTier: 5, isKnown: true },
+
+    // ============================================
+    // Rare Weapon Evolution Recipes (T2 evolved + T2 uncommon → T3 rare)
+    // 20 recipes for rare weapons
+    // ============================================
+    'mystic_arrow+prismatic_ray': { result: 'constellation_arrow', resultTier: 3, isKnown: true },
+    'arcane_cannon+gravity_well': { result: 'singularity_orb', resultTier: 3, isKnown: true },
+    'blazing_bolt+flame_dancers': { result: 'phoenix_feather', resultTier: 3, isKnown: true },
+    'death_ray+crystal_lance': { result: 'temporal_bolt', resultTier: 3, isKnown: true },
+    'inferno_swarm+plasma_orb': { result: 'dragonbreath_volley', resultTier: 3, isKnown: true },
+    'umbral_wave+void_bullet': { result: 'void_reaver', resultTier: 3, isKnown: true },
+    'lightning_lash+thunder_hammer': { result: 'storm_caller', resultTier: 3, isKnown: true },
+    'blade_storm+phantom_blade': { result: 'mirrorblade', resultTier: 3, isKnown: true },
+    'blood_cleaver+soul_orbit': { result: 'soulrender', resultTier: 3, isKnown: true },
+    'elemental_clash+blizzard_zone': { result: 'aurora_field', resultTier: 3, isKnown: true },
+    'arcane_scatter+void_bullet': { result: 'dimensional_rift', resultTier: 3, isKnown: true },
+    'blazing_bolt+meteor_crater': { result: 'supernova_core', resultTier: 3, isKnown: true },
+    'rock_storm+hallowed_ring': { result: 'celestial_orbit', resultTier: 3, isKnown: true },
+    'storm_scatter+arc_lightning': { result: 'cascade_lightning', resultTier: 3, isKnown: true },
+    'explosive_trap+cluster_mine': { result: 'orbital_bombardment', resultTier: 3, isKnown: true },
+    'explosive_trap+magnetic_mine': { result: 'quantum_mine', resultTier: 3, isKnown: true },
+    'umbral_wave+gravity_well': { result: 'void_anchor', resultTier: 3, isKnown: true },
+    'radiant_ground+prismatic_ray': { result: 'sunbeam', resultTier: 3, isKnown: true },
+    'phantom_volley+crescent_moon': { result: 'moonlight_slash', resultTier: 3, isKnown: true },
+    'inferno_swarm+frost_elemental': { result: 'phoenix_guardian', resultTier: 3, isKnown: true },
+
+    // ============================================
+    // Epic Weapon Evolution Recipes (T3 rare + T2 uncommon → T4 epic)
+    // 10 recipes for epic weapons
+    // ============================================
+    'soulrender+blood_razor': { result: 'ragnarok', resultTier: 4, isKnown: true },
+    'supernova_core+gravity_well': { result: 'cosmic_annihilator', resultTier: 4, isKnown: true },
+    'void_reaver+toxic_chain': { result: 'world_serpent', resultTier: 4, isKnown: true },
+    'dimensional_rift+crystal_lance': { result: 'infinity_gauntlet', resultTier: 4, isKnown: true },
+    'temporal_bolt+void_bullet': { result: 'chrono_shatter', resultTier: 4, isKnown: true },
+    'void_anchor+phantom_blade': { result: 'void_emperor', resultTier: 4, isKnown: true },
+    'sunbeam+hallowed_ring': { result: 'heavens_wrath', resultTier: 4, isKnown: true },
+    'soulrender+soul_orbit': { result: 'soul_nexus', resultTier: 4, isKnown: true },
+    'orbital_bombardment+magnetic_mine': { result: 'apocalypse_engine', resultTier: 4, isKnown: true },
+    'mirrorblade+flame_scythe': { result: 'genesis_blade', resultTier: 4, isKnown: true },
   };
 
   // ============================================

@@ -26,7 +26,12 @@
       "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\systems\\\\levelup\"/*.js)",
       "Bash(for dir in C:_projectmyVampire_Survivors_Purejssrc/data/weapons/evolved/*/)",
       "Bash(ls:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(for file in src/data/weapons/rare/*.js)",
+      "Bash(do sed -i 's/tier: 1,/tier: 3,/' \"$file\")",
+      "Bash(for f in src/data/weapons/rare/*.js)",
+      "Bash(for f in src/data/weapons/epic/*.js)",
+      "Bash(for f in src/data/weapons/evolved/uncommon/*.js)"
     ]
   }
 }
