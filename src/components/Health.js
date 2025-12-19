@@ -46,9 +46,10 @@
     /**
      * Apply damage to this entity
      * @param {number} amount - Damage amount
+     * @param {boolean} [isCrit] - Whether this was a critical hit
      * @returns {boolean} True if damage was applied
      */
-    takeDamage(amount) {
+    takeDamage(amount, isCrit) {
       if (this._isDead || this._isInvincible || amount <= 0) {
         return false;
       }
@@ -61,6 +62,7 @@
         amount: amount,
         currentHealth: this._currentHealth,
         maxHealth: this._maxHealth,
+        isCrit: isCrit || false,
       });
 
       // Check for death

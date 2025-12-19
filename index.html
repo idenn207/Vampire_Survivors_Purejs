@@ -31,6 +31,7 @@
 
   <!-- Phase 2: Utilities (No Dependencies) -->
   <script src="src/utils/Vector2.js"></script>
+  <script src="src/utils/GlobalStatsHelper.js"></script>
 
   <!-- Phase 2.5: Object Pools -->
   <script src="src/pool/ObjectPool.js"></script>
@@ -73,11 +74,15 @@
   <script src="src/entities/Projectile.js"></script>
   <script src="src/entities/AreaEffect.js"></script>
   <script src="src/entities/Pickup.js"></script>
+  <script src="src/entities/Mine.js"></script>
+  <script src="src/entities/Summon.js"></script>
 
   <!-- Phase 5.5: Pools (depend on entities) -->
   <script src="src/pool/ProjectilePool.js"></script>
   <script src="src/pool/AreaEffectPool.js"></script>
   <script src="src/pool/PickupPool.js"></script>
+  <script src="src/pool/MinePool.js"></script>
+  <script src="src/pool/SummonPool.js"></script>
 
   <!-- Phase 5.7: Data -->
   <script src="src/data/WeaponData.js"></script>
@@ -118,6 +123,8 @@
   <script src="src/systems/MovementSystem.js"></script>
   <script src="src/systems/ProjectileSystem.js"></script>
   <script src="src/systems/AreaEffectSystem.js"></script>
+  <script src="src/systems/MineSystem.js"></script>
+  <script src="src/systems/SummonSystem.js"></script>
   <script src="src/systems/CollisionSystem.js"></script>
   <script src="src/systems/StatusEffectSystem.js"></script>
   <script src="src/systems/CombatSystem.js"></script>
@@ -133,6 +140,8 @@
   <script src="src/behaviors/MeleeBehavior.js"></script>
   <script src="src/behaviors/AreaBehavior.js"></script>
   <script src="src/behaviors/ParticleBehavior.js"></script>
+  <script src="src/behaviors/MineBehavior.js"></script>
+  <script src="src/behaviors/SummonBehavior.js"></script>
 
   <!-- Phase 7.7: Weapon System (depends on behaviors) -->
   <script src="src/systems/WeaponSystem.js"></script>

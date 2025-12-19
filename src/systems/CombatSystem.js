@@ -44,11 +44,21 @@
     // Per-enemy collision cooldown tracking
     _enemyCollisionCooldowns = new Map();
 
+    // Enemy explosion passive
+    _enemyExplosionEnabled = false;
+    _enemyExplosionDamage = 30;
+    _enemyExplosionRadius = 50;
+
+    // Event handler for entity death
+    _boundOnEntityDeath = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
     constructor() {
       super();
+      this._boundOnEntityDeath = this._handleEntityDeath.bind(this);
+      events.on('entity:died', this._boundOnEntityDeath);
     }
 
     // ----------------------------------------
@@ -60,6 +70,32 @@
 
     setPlayer(player) {
       this._player = player;
+    }
+
+    /**
+     * Enable enemy explosion passive
+     * @param {number} damage - Explosion damage
+     * @param {number} radius - Explosion radius
+     */
+    enableEnemyExplosions(damage, radius) {
+      this._enemyExplosionEnabled = true;
+      this._enemyExplosionDamage = damage || 30;
+      this._enemyExplosionRadius = radius || 50;
+    }
+
+    /**
+     * Disable enemy explosion passive
+     */
+    disableEnemyExplosions() {
+      this._enemyExplosionEnabled = false;
+    }
+
+    /**
+     * Check if enemy explosions are enabled
+     * @returns {boolean}
+     */
+    isEnemyExplosionEnabled() {
+      return this._enemyExplosionEnabled;
     }
 
     update(deltaTime) {
@@ -160,17 +196,36 @@
         // Get weapon config for enhanced effects
         var weaponConfig = this._getWeaponConfig(projectileComp.sourceWeaponId);
 
-        // Calculate enhanced damage
-        var damageResult = this._calculateEnhancedDamage(
-          projectileComp.damage,
-          enemy,
-          weaponConfig
-        );
+        // Use projectile's pre-calculated damage and crit status
+        // (crit already applied in behavior when spawning)
+        var finalDamage = projectileComp.damage;
+        var isCrit = projectileComp.isCrit;
 
-        // Apply damage
+        // Track crit stats
+        if (isCrit) {
+          this._criticalHits++;
+        }
+
+        // Apply execute bonus (extra damage to low HP enemies) - only non-crit modifier
+        if (weaponConfig && weaponConfig.executeThreshold) {
+          var hpPercent = enemyHealth.currentHealth / enemyHealth.maxHealth;
+          if (hpPercent <= weaponConfig.executeThreshold) {
+            var executeMultiplier = weaponConfig.executeMultiplier || 2;
+            finalDamage = Math.round(finalDamage * executeMultiplier);
+          }
+        }
+
+        // Apply weakness/mark damage modifiers from status effects
+        var statusEffect = enemy.getComponent(StatusEffect);
+        if (statusEffect) {
+          var damageTakenModifier = statusEffect.getDamageTakenModifier();
+          finalDamage = Math.round(finalDamage * damageTakenModifier);
+        }
+
+        // Apply damage (pass isCrit for damage number display)
         var wasAlive = !enemyHealth.isDead;
-        enemyHealth.takeDamage(damageResult.finalDamage);
-        this._damageDealt += damageResult.finalDamage;
+        enemyHealth.takeDamage(finalDamage, isCrit);
+        this._damageDealt += finalDamage;
 
         // Apply status effects
         if (weaponConfig && weaponConfig.statusEffects) {
@@ -184,7 +239,7 @@
 
         // Process lifesteal
         if (weaponConfig && weaponConfig.lifesteal && weaponConfig.lifesteal > 0) {
-          this._processLifesteal(damageResult.finalDamage, weaponConfig.lifesteal);
+          this._processLifesteal(finalDamage, weaponConfig.lifesteal);
         }
 
         // Process heal on hit
@@ -196,8 +251,8 @@
         events.emit('weapon:hit', {
           hitbox: hitbox,
           enemy: enemy,
-          damage: damageResult.finalDamage,
-          isCrit: damageResult.isCrit,
+          damage: finalDamage,
+          isCrit: isCrit,
           type: 'projectile',
           weaponId: projectileComp.sourceWeaponId,
         });
@@ -642,6 +697,64 @@
       this._enemyCollisionCooldowns.set(enemy.id, CONTACT_DAMAGE_COOLDOWN);
     }
 
+    /**
+     * Handle entity death for enemy explosion passive
+     * @param {Object} data - { entity, killer }
+     */
+    _handleEntityDeath(data) {
+      if (!this._enemyExplosionEnabled) return;
+      if (!data.entity || !data.entity.hasTag('enemy')) return;
+
+      var deadEnemy = data.entity;
+      var transform = deadEnemy.getComponent(Transform);
+      if (!transform) return;
+
+      // Create explosion at enemy's position
+      var x = transform.centerX;
+      var y = transform.centerY;
+
+      // Find all enemies in explosion radius
+      var enemies = this._entityManager.getByTag('enemy');
+      var radiusSq = this._enemyExplosionRadius * this._enemyExplosionRadius;
+
+      for (var i = 0; i < enemies.length; i++) {
+        var enemy = enemies[i];
+        if (!enemy.isActive || enemy === deadEnemy) continue;
+
+        var enemyTransform = enemy.getComponent(Transform);
+        if (!enemyTransform) continue;
+
+        var enemyHealth = enemy.getComponent(Health);
+        if (!enemyHealth || enemyHealth.isDead) continue;
+
+        // Check distance
+        var dx = enemyTransform.centerX - x;
+        var dy = enemyTransform.centerY - y;
+        var distSq = dx * dx + dy * dy;
+
+        if (distSq <= radiusSq) {
+          // Apply explosion damage
+          enemyHealth.takeDamage(this._enemyExplosionDamage);
+
+          // Emit hit event
+          events.emit('weapon:hit', {
+            enemy: enemy,
+            damage: this._enemyExplosionDamage,
+            type: 'enemy_explosion',
+          });
+        }
+      }
+
+      // Emit explosion effect event for visuals
+      events.emit('effect:explosion', {
+        x: x,
+        y: y,
+        radius: this._enemyExplosionRadius,
+        damage: this._enemyExplosionDamage,
+        color: '#FF8800',
+      });
+    }
+
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
@@ -675,8 +788,13 @@
     // Lifecycle
     // ----------------------------------------
     dispose() {
+      if (this._boundOnEntityDeath) {
+        events.off('entity:died', this._boundOnEntityDeath);
+        this._boundOnEntityDeath = null;
+      }
       this._collisionSystem = null;
       this._player = null;
+      this._enemyCollisionCooldowns.clear();
       super.dispose();
     }
   }

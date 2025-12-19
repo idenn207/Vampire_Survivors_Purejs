@@ -29,6 +29,7 @@
     _elapsed = 0;
     _hitEnemies = null;
     _sourceWeaponId = null;
+    _isCrit = false;
 
     // Ricochet properties
     _ricochetBounces = 0;      // Remaining bounces
@@ -72,14 +73,16 @@
      * @param {number} lifetime
      * @param {string} [sourceWeaponId]
      * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
+     * @param {boolean} [isCrit] - Whether this projectile is a critical hit
      */
-    reset(damage, pierce, lifetime, sourceWeaponId, ricochet) {
+    reset(damage, pierce, lifetime, sourceWeaponId, ricochet, isCrit) {
       this._damage = damage || 0;
       this._pierce = pierce !== undefined ? pierce : DEFAULT_PIERCE;
       this._lifetime = lifetime !== undefined ? lifetime : DEFAULT_LIFETIME;
       this._elapsed = 0;
       this._hitEnemies.clear();
       this._sourceWeaponId = sourceWeaponId || null;
+      this._isCrit = isCrit || false;
 
       // Reset ricochet
       if (ricochet) {
@@ -197,6 +200,10 @@
 
     set sourceWeaponId(value) {
       this._sourceWeaponId = value;
+    }
+
+    get isCrit() {
+      return this._isCrit;
     }
 
     get ricochetBounces() {

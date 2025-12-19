@@ -14,6 +14,8 @@
     MELEE_SWING: 'melee_swing',
     AREA_DAMAGE: 'area_damage',
     PARTICLE: 'particle',
+    MINE: 'mine',
+    SUMMON: 'summon',
   };
 
   // ============================================
@@ -231,6 +233,7 @@
       arcAngle: 90,
       swingDuration: 0.2,
       hitsPerSwing: 1,
+      doubleSwing: false, // When true, swings forward then backward
 
       color: '#CCCCCC',
       icon: 'sword', // Sword blade
@@ -238,7 +241,7 @@
       upgrades: {
         2: { damage: 45, hitsPerSwing: 2 },
         3: { damage: 55, range: 75, arcAngle: 110 },
-        4: { damage: 70, hitsPerSwing: 3, cooldown: 0.85 },
+        4: { damage: 70, hitsPerSwing: 3, cooldown: 0.85, doubleSwing: true },
         5: { damage: 95, range: 90, arcAngle: 130, hitsPerSwing: 4 },
       },
       maxLevel: 5,
@@ -262,6 +265,7 @@
       arcAngle: 120,
       swingDuration: 0.15,
       hitsPerSwing: 1,
+      doubleSwing: false, // When true, swings forward then backward
 
       color: '#AAAAAA',
       icon: 'dagger', // Quick blade
@@ -269,7 +273,7 @@
       upgrades: {
         2: { damage: 32, cooldown: 0.7 },
         3: { damage: 40, range: 65, hitsPerSwing: 2 },
-        4: { damage: 52, arcAngle: 150, cooldown: 0.6 },
+        4: { damage: 52, arcAngle: 150, cooldown: 0.6, doubleSwing: true },
         5: { damage: 70, range: 80, hitsPerSwing: 3 },
       },
       maxLevel: 5,
@@ -404,6 +408,77 @@
         3: { damage: 48, chainRange: 180, chainDamageDecay: 0.75 },
         4: { damage: 62, chainCount: 5, cooldown: 1.3 },
         5: { damage: 85, chainCount: 7, chainRange: 200 },
+      },
+      maxLevel: 5,
+    },
+
+    // ------------------------------------
+    // MINE WEAPONS
+    // ------------------------------------
+    proximity_mine: {
+      id: 'proximity_mine',
+      name: 'Proximity Mine',
+      attackType: AttackType.MINE,
+      targetingMode: TargetingMode.RANDOM,
+      isAuto: true,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
+      damage: 80,
+      cooldown: 3.0,
+      mineCount: 1,
+      explosionRadius: 60,
+      triggerRadius: 40,
+      duration: 15.0,
+      spawnRange: 150,
+
+      color: '#FF4444',
+      icon: 'mine', // Explosive trap
+
+      upgrades: {
+        2: { damage: 100, mineCount: 2 },
+        3: { damage: 130, explosionRadius: 80, triggerRadius: 50 },
+        4: { damage: 170, mineCount: 3, cooldown: 2.5 },
+        5: { damage: 220, explosionRadius: 100, mineCount: 4 },
+      },
+      maxLevel: 5,
+    },
+
+    // ------------------------------------
+    // SUMMON WEAPONS
+    // ------------------------------------
+    spirit_companion: {
+      id: 'spirit_companion',
+      name: 'Spirit Companion',
+      attackType: AttackType.SUMMON,
+      targetingMode: TargetingMode.NEAREST,
+      isAuto: true,
+
+      // Tier properties
+      tier: 1,
+      isExclusive: false,
+      maxTier: 4,
+
+      damage: 20,
+      cooldown: 10.0,
+      summonCount: 1,
+      summonHealth: 50,
+      attackCooldown: 1.0,
+      attackRange: 50,
+      summonSpeed: 150,
+      duration: 15.0,
+
+      color: '#88CCFF',
+      icon: 'spirit', // Ghostly companion
+
+      upgrades: {
+        2: { damage: 28, summonHealth: 70, summonCount: 2 },
+        3: { damage: 38, summonSpeed: 180, attackRange: 60 },
+        4: { damage: 50, summonCount: 3, duration: 20.0 },
+        5: { damage: 70, summonHealth: 100, summonCount: 4 },
       },
       maxLevel: 5,
     },

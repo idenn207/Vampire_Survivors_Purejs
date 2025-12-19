@@ -204,8 +204,8 @@
       var worldX = transform.x + transform.width / 2;
       var worldY = transform.y;
 
-      // Determine type (could add crit detection later)
-      var type = 'damage';
+      // Use crit type if isCrit flag is set (displays in gold with larger scale)
+      var type = data.isCrit ? 'crit' : 'damage';
 
       this.spawn(worldX, worldY, data.amount, type);
     }

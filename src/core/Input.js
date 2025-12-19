@@ -30,7 +30,7 @@
     _camera = null;
 
     // Auto/Manual mode toggle
-    _isAutoMode = true;
+    _isAutoMode = false;
     _lastMovementDirection = { x: 1, y: 0 };
 
     _boundHandleKeyDown = null;

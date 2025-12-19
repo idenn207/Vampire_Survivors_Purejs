@@ -44,10 +44,16 @@
       var spread = weapon.getStat('spread', 0);
       var pierce = weapon.getStat('pierce', 0);
       var color = weapon.getStat('color', '#FFFF00');
-      var size = weapon.getStat('size', 8);
+      var baseSize = weapon.getStat('size', 8);
       var lifetime = weapon.getStat('lifetime', 3.0);
-      var range = weapon.getStat('range', 400);
-      var damage = weapon.damage;
+      var baseRange = weapon.getStat('range', 400);
+
+      // Apply player stat bonuses
+      var range = this.getEffectiveRange(baseRange);
+      var size = Math.round(baseSize * this.getSizeMultiplier());
+      var damageResult = this.calculateDamage(weapon);
+      var damage = damageResult.damage;
+      var isCrit = damageResult.isCrit;
 
       // Get ricochet config if present
       var ricochet = weapon.getStat('ricochet', null);
@@ -74,7 +80,8 @@
           size,
           lifetime,
           range,
-          ricochet
+          ricochet,
+          isCrit
         );
       }
 
@@ -103,7 +110,8 @@
           size,
           lifetime,
           weapon.id,
-          ricochet
+          ricochet,
+          isCrit
         );
 
         if (projectile) {
@@ -176,6 +184,7 @@
      * @param {number} lifetime
      * @param {number} range
      * @param {Object} [ricochet]
+     * @param {boolean} [isCrit]
      * @returns {Array<Projectile>}
      */
     _spawnMultiTargetProjectiles(
@@ -190,7 +199,8 @@
       size,
       lifetime,
       range,
-      ricochet
+      ricochet,
+      isCrit
     ) {
       var projectiles = [];
       var targetingMode = weapon.targetingMode;
@@ -221,7 +231,8 @@
           size,
           lifetime,
           weapon.id,
-          ricochet
+          ricochet,
+          isCrit
         );
 
         if (projectile) {

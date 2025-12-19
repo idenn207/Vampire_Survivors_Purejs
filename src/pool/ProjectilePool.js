@@ -67,9 +67,10 @@
      * @param {number} [lifetime] - Time before despawn (default 3.0)
      * @param {string} [sourceWeaponId] - ID of weapon that fired this
      * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
+     * @param {boolean} [isCrit] - Whether this projectile is a critical hit
      * @returns {Projectile|null}
      */
-    spawn(x, y, angle, speed, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet) {
+    spawn(x, y, angle, speed, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit) {
       var projectile = this._pool.get();
       if (!projectile) {
         console.warn('[ProjectilePool] Pool exhausted');
@@ -92,7 +93,8 @@
         size,
         lifetime || 3.0,
         sourceWeaponId,
-        ricochet
+        ricochet,
+        isCrit
       );
 
       // Add to entity manager if available
@@ -116,16 +118,17 @@
      * @param {number} [lifetime]
      * @param {string} [sourceWeaponId]
      * @param {Object} [ricochet]
+     * @param {boolean} [isCrit]
      * @returns {Projectile|null}
      */
-    spawnWithVelocity(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet) {
+    spawnWithVelocity(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit) {
       var projectile = this._pool.get();
       if (!projectile) {
         console.warn('[ProjectilePool] Pool exhausted');
         return null;
       }
 
-      projectile.reset(x, y, vx, vy, damage, pierce, color, size, lifetime || 3.0, sourceWeaponId, ricochet);
+      projectile.reset(x, y, vx, vy, damage, pierce, color, size, lifetime || 3.0, sourceWeaponId, ricochet, isCrit);
 
       if (this._entityManager) {
         this._entityManager.add(projectile);

@@ -87,6 +87,50 @@
       description: '+10% XP Gain',
       isPercent: true,
     },
+    range: {
+      id: 'range',
+      name: 'Range',
+      icon: '#9B59B6',
+      baseCost: 60,
+      costMultiplier: 1.5,
+      bonusPerLevel: 0.08,
+      maxLevel: 10,
+      description: '+8% Weapon Range',
+      isPercent: true,
+    },
+    cooldownReduction: {
+      id: 'cooldownReduction',
+      name: 'Cooldown',
+      icon: '#1ABC9C',
+      baseCost: 80,
+      costMultiplier: 1.5,
+      bonusPerLevel: 0.05,
+      maxLevel: 10,
+      description: '-5% Cooldown',
+      isPercent: true,
+    },
+    duration: {
+      id: 'duration',
+      name: 'Duration',
+      icon: '#E67E22',
+      baseCost: 50,
+      costMultiplier: 1.5,
+      bonusPerLevel: 0.10,
+      maxLevel: 10,
+      description: '+10% Effect Duration',
+      isPercent: true,
+    },
+    luck: {
+      id: 'luck',
+      name: 'Luck',
+      icon: '#27AE60',
+      baseCost: 100,
+      costMultiplier: 1.5,
+      bonusPerLevel: 0.05,
+      maxLevel: 10,
+      description: '+5% Luck (Crits & Drops)',
+      isPercent: true,
+    },
   };
 
   // Order for display in UI
@@ -98,6 +142,10 @@
     'critDamage',
     'pickupRange',
     'xpGain',
+    'range',
+    'cooldownReduction',
+    'duration',
+    'luck',
   ];
 
   // ============================================

@@ -44,11 +44,17 @@
       var playerPos = this.getPlayerCenter(player);
 
       // Get weapon stats
-      var range = weapon.getStat('range', 60);
+      var baseRange = weapon.getStat('range', 60);
       var arcAngle = weapon.getStat('arcAngle', 90);
       var swingDuration = weapon.getStat('swingDuration', 0.2);
-      var damage = weapon.damage;
       var color = weapon.getStat('color', '#CCCCCC');
+      var doubleSwing = weapon.getStat('doubleSwing', false);
+
+      // Apply player stat bonuses
+      var range = this.getEffectiveRange(baseRange);
+      var damageResult = this.calculateDamage(weapon);
+      var damage = damageResult.damage;
+      var isCrit = damageResult.isCrit;
 
       // Get swing direction based on targeting mode
       var direction = this._getSwingDirection(weapon, player, range);
@@ -56,9 +62,85 @@
 
       // Convert arc angle to radians
       var arcRad = this.degreesToRadians(arcAngle);
+
+      // Perform forward swing
+      var swings = [];
+      var forwardSwing = this._performSwing(
+        weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, 0
+      );
+      swings.push(forwardSwing);
+
+      // Perform backward swing if enabled (opposite direction with delay)
+      if (doubleSwing) {
+        var backAngle = centerAngle + Math.PI; // Opposite direction
+        var backDelay = swingDuration * 0.5; // Slight delay before back swing
+        var backSwing = this._performSwing(
+          weapon, playerPos, range, backAngle, arcRad, swingDuration, damage, isCrit, color, backDelay
+        );
+        swings.push(backSwing);
+      }
+
+      return swings;
+    }
+
+    /**
+     * Perform a single swing attack
+     * @param {Weapon} weapon
+     * @param {{x: number, y: number}} playerPos
+     * @param {number} range
+     * @param {number} centerAngle
+     * @param {number} arcRad
+     * @param {number} swingDuration
+     * @param {number} damage
+     * @param {boolean} isCrit
+     * @param {string} color
+     * @param {number} delay - Delay before swing starts (for back swing)
+     * @returns {Object} Swing data
+     */
+    _performSwing(weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, delay) {
       var startAngle = centerAngle - arcRad / 2;
       var endAngle = centerAngle + arcRad / 2;
 
+      // Create swing visual data (with negative elapsed for delay)
+      var swingData = {
+        x: playerPos.x,
+        y: playerPos.y,
+        range: range,
+        startAngle: startAngle,
+        endAngle: endAngle,
+        duration: swingDuration,
+        elapsed: -delay, // Negative elapsed acts as delay
+        color: color,
+        alpha: 0.6,
+        progress: 0,
+        // Store damage info for delayed swings
+        weapon: weapon,
+        damage: damage,
+        isCrit: isCrit,
+        damageApplied: delay === 0, // Immediate swings apply damage now
+      };
+
+      // Apply damage immediately for non-delayed swings
+      if (delay === 0) {
+        this._applySwingDamage(playerPos, range, startAngle, endAngle, weapon, damage, isCrit);
+      }
+
+      this._activeSwings.push(swingData);
+
+      return swingData;
+    }
+
+    /**
+     * Apply damage to enemies in swing arc
+     * @param {{x: number, y: number}} playerPos
+     * @param {number} range
+     * @param {number} startAngle
+     * @param {number} endAngle
+     * @param {Weapon} weapon
+     * @param {number} damage
+     * @param {boolean} isCrit
+     */
+    _applySwingDamage(playerPos, range, startAngle, endAngle, weapon, damage, isCrit) {
       // Find enemies in arc
       var hitEnemies = this._findEnemiesInArc(playerPos.x, playerPos.y, range, startAngle, endAngle);
 
@@ -67,35 +149,18 @@
         var enemy = hitEnemies[i];
         var health = enemy.getComponent(Health);
         if (health && !health.isDead) {
-          health.takeDamage(damage);
+          health.takeDamage(damage, isCrit);
 
           // Emit hit event
           events.emit('weapon:hit', {
             weapon: weapon,
             enemy: enemy,
             damage: damage,
+            isCrit: isCrit,
             type: 'melee',
           });
         }
       }
-
-      // Create swing visual data
-      var swingData = {
-        x: playerPos.x,
-        y: playerPos.y,
-        range: range,
-        startAngle: startAngle,
-        endAngle: endAngle,
-        duration: swingDuration,
-        elapsed: 0,
-        color: color,
-        alpha: 0.6,
-        progress: 0,
-      };
-
-      this._activeSwings.push(swingData);
-
-      return [swingData];
     }
 
     /**
@@ -105,11 +170,34 @@
     update(deltaTime) {
       for (var i = this._activeSwings.length - 1; i >= 0; i--) {
         var swing = this._activeSwings[i];
+        var wasDelayed = swing.elapsed < 0;
         swing.elapsed += deltaTime;
-        swing.progress = swing.elapsed / swing.duration;
 
-        // Fade out
-        swing.alpha = 0.6 * (1 - swing.progress);
+        // Check if delayed swing just became active (elapsed crossed from negative to positive)
+        if (wasDelayed && swing.elapsed >= 0 && !swing.damageApplied) {
+          swing.damageApplied = true;
+          // Apply damage for the delayed swing
+          this._applySwingDamage(
+            { x: swing.x, y: swing.y },
+            swing.range,
+            swing.startAngle,
+            swing.endAngle,
+            swing.weapon,
+            swing.damage,
+            swing.isCrit
+          );
+        }
+
+        // Calculate progress only for active (non-delayed) swings
+        if (swing.elapsed >= 0) {
+          swing.progress = swing.elapsed / swing.duration;
+          // Fade out
+          swing.alpha = 0.6 * (1 - swing.progress);
+        } else {
+          // Keep hidden during delay
+          swing.progress = 0;
+          swing.alpha = 0;
+        }
 
         // Remove expired swings
         if (swing.elapsed >= swing.duration) {

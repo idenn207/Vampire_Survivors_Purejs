@@ -38,13 +38,19 @@
       var playerPos = this.getPlayerCenter(player);
 
       // Get weapon stats
-      var radius = weapon.getStat('radius', 50);
-      var duration = weapon.getStat('duration', 4.0);
+      var baseRadius = weapon.getStat('radius', 50);
+      var baseDuration = weapon.getStat('duration', 4.0);
       var tickRate = weapon.getStat('tickRate', 2);
       var cloudCount = weapon.getStat('cloudCount', 1);
-      var spawnRange = weapon.getStat('spawnRange', 200);
-      var damage = weapon.damage;
+      var baseSpawnRange = weapon.getStat('spawnRange', 200);
       var color = weapon.getStat('color', '#00FF00');
+
+      // Apply player stat bonuses
+      var radius = this.getEffectiveRange(baseRadius);
+      var spawnRange = this.getEffectiveRange(baseSpawnRange);
+      var duration = this.getEffectiveDuration(baseDuration);
+      var damageResult = this.calculateDamage(weapon);
+      var damage = damageResult.damage;
 
       // Spawn multiple clouds
       for (var i = 0; i < cloudCount; i++) {

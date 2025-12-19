@@ -46,10 +46,14 @@
   var CoreSelectionSystem = Systems.CoreSelectionSystem;
   var TechTreeSystem = Systems.TechTreeSystem;
   var StatusEffectSystem = Systems.StatusEffectSystem;
+  var MineSystem = Systems.MineSystem;
+  var SummonSystem = Systems.SummonSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
   var pickupPool = Pool.pickupPool;
+  var minePool = Pool.minePool;
+  var summonPool = Pool.summonPool;
 
   // ============================================
   // Application State
@@ -80,6 +84,8 @@
       projectilePool.initialize(entityManager);
       areaEffectPool.initialize(entityManager);
       pickupPool.initialize(entityManager);
+      minePool.initialize(entityManager);
+      summonPool.initialize(entityManager);
 
       // Setup camera
       camera = new Camera(game.width, game.height);
@@ -122,6 +128,14 @@
       var areaEffectSystem = new AreaEffectSystem();
       areaEffectSystem.initialize(game, entityManager);
       game.addSystem(areaEffectSystem);
+
+      var mineSystem = new MineSystem();
+      mineSystem.initialize(game, entityManager);
+      game.addSystem(mineSystem);
+
+      var summonSystem = new SummonSystem();
+      summonSystem.initialize(game, entityManager);
+      game.addSystem(summonSystem);
 
       var collisionSystem = new CollisionSystem();
       collisionSystem.initialize(game, entityManager);
@@ -275,6 +289,10 @@
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
       game.debugManager.register(pickupPool);
+      game.debugManager.register(minePool);
+      game.debugManager.register(summonPool);
+      game.debugManager.register(mineSystem);
+      game.debugManager.register(summonSystem);
 
       // Register summary providers for high-priority debug info
       game.debugManager.registerSummary(game);

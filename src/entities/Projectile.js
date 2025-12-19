@@ -75,8 +75,9 @@
      * @param {number} lifetime
      * @param {string} [sourceWeaponId]
      * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
+     * @param {boolean} [isCrit] - Whether this projectile is a critical hit
      */
-    reset(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet) {
+    reset(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit) {
       // Reset transform
       var transform = this.transform;
       transform.x = x;
@@ -101,7 +102,7 @@
 
       // Reset projectile component
       var projectile = this.projectile;
-      projectile.reset(damage, pierce, lifetime, sourceWeaponId, ricochet);
+      projectile.reset(damage, pierce, lifetime, sourceWeaponId, ricochet, isCrit);
 
       // Ensure active
       this.isActive = true;

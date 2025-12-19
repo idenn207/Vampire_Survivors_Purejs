@@ -10,7 +10,9 @@
   // ============================================
   var Transform = window.VampireSurvivors.Components.Transform;
   var Health = window.VampireSurvivors.Components.Health;
+  var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
   var Vector2 = window.VampireSurvivors.Utils.Vector2;
+  var GlobalStatsHelper = window.VampireSurvivors.Utils.GlobalStatsHelper;
 
   // ============================================
   // Class Definition
@@ -22,6 +24,7 @@
     _entityManager = null;
     _input = null;
     _events = null;
+    _player = null;
 
     // ----------------------------------------
     // Constructor
@@ -36,11 +39,30 @@
      * @param {EntityManager} entityManager
      * @param {Input} input
      * @param {EventBus} events
+     * @param {Entity} player - Player entity reference
      */
-    initialize(entityManager, input, events) {
+    initialize(entityManager, input, events, player) {
       this._entityManager = entityManager;
       this._input = input;
       this._events = events;
+      this._player = player;
+    }
+
+    /**
+     * Set the player reference (called when player changes)
+     * @param {Entity} player
+     */
+    setPlayer(player) {
+      this._player = player;
+    }
+
+    /**
+     * Get player stats component
+     * @returns {PlayerStats|null}
+     */
+    _getPlayerStats() {
+      if (!this._player) return null;
+      return this._player.getComponent(PlayerStats);
     }
 
     /**
@@ -317,25 +339,67 @@
     // Damage Helpers
     // ----------------------------------------
     /**
-     * Calculate damage (with optional critical hit)
+     * Calculate damage (with player stats applied)
      * @param {Weapon} weapon
-     * @param {number} [critChance] - Critical hit chance (0-1)
-     * @param {number} [critMultiplier] - Critical damage multiplier
-     * @returns {{damage: number, isCritical: boolean}}
+     * @param {number} [critChance] - Override critical hit chance (0-1)
+     * @param {number} [critMultiplier] - Override critical damage multiplier
+     * @returns {{damage: number, isCrit: boolean}}
      */
     calculateDamage(weapon, critChance, critMultiplier) {
+      var playerStats = this._getPlayerStats();
       var baseDamage = weapon.damage;
-      var isCritical = false;
 
-      if (critChance && Math.random() < critChance) {
-        isCritical = true;
-        baseDamage *= critMultiplier || 2;
+      // Apply player damage multiplier
+      var effectiveDamage = GlobalStatsHelper.getEffectiveDamage(baseDamage, playerStats);
+
+      // Get crit stats from weapon if not provided as parameters
+      // Default base crit chance is 5% for weapons without explicit critChance
+      var baseCritChance = critChance !== undefined ? critChance : weapon.getStat('critChance', 0.05);
+      var baseCritMultiplier = critMultiplier !== undefined ? critMultiplier : weapon.getStat('critMultiplier', 2);
+
+      // Apply player crit chance and multiplier bonuses
+      var effectiveCritChance = GlobalStatsHelper.getEffectiveCritChance(baseCritChance, playerStats);
+      var effectiveCritMultiplier = GlobalStatsHelper.getEffectiveCritMultiplier(baseCritMultiplier, playerStats);
+
+      var isCrit = false;
+      if (effectiveCritChance > 0 && Math.random() < effectiveCritChance) {
+        isCrit = true;
+        effectiveDamage *= effectiveCritMultiplier;
       }
 
       return {
-        damage: Math.floor(baseDamage),
-        isCritical: isCritical,
+        damage: Math.floor(effectiveDamage),
+        isCrit: isCrit,
       };
+    }
+
+    /**
+     * Get effective range with player stats applied
+     * @param {number} baseRange - Base weapon range
+     * @returns {number} Effective range
+     */
+    getEffectiveRange(baseRange) {
+      var playerStats = this._getPlayerStats();
+      return GlobalStatsHelper.getEffectiveRange(baseRange, playerStats);
+    }
+
+    /**
+     * Get effective duration with player stats applied
+     * @param {number} baseDuration - Base effect duration
+     * @returns {number} Effective duration
+     */
+    getEffectiveDuration(baseDuration) {
+      var playerStats = this._getPlayerStats();
+      return GlobalStatsHelper.getEffectiveDuration(baseDuration, playerStats);
+    }
+
+    /**
+     * Get size multiplier from player stats
+     * @returns {number} Size multiplier
+     */
+    getSizeMultiplier() {
+      var playerStats = this._getPlayerStats();
+      return GlobalStatsHelper.getSizeMultiplier(playerStats);
     }
 
     // ----------------------------------------
@@ -382,6 +446,7 @@
       this._entityManager = null;
       this._input = null;
       this._events = null;
+      this._player = null;
     }
   }
 

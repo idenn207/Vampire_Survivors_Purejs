@@ -40,6 +40,10 @@
         critDamage: { level: 0, bonus: 0 },
         pickupRange: { level: 0, bonus: 0 },
         xpGain: { level: 0, bonus: 0 },
+        range: { level: 0, bonus: 0 },
+        cooldownReduction: { level: 0, bonus: 0 },
+        duration: { level: 0, bonus: 0 },
+        luck: { level: 0, bonus: 0 },
       };
     }
 

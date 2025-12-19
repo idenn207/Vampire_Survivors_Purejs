@@ -10,6 +10,7 @@
   // ============================================
   var System = Systems.System;
   var WeaponSlot = window.VampireSurvivors.Components.WeaponSlot;
+  var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
   var AttackType = window.VampireSurvivors.Data.AttackType;
   var events = window.VampireSurvivors.Core.events;
 
@@ -31,6 +32,8 @@
     _meleeBehavior = null;
     _areaBehavior = null;
     _particleBehavior = null;
+    _mineBehavior = null;
+    _summonBehavior = null;
 
     // Active particle weapons for update
     _activeParticleWeapons = [];
@@ -52,6 +55,8 @@
      */
     setPlayer(player) {
       this._player = player;
+      // Update behaviors with new player reference
+      this.updateBehaviorPlayer();
     }
 
     /**
@@ -81,6 +86,8 @@
       this._meleeBehavior = new Behaviors.MeleeBehavior();
       this._areaBehavior = new Behaviors.AreaBehavior();
       this._particleBehavior = new Behaviors.ParticleBehavior();
+      this._mineBehavior = new Behaviors.MineBehavior();
+      this._summonBehavior = new Behaviors.SummonBehavior();
 
       // Initialize all behaviors with dependencies
       var behaviors = [
@@ -89,10 +96,34 @@
         this._meleeBehavior,
         this._areaBehavior,
         this._particleBehavior,
+        this._mineBehavior,
+        this._summonBehavior,
       ];
 
       for (var i = 0; i < behaviors.length; i++) {
-        behaviors[i].initialize(this._entityManager, this._input, events);
+        behaviors[i].initialize(this._entityManager, this._input, events, this._player);
+      }
+    }
+
+    /**
+     * Update player reference on all behaviors
+     * Called when player changes
+     */
+    updateBehaviorPlayer() {
+      var behaviors = [
+        this._projectileBehavior,
+        this._laserBehavior,
+        this._meleeBehavior,
+        this._areaBehavior,
+        this._particleBehavior,
+        this._mineBehavior,
+        this._summonBehavior,
+      ];
+
+      for (var i = 0; i < behaviors.length; i++) {
+        if (behaviors[i] && behaviors[i].setPlayer) {
+          behaviors[i].setPlayer(this._player);
+        }
       }
     }
 
@@ -106,8 +137,12 @@
       var weaponSlot = this._player.getComponent(WeaponSlot);
       if (!weaponSlot) return;
 
-      // Update all weapon cooldowns
-      weaponSlot.updateCooldowns(deltaTime);
+      // Get cooldown reduction from player stats
+      var playerStats = this._player.getComponent(PlayerStats);
+      var cooldownReduction = playerStats ? playerStats.getStatBonus('cooldownReduction') : 0;
+
+      // Update all weapon cooldowns with reduction
+      weaponSlot.updateCooldowns(deltaTime, cooldownReduction);
 
       // Get all weapons
       var weapons = weaponSlot.getWeapons();
@@ -199,6 +234,10 @@
           return this._areaBehavior;
         case AttackType.PARTICLE:
           return this._particleBehavior;
+        case AttackType.MINE:
+          return this._mineBehavior;
+        case AttackType.SUMMON:
+          return this._summonBehavior;
         default:
           console.warn('[WeaponSystem] Unknown attack type:', attackType);
           return null;
@@ -275,6 +314,14 @@
       if (this._particleBehavior) {
         this._particleBehavior.dispose();
         this._particleBehavior = null;
+      }
+      if (this._mineBehavior) {
+        this._mineBehavior.dispose();
+        this._mineBehavior = null;
+      }
+      if (this._summonBehavior) {
+        this._summonBehavior.dispose();
+        this._summonBehavior = null;
       }
 
       this._player = null;

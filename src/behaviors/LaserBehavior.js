@@ -44,11 +44,18 @@
       var playerPos = this.getPlayerCenter(player);
 
       // Get weapon stats
-      var range = weapon.getStat('range', 800);
-      var width = weapon.getStat('width', 5);
-      var duration = weapon.getStat('duration', 0.5);
-      var damage = weapon.damage;
+      var baseRange = weapon.getStat('range', 800);
+      var baseWidth = weapon.getStat('width', 5);
+      var baseDuration = weapon.getStat('duration', 0.5);
       var color = weapon.getStat('color', '#00FFFF');
+
+      // Apply player stat bonuses
+      var range = this.getEffectiveRange(baseRange);
+      var width = Math.round(baseWidth * this.getSizeMultiplier());
+      var duration = this.getEffectiveDuration(baseDuration);
+      var damageResult = this.calculateDamage(weapon);
+      var damage = damageResult.damage;
+      var isCrit = damageResult.isCrit;
 
       // Get direction based on targeting mode
       var direction = this._getDirection(weapon, player, range);
@@ -68,13 +75,14 @@
         var enemy = hitEnemies[i];
         var health = enemy.getComponent(Health);
         if (health && !health.isDead) {
-          health.takeDamage(damage);
+          health.takeDamage(damage, isCrit);
 
           // Emit hit event
           events.emit('weapon:hit', {
             weapon: weapon,
             enemy: enemy,
             damage: damage,
+            isCrit: isCrit,
             type: 'laser',
           });
         }
