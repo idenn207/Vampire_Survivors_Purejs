@@ -32,7 +32,7 @@
     targetingMode: TargetingMode.RANDOM,
     isAuto: true,
 
-    // Stats (2.0x base multiplier)
+    // Stats (4.0x base multiplier)
     damage: 24,
     cooldown: 0.25,
     projectileCount: 6,

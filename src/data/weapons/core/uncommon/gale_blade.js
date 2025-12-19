@@ -32,7 +32,7 @@
     targetingMode: TargetingMode.NEAREST,
     isAuto: true,
 
-    // Stats (1.3x base multiplier)
+    // Stats (1.6x base multiplier)
     damage: 18,
     cooldown: 0.52,
     projectileCount: 3,

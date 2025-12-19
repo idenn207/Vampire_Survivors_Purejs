@@ -7,14 +7,14 @@
 
   /**
    * Stat multipliers for each evolution tier
-   * T1 (Common) = 1.0x, T2 (Uncommon) = 1.3x, T3 (Rare) = 1.6x, T4 (Epic) = 2.0x, T5 (Legendary) = 2.5x
+   * T1 (Common) = 1.0x, T2 (Uncommon) = 1.6x, T3 (Rare) = 2.5x, T4 (Epic) = 4.0x, T5 (Legendary) = 10.0x
    */
   var EVOLUTION_TIER_MULTIPLIERS = {
     1: 1.0,
-    2: 1.3,
-    3: 1.6,
-    4: 2.0,
-    5: 2.5,
+    2: 1.6,
+    3: 2.5,
+    4: 4.0,
+    5: 10.0,
   };
 
   /**
