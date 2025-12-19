@@ -92,7 +92,109 @@
   <script src="src/pool/EnemyProjectilePool.js"></script>
 
   <!-- Phase 5.7: Data -->
-  <script src="src/data/WeaponData.js"></script>
+  <!-- Weapon Constants (must load first) -->
+  <script src="src/data/weapons/WeaponConstants.js"></script>
+
+  <!-- Individual Weapon Files - Common Tier (30 weapons) -->
+  <script src="src/data/weapons/common/arcane_dart.js"></script>
+  <script src="src/data/weapons/common/stone_throw.js"></script>
+  <script src="src/data/weapons/common/ice_shard.js"></script>
+  <script src="src/data/weapons/common/ember_bolt.js"></script>
+  <script src="src/data/weapons/common/spectral_arrow.js"></script>
+  <script src="src/data/weapons/common/scatter_shot.js"></script>
+  <script src="src/data/weapons/common/venom_fang.js"></script>
+  <script src="src/data/weapons/common/wind_cutter.js"></script>
+  <script src="src/data/weapons/common/rusty_blade.js"></script>
+  <script src="src/data/weapons/common/monks_fist.js"></script>
+  <script src="src/data/weapons/common/cleaver.js"></script>
+  <script src="src/data/weapons/common/whip_lash.js"></script>
+  <script src="src/data/weapons/common/battle_axe.js"></script>
+  <script src="src/data/weapons/common/claw_strike.js"></script>
+  <script src="src/data/weapons/common/poison_puddle.js"></script>
+  <script src="src/data/weapons/common/frost_circle.js"></script>
+  <script src="src/data/weapons/common/ember_field.js"></script>
+  <script src="src/data/weapons/common/shadow_pool.js"></script>
+  <script src="src/data/weapons/common/holy_ground.js"></script>
+  <script src="src/data/weapons/common/orbiting_stones.js"></script>
+  <script src="src/data/weapons/common/spark_chain.js"></script>
+  <script src="src/data/weapons/common/spirit_wisps.js"></script>
+  <script src="src/data/weapons/common/fire_motes.js"></script>
+  <script src="src/data/weapons/common/spike_trap.js"></script>
+  <script src="src/data/weapons/common/flash_bomb.js"></script>
+  <script src="src/data/weapons/common/ice_bomb.js"></script>
+  <script src="src/data/weapons/common/light_ray.js"></script>
+  <script src="src/data/weapons/common/shadow_beam.js"></script>
+  <script src="src/data/weapons/common/skeleton_minion.js"></script>
+  <script src="src/data/weapons/common/fire_sprite.js"></script>
+
+  <!-- Individual Weapon Files - Uncommon Tier (30 weapons) -->
+  <script src="src/data/weapons/uncommon/bifrost_bolt.js"></script>
+  <script src="src/data/weapons/uncommon/homing_missile.js"></script>
+  <script src="src/data/weapons/uncommon/ricochet_shot.js"></script>
+  <script src="src/data/weapons/uncommon/split_arrow.js"></script>
+  <script src="src/data/weapons/uncommon/plasma_orb.js"></script>
+  <script src="src/data/weapons/uncommon/chakram.js"></script>
+  <script src="src/data/weapons/uncommon/void_bullet.js"></script>
+  <script src="src/data/weapons/uncommon/crystal_lance.js"></script>
+  <script src="src/data/weapons/uncommon/phantom_blade.js"></script>
+  <script src="src/data/weapons/uncommon/flame_scythe.js"></script>
+  <script src="src/data/weapons/uncommon/thunder_hammer.js"></script>
+  <script src="src/data/weapons/uncommon/blood_razor.js"></script>
+  <script src="src/data/weapons/uncommon/crescent_moon.js"></script>
+  <script src="src/data/weapons/uncommon/toxic_spores.js"></script>
+  <script src="src/data/weapons/uncommon/gravity_well.js"></script>
+  <script src="src/data/weapons/uncommon/hallowed_ring.js"></script>
+  <script src="src/data/weapons/uncommon/meteor_crater.js"></script>
+  <script src="src/data/weapons/uncommon/blizzard_zone.js"></script>
+  <script src="src/data/weapons/uncommon/soul_orbit.js"></script>
+  <script src="src/data/weapons/uncommon/arc_lightning.js"></script>
+  <script src="src/data/weapons/uncommon/blade_vortex.js"></script>
+  <script src="src/data/weapons/uncommon/toxic_chain.js"></script>
+  <script src="src/data/weapons/uncommon/flame_dancers.js"></script>
+  <script src="src/data/weapons/uncommon/cluster_mine.js"></script>
+  <script src="src/data/weapons/uncommon/magnetic_mine.js"></script>
+  <script src="src/data/weapons/uncommon/chain_reaction_mine.js"></script>
+  <script src="src/data/weapons/uncommon/prismatic_ray.js"></script>
+  <script src="src/data/weapons/uncommon/piercing_gaze.js"></script>
+  <script src="src/data/weapons/uncommon/shadow_clone.js"></script>
+  <script src="src/data/weapons/uncommon/frost_elemental.js"></script>
+
+  <!-- Individual Weapon Files - Rare Tier (20 weapons) -->
+  <script src="src/data/weapons/rare/constellation_arrow.js"></script>
+  <script src="src/data/weapons/rare/singularity_orb.js"></script>
+  <script src="src/data/weapons/rare/phoenix_feather.js"></script>
+  <script src="src/data/weapons/rare/temporal_bolt.js"></script>
+  <script src="src/data/weapons/rare/dragonbreath_volley.js"></script>
+  <script src="src/data/weapons/rare/void_reaver.js"></script>
+  <script src="src/data/weapons/rare/storm_caller.js"></script>
+  <script src="src/data/weapons/rare/mirrorblade.js"></script>
+  <script src="src/data/weapons/rare/soulrender.js"></script>
+  <script src="src/data/weapons/rare/aurora_field.js"></script>
+  <script src="src/data/weapons/rare/dimensional_rift.js"></script>
+  <script src="src/data/weapons/rare/supernova_core.js"></script>
+  <script src="src/data/weapons/rare/celestial_orbit.js"></script>
+  <script src="src/data/weapons/rare/cascade_lightning.js"></script>
+  <script src="src/data/weapons/rare/orbital_bombardment.js"></script>
+  <script src="src/data/weapons/rare/quantum_mine.js"></script>
+  <script src="src/data/weapons/rare/void_anchor.js"></script>
+  <script src="src/data/weapons/rare/sunbeam.js"></script>
+  <script src="src/data/weapons/rare/moonlight_slash.js"></script>
+  <script src="src/data/weapons/rare/phoenix_guardian.js"></script>
+
+  <!-- Individual Weapon Files - Epic Tier (10 weapons) -->
+  <script src="src/data/weapons/epic/ragnarok.js"></script>
+  <script src="src/data/weapons/epic/cosmic_annihilator.js"></script>
+  <script src="src/data/weapons/epic/world_serpent.js"></script>
+  <script src="src/data/weapons/epic/infinity_gauntlet.js"></script>
+  <script src="src/data/weapons/epic/chrono_shatter.js"></script>
+  <script src="src/data/weapons/epic/void_emperor.js"></script>
+  <script src="src/data/weapons/epic/heavens_wrath.js"></script>
+  <script src="src/data/weapons/epic/soul_nexus.js"></script>
+  <script src="src/data/weapons/epic/apocalypse_engine.js"></script>
+  <script src="src/data/weapons/epic/genesis_blade.js"></script>
+
+  <!-- Weapon Aggregator (must load after all weapon files) -->
+  <script src="src/data/weapons/WeaponAggregator.js"></script>
   <script src="src/data/WeaponTierData.js"></script>
   <script src="src/data/WeaponEvolutionData.js"></script>
   <script src="src/data/DropTable.js"></script>
