@@ -61,14 +61,18 @@ All code uses IIFE (Immediately Invoked Function Expression) with a global names
 | Priority | System | Purpose |
 |----------|--------|---------|
 | 0 | BackgroundSystem | Draw grid |
+| 1 | CoreSelectionSystem | Tech core selection at start |
 | 4 | WaveSystem | Wave progression |
 | 5 | PlayerSystem | Input → Velocity |
+| 6 | StatusEffectSystem | Apply buffs/debuffs |
 | 8 | EnemySystem | Spawn + AI |
 | 8 | TraversalEnemySystem | Screen-crossing enemies |
 | 8 | BossSystem | Boss spawning + patterns |
 | 10 | MovementSystem | Velocity → Position |
 | 15 | ProjectileSystem | Projectile lifecycle |
 | 15 | AreaEffectSystem | Area damage zones |
+| 15 | MineSystem | Deployable mines |
+| 15 | SummonSystem | Summoned minions |
 | 20 | CollisionSystem | Detect collisions |
 | 25 | CombatSystem | Damage dealing |
 | 30 | DropSystem | Loot spawning |
@@ -77,17 +81,32 @@ All code uses IIFE (Immediately Invoked Function Expression) with a global names
 | 50 | CameraSystem | Follow player |
 | 100 | RenderSystem | Draw entities |
 | 110 | HUDSystem | UI overlay |
+| 112 | TechTreeSystem | Tech progression UI |
 | 115 | LevelUpSystem | Level-up screen |
+| 116 | TabScreenSystem | Stats/evolution tabs (Tab key) |
 | 120 | GameOverSystem | Death screen |
 
 ### Weapon System (Behavior Pattern)
 
-Weapons are data-driven via `src/data/WeaponData.js`. Each weapon has:
-- `attackType`: PROJECTILE, LASER, MELEE_SWING, AREA_DAMAGE, PARTICLE
+Weapons are data-driven with modular file structure:
+- Individual weapon files in `src/data/weapons/basic/` (common, uncommon, rare, epic)
+- Core weapon chains in `src/data/weapons/core/` (evolved weapons tied to tech cores)
+- `WeaponAggregator.js` merges all weapons into `Data.WeaponData`
+
+Each weapon has:
+- `attackType`: PROJECTILE, LASER, MELEE_SWING, AREA_DAMAGE, PARTICLE, MINE, SUMMON
 - `targetingMode`: NEAREST, RANDOM, MOUSE, ROTATING, CHAIN
 - `isAuto`: true for auto-fire, false for manual (mouse click)
+- `tier`: 1-5 (common → legendary), affects stat multipliers
 
 Weapon behaviors in `src/behaviors/` execute the attack logic based on type.
+
+### Tech Core System
+
+15 element-based cores in `src/data/techcores/`. Each core:
+- Grants a starting weapon and evolution chain (up to 5 tiers)
+- Provides tech abilities with 10 levels each
+- Uses `TechCoreAggregator.js` to merge into `Data.TechCoreData`
 
 ### Collision Layers (Bitmask)
 
@@ -105,6 +124,19 @@ CollisionLayer.PICKUP = 16;  // 0b10000
 1. Create file using IIFE pattern
 2. Add `<script>` tag in `index.html` in correct phase
 3. Register with namespace: `Namespace.ClassName = ClassName;`
+
+### Adding New Weapons
+
+1. Create weapon file in appropriate folder (`src/data/weapons/basic/<rarity>/`)
+2. Register to `Data.WeaponRegistry[weaponId] = { ... }`
+3. Add `<script>` tag in index.html **before** WeaponAggregator.js
+4. Aggregator auto-merges into WeaponData on load
+
+### Adding New Enemies
+
+1. Create enemy file in `src/data/enemies/`
+2. Register to `Data.EnemyRegistry[enemyId] = { ... }`
+3. Add `<script>` tag before EnemyAggregator.js
 
 ## Code Conventions
 
@@ -169,7 +201,9 @@ events.emit('player:damaged', { amount: 10 });
 - `src/core/Game.js` - Game loop, state management
 - `src/managers/EntityManager.js` - Entity creation/querying
 - `src/entities/Entity.js` - Base entity class with component/tag system
-- `src/data/WeaponData.js` - All weapon definitions and stats
+- `src/data/weapons/WeaponAggregator.js` - Merges all weapon files into WeaponData
+- `src/data/techcores/TechCoreAggregator.js` - Merges all tech core files
+- `src/data/WeaponTierData.js` - Tier multipliers and evolution recipes
 - `src/data/WaveData.js` - Enemy wave configurations
 - `src/systems/WeaponSystem.js` - Weapon firing orchestration
 
