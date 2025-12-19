@@ -216,6 +216,9 @@
         enemyHealth.takeDamage(finalDamage, isCrit);
         this._damageDealt += finalDamage;
 
+        // Track damage per weapon for Tab screen stats
+        this._trackWeaponDamage(projectileComp.sourceWeaponId, finalDamage);
+
         // Apply status effects
         if (weaponConfig && weaponConfig.statusEffects) {
           EffectHandlers.applyStatusEffects(enemy, weaponConfig.statusEffects, hitbox, this);
@@ -282,6 +285,23 @@
 
       // Return weapon data which contains all config including statusEffects, knockback, etc.
       return weapon.data || weapon.getAllStats();
+    }
+
+    /**
+     * Track damage dealt by a specific weapon for Tab screen stats
+     * @param {string} weaponId - The weapon ID
+     * @param {number} damage - Damage amount dealt
+     */
+    _trackWeaponDamage(weaponId, damage) {
+      if (!weaponId || !this._player) return;
+
+      var weaponSlot = this._player.getComponent(WeaponSlot);
+      if (!weaponSlot) return;
+
+      var weapon = weaponSlot.getWeapon(weaponId);
+      if (weapon && weapon.addDamageDealt) {
+        weapon.addDamageDealt(damage);
+      }
     }
 
     _handlePlayerEnemyCollision(player, enemy) {

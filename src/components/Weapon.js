@@ -36,6 +36,9 @@
     _maxTier = 4;
     _isExclusive = false;
 
+    // Damage tracking for Tab screen stats
+    _totalDamageDealt = 0;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -164,6 +167,31 @@
     }
 
     /**
+     * Add damage dealt to total (for Tab screen stats)
+     * @param {number} amount - Damage amount dealt
+     */
+    addDamageDealt(amount) {
+      this._totalDamageDealt += amount;
+    }
+
+    /**
+     * Get total damage dealt by this weapon
+     * @returns {number}
+     */
+    getTotalDamageDealt() {
+      return this._totalDamageDealt;
+    }
+
+    /**
+     * Calculate DPS (damage per second)
+     * @returns {number}
+     */
+    getDPS() {
+      if (this._cooldownMax <= 0) return 0;
+      return this._damage / this._cooldownMax;
+    }
+
+    /**
      * Get all current stats
      * @returns {Object}
      */
@@ -276,6 +304,15 @@
       return this._level >= this._maxLevel && this._tier < this._maxTier;
     }
 
+    get totalDamageDealt() {
+      return this._totalDamageDealt;
+    }
+
+    get dps() {
+      if (this._cooldownMax <= 0) return 0;
+      return this._damage / this._cooldownMax;
+    }
+
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
@@ -286,6 +323,8 @@
           { key: 'Level', value: this._level + '/' + this._maxLevel },
           { key: 'Tier', value: this._tier + '/' + this._maxTier },
           { key: 'Damage', value: this._damage },
+          { key: 'DPS', value: this.dps.toFixed(1) },
+          { key: 'Total Dealt', value: this._totalDamageDealt },
           { key: 'Cooldown', value: this._cooldown.toFixed(2) + '/' + this._cooldownMax },
           { key: 'Type', value: this._attackType },
           { key: 'Target', value: this._targetingMode },

@@ -49,6 +49,7 @@
   var StatusEffectSystem = Systems.StatusEffectSystem;
   var MineSystem = Systems.MineSystem;
   var SummonSystem = Systems.SummonSystem;
+  var TabScreenSystem = Systems.TabScreenSystem;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
@@ -202,6 +203,13 @@
       techTreeSystem.initialize(game, entityManager);
       game.addSystem(techTreeSystem);
 
+      // Create tab screen system (priority 116)
+      var tabScreenSystem = new TabScreenSystem();
+      tabScreenSystem.initialize(game, entityManager);
+      tabScreenSystem.setLevelUpSystem(levelUpSystem);
+      tabScreenSystem.setGameOverSystem(gameOverSystem);
+      game.addSystem(tabScreenSystem);
+
       // Helper function to setup player after core selection
       function setupPlayer(coreId) {
         // Create player at center
@@ -234,6 +242,7 @@
         weaponSystem.initializeBehaviors();
         levelUpSystem.setPlayer(player);
         techTreeSystem.setPlayer(player);
+        tabScreenSystem.setPlayer(player);
         gameOverSystem.setPlayer(player);
         gameOverSystem.setHUDSystem(hudSystem);
 
@@ -293,6 +302,7 @@
       game.debugManager.register(gameOverSystem);
       game.debugManager.register(coreSelectionSystem);
       game.debugManager.register(techTreeSystem);
+      game.debugManager.register(tabScreenSystem);
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
       game.debugManager.register(pickupPool);

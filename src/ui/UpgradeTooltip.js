@@ -102,6 +102,8 @@
         contentY = this._renderStatTooltip(ctx, x + PADDING, contentY);
       } else if (this._content.type === 'weapon') {
         contentY = this._renderWeaponTooltip(ctx, x + PADDING, contentY);
+      } else if (this._content.type === 'weaponDetail') {
+        contentY = this._renderWeaponDetailTooltip(ctx, x + PADDING, contentY);
       } else if (this._content.type === 'newWeapon') {
         contentY = this._renderNewWeaponTooltip(ctx, x + PADDING, contentY);
       } else if (this._content.type === 'tech') {
@@ -120,6 +122,14 @@
         lines = 4; // Title + current + next + cost
       } else if (this._content.type === 'weapon') {
         lines = 5; // Title + level + stats + cost
+      } else if (this._content.type === 'weaponDetail') {
+        lines = 7; // Title + tier + damage/DPS + cooldown + range + traits + total damage
+        if (this._content.traits && this._content.traits.length > 2) {
+          lines += Math.min(this._content.traits.length - 2, 2); // Extra trait lines
+        }
+        this._width = 220; // Wider for detailed stats
+        this._height = PADDING * 2 + lines * LINE_HEIGHT;
+        return;
       } else if (this._content.type === 'newWeapon') {
         lines = 4; // Title + type + description + NEW
       } else if (this._content.type === 'tech') {
@@ -203,6 +213,88 @@
       y += LINE_HEIGHT;
 
       return y;
+    }
+
+    _renderWeaponDetailTooltip(ctx, x, y) {
+      var content = this._content;
+
+      // Tier colors
+      var tierColors = {
+        1: '#FFFFFF',
+        2: '#3498DB',
+        3: '#9B59B6',
+        4: '#F39C12',
+        5: '#E74C3C',
+      };
+      var tierNames = {
+        1: 'Common',
+        2: 'Uncommon',
+        3: 'Rare',
+        4: 'Epic',
+        5: 'Legendary',
+      };
+
+      // Title (weapon name) with tier color
+      ctx.font = 'bold 14px Arial';
+      ctx.fillStyle = tierColors[content.tier] || TITLE_COLOR;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(content.name, x, y);
+      y += LINE_HEIGHT;
+
+      // Level and Tier
+      ctx.font = '12px Arial';
+      ctx.fillStyle = DESC_COLOR;
+      ctx.fillText('Lv.' + content.level + '/' + content.maxLevel + '  ', x, y);
+      ctx.fillStyle = tierColors[content.tier] || DESC_COLOR;
+      ctx.fillText('[' + (tierNames[content.tier] || 'T' + content.tier) + ']', x + 55, y);
+      y += LINE_HEIGHT;
+
+      // Damage and DPS
+      ctx.fillStyle = '#E67E22'; // Orange for damage
+      ctx.fillText('Damage: ' + content.damage, x, y);
+      ctx.fillStyle = VALUE_COLOR;
+      ctx.fillText('  DPS: ' + content.dps.toFixed(1), x + 80, y);
+      y += LINE_HEIGHT;
+
+      // Cooldown
+      ctx.fillStyle = '#1ABC9C'; // Teal for cooldown
+      ctx.fillText('Cooldown: ' + content.cooldown.toFixed(2) + 's', x, y);
+      y += LINE_HEIGHT;
+
+      // Range (if applicable)
+      if (content.range > 0) {
+        ctx.fillStyle = '#9B59B6'; // Purple for range
+        ctx.fillText('Range: ' + content.range, x, y);
+        y += LINE_HEIGHT;
+      }
+
+      // Traits
+      if (content.traits && content.traits.length > 0) {
+        ctx.fillStyle = '#3498DB'; // Blue for traits
+        var traitsText = content.traits.slice(0, 4).join(', ');
+        if (traitsText.length > 30) {
+          traitsText = traitsText.substring(0, 27) + '...';
+        }
+        ctx.fillText(traitsText, x, y);
+        y += LINE_HEIGHT;
+      }
+
+      // Total Damage Dealt
+      ctx.fillStyle = COST_COLOR;
+      ctx.fillText('Total Dealt: ' + this._formatNumber(content.totalDamageDealt), x, y);
+      y += LINE_HEIGHT;
+
+      return y;
+    }
+
+    _formatNumber(num) {
+      if (num >= 1000000) {
+        return (num / 1000000).toFixed(1) + 'M';
+      } else if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'K';
+      }
+      return Math.floor(num).toString();
     }
 
     _renderNewWeaponTooltip(ctx, x, y) {

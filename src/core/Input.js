@@ -39,6 +39,7 @@
     _boundHandleMouseDown = null;
     _boundHandleMouseUp = null;
     _boundHandleContextMenu = null;
+    _boundHandleBlur = null;
 
     // ----------------------------------------
     // Constructor
@@ -50,6 +51,7 @@
       this._boundHandleMouseDown = this._handleMouseDown.bind(this);
       this._boundHandleMouseUp = this._handleMouseUp.bind(this);
       this._boundHandleContextMenu = this._handleContextMenu.bind(this);
+      this._boundHandleBlur = this._handleBlur.bind(this);
     }
 
     // ----------------------------------------
@@ -60,6 +62,7 @@
 
       window.addEventListener('keydown', this._boundHandleKeyDown);
       window.addEventListener('keyup', this._boundHandleKeyUp);
+      window.addEventListener('blur', this._boundHandleBlur);
       canvas.addEventListener('mousemove', this._boundHandleMouseMove);
       canvas.addEventListener('mousedown', this._boundHandleMouseDown);
       canvas.addEventListener('mouseup', this._boundHandleMouseUp);
@@ -135,6 +138,11 @@
     // Private Methods
     // ----------------------------------------
     _handleKeyDown(e) {
+      // Prevent browser default for Tab key (focus switching)
+      if (e.code === 'Tab') {
+        e.preventDefault();
+      }
+
       if (!this._keys.get(e.code)) {
         this._keysPressed.add(e.code);
       }
@@ -175,6 +183,17 @@
 
     _handleContextMenu(e) {
       e.preventDefault();
+    }
+
+    _handleBlur() {
+      // Clear all key states when window loses focus
+      // This prevents stuck movement when returning to the game
+      this._keys.clear();
+      this._keysPressed.clear();
+      this._keysReleased.clear();
+      this._mouseButtons.clear();
+      this._mouseButtonsPressed.clear();
+      this._mouseButtonsReleased.clear();
     }
 
     _updateMouseWorldPosition() {
@@ -232,6 +251,7 @@
     dispose() {
       window.removeEventListener('keydown', this._boundHandleKeyDown);
       window.removeEventListener('keyup', this._boundHandleKeyUp);
+      window.removeEventListener('blur', this._boundHandleBlur);
 
       if (this._canvas) {
         this._canvas.removeEventListener('mousemove', this._boundHandleMouseMove);
