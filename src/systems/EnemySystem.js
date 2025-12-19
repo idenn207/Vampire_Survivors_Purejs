@@ -1,5 +1,5 @@
 /**
- * @fileoverview Enemy system - handles spawning and AI
+ * @fileoverview Enemy system - handles spawning and AI with behavior pattern
  * @module Systems/EnemySystem
  */
 (function (Systems) {
@@ -14,6 +14,9 @@
   var Health = window.VampireSurvivors.Components.Health;
   var Enemy = window.VampireSurvivors.Entities.Enemy;
   var events = window.VampireSurvivors.Core.events;
+  var EnemyTypeData = window.VampireSurvivors.Data.EnemyTypeData;
+  var Behaviors = window.VampireSurvivors.Behaviors;
+  var Pool = window.VampireSurvivors.Pool;
 
   // ============================================
   // Constants (Base values - modified by wave system)
@@ -37,6 +40,10 @@
 
     // Wave difficulty modifiers
     _difficultyModifiers = null;
+    _currentWave = 1;
+
+    // Behavior instances
+    _behaviors = null;
 
     // Event handlers
     _boundOnWaveStarted = null;
@@ -47,6 +54,7 @@
     constructor() {
       super();
       this._boundOnWaveStarted = this._onWaveStarted.bind(this);
+      this._behaviors = {};
     }
 
     // ----------------------------------------
@@ -57,10 +65,60 @@
 
       // Subscribe to wave events
       events.on('wave:started', this._boundOnWaveStarted);
+
+      // Initialize behaviors (will be fully set up when player is set)
+      this._initializeBehaviors();
+    }
+
+    /**
+     * Initialize all enemy behaviors
+     * @private
+     */
+    _initializeBehaviors() {
+      // Create behavior instances for each behavior type
+      // Note: More behaviors will be added as they are implemented
+      if (Behaviors.ChaseEnemyBehavior) {
+        this._behaviors['chase'] = new Behaviors.ChaseEnemyBehavior();
+      }
+      if (Behaviors.FlyingEnemyBehavior) {
+        this._behaviors['flying'] = new Behaviors.FlyingEnemyBehavior();
+      }
+      if (Behaviors.InvisibleEnemyBehavior) {
+        this._behaviors['invisible'] = new Behaviors.InvisibleEnemyBehavior();
+      }
+      if (Behaviors.SelfDestructBehavior) {
+        this._behaviors['self_destruct'] = new Behaviors.SelfDestructBehavior();
+      }
+      if (Behaviors.DashAttackBehavior) {
+        this._behaviors['dash_attack'] = new Behaviors.DashAttackBehavior();
+      }
+      if (Behaviors.ProjectileEnemyBehavior) {
+        this._behaviors['projectile'] = new Behaviors.ProjectileEnemyBehavior();
+      }
+      if (Behaviors.JumpDropBehavior) {
+        this._behaviors['jump_drop'] = new Behaviors.JumpDropBehavior();
+      }
+    }
+
+    /**
+     * Get behavior for a given behavior type
+     * @param {string} behaviorType - Behavior type key
+     * @returns {EnemyBehavior|null}
+     */
+    getBehavior(behaviorType) {
+      return this._behaviors[behaviorType] || this._behaviors['chase'] || null;
     }
 
     setPlayer(player) {
       this._player = player;
+
+      // Initialize all behaviors with player reference
+      for (var behaviorType in this._behaviors) {
+        var behavior = this._behaviors[behaviorType];
+        if (behavior) {
+          behavior.initialize(this._entityManager, player, events);
+        }
+      }
     }
 
     update(deltaTime) {
@@ -84,6 +142,11 @@
         this._updateEnemyAI();
       }
 
+      // Update enemy projectiles
+      if (Pool.enemyProjectilePool) {
+        Pool.enemyProjectilePool.update(deltaTime);
+      }
+
       // Cleanup dead enemies
       this._cleanupDeadEnemies();
     }
@@ -104,6 +167,10 @@
       var playerTransform = this._player.getComponent(Transform);
       if (!playerTransform) return;
 
+      // Select enemy type based on current wave
+      var enemyType = EnemyTypeData.selectRandomType(this._currentWave);
+      var config = EnemyTypeData.getConfig(enemyType);
+
       // Random angle around player
       var angle = Math.random() * Math.PI * 2;
       var x = playerTransform.centerX + Math.cos(angle) * SPAWN_DISTANCE;
@@ -111,6 +178,11 @@
 
       // Create enemy at spawn position
       var enemy = this._entityManager.create(Enemy);
+
+      // Configure enemy from type
+      enemy.configureFromType(enemyType, config);
+
+      // Position enemy
       var transform = enemy.getComponent(Transform);
       transform.x = x - transform.width / 2;
       transform.y = y - transform.height / 2;
@@ -126,10 +198,17 @@
           health.setMaxHealth(newMaxHealth, true);
         }
       }
+
+      // Notify behavior of spawn
+      var behavior = this.getBehavior(config.behavior);
+      if (behavior && behavior.onSpawn) {
+        behavior.onSpawn(enemy, config);
+      }
     }
 
     _onWaveStarted(data) {
       this._difficultyModifiers = data.modifiers;
+      this._currentWave = data.wave;
       console.log('[EnemySystem] Wave ' + data.wave + ' started, modifiers:', data.modifiers);
     }
 
@@ -137,11 +216,8 @@
       var enemies = this._entityManager.getByTag('enemy');
       if (!enemies || enemies.length === 0) return;
 
-      var playerTransform = this._player.getComponent(Transform);
-      if (!playerTransform) return;
-
-      var playerX = playerTransform.centerX;
-      var playerY = playerTransform.centerY;
+      // AI update uses fixed deltaTime based on interval
+      var deltaTime = AI_UPDATE_INTERVAL;
 
       for (var i = 0; i < enemies.length; i++) {
         var enemy = enemies[i];
@@ -150,20 +226,41 @@
         // Skip traversal enemies - they have their own movement patterns
         if (enemy.hasTag('traversal')) continue;
 
-        var transform = enemy.getComponent(Transform);
-        var velocity = enemy.getComponent(Velocity);
-        if (!transform || !velocity) continue;
+        // Get the behavior for this enemy type
+        var config = enemy.config;
+        var behaviorType = config ? config.behavior : 'chase';
+        var behavior = this.getBehavior(behaviorType);
 
-        // Calculate direction to player
-        var dx = playerX - transform.centerX;
-        var dy = playerY - transform.centerY;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-
-        // Normalize and apply speed
-        if (distance > 0) {
-          velocity.vx = (dx / distance) * enemy.speed;
-          velocity.vy = (dy / distance) * enemy.speed;
+        if (behavior) {
+          // Delegate AI to behavior
+          behavior.update(enemy, deltaTime);
+        } else {
+          // Fallback: simple chase if no behavior found
+          this._fallbackChase(enemy);
         }
+      }
+    }
+
+    /**
+     * Fallback chase behavior when no behavior class is available
+     * @param {Entity} enemy
+     * @private
+     */
+    _fallbackChase(enemy) {
+      var playerTransform = this._player.getComponent(Transform);
+      if (!playerTransform) return;
+
+      var transform = enemy.getComponent(Transform);
+      var velocity = enemy.getComponent(Velocity);
+      if (!transform || !velocity) return;
+
+      var dx = playerTransform.centerX - transform.centerX;
+      var dy = playerTransform.centerY - transform.centerY;
+      var distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance > 0) {
+        velocity.vx = (dx / distance) * enemy.speed;
+        velocity.vy = (dy / distance) * enemy.speed;
       }
     }
 
@@ -208,9 +305,18 @@
     dispose() {
       events.off('wave:started', this._boundOnWaveStarted);
 
+      // Dispose behaviors
+      for (var behaviorType in this._behaviors) {
+        var behavior = this._behaviors[behaviorType];
+        if (behavior && behavior.dispose) {
+          behavior.dispose();
+        }
+      }
+
       this._player = null;
       this._difficultyModifiers = null;
       this._boundOnWaveStarted = null;
+      this._behaviors = {};
 
       super.dispose();
     }

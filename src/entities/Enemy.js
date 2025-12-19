@@ -1,5 +1,5 @@
 /**
- * @fileoverview Enemy entity with chase AI
+ * @fileoverview Enemy entity with configurable type and behavior
  * @module Entities/Enemy
  */
 (function (Entities) {
@@ -36,6 +36,11 @@
     _speed = DEFAULT_SPEED;
     _damage = DEFAULT_DAMAGE;
 
+    // Enemy type system
+    _enemyType = 'normal';
+    _config = null;
+    _behaviorState = null; // For state-machine behaviors
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -57,6 +62,53 @@
 
       // Add tag
       this.addTag('enemy');
+    }
+
+    // ----------------------------------------
+    // Configuration Methods
+    // ----------------------------------------
+    /**
+     * Configure enemy from type config
+     * @param {string} enemyType - Enemy type key
+     * @param {Object} config - Enemy type configuration from EnemyTypeData
+     */
+    configureFromType(enemyType, config) {
+      this._enemyType = enemyType;
+      this._config = config;
+      this._behaviorState = {};
+
+      // Apply base stats from config
+      this._speed = config.baseSpeed;
+      this._damage = config.baseDamage;
+
+      // Update size
+      var size = config.size || DEFAULT_WIDTH;
+      var transform = this.getComponent(Transform);
+      if (transform) {
+        transform.width = size;
+        transform.height = size;
+      }
+
+      // Update collider radius
+      var collider = this.getComponent(Collider);
+      if (collider) {
+        collider.radius = size / 2;
+      }
+
+      // Update color
+      var sprite = this.getComponent(Sprite);
+      if (sprite) {
+        sprite.color = config.color || ENEMY_COLOR;
+      }
+
+      // Update health
+      var health = this.getComponent(Health);
+      if (health) {
+        health.setMaxHealth(config.baseHealth, true);
+      }
+
+      // Add type-specific tag
+      this.addTag('enemy_' + enemyType);
     }
 
     // ----------------------------------------
@@ -96,6 +148,22 @@
 
     get collider() {
       return this.getComponent(Collider);
+    }
+
+    get enemyType() {
+      return this._enemyType;
+    }
+
+    get config() {
+      return this._config;
+    }
+
+    get behaviorState() {
+      return this._behaviorState;
+    }
+
+    set behaviorState(value) {
+      this._behaviorState = value;
     }
   }
 

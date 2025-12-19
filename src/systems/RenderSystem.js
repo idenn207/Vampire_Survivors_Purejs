@@ -121,6 +121,12 @@
         // Restore context state
         ctx.restore();
       }
+
+      // Render enemy projectiles
+      var Pool = window.VampireSurvivors.Pool;
+      if (Pool && Pool.enemyProjectilePool) {
+        Pool.enemyProjectilePool.render(ctx, this._camera);
+      }
     }
 
     // ----------------------------------------

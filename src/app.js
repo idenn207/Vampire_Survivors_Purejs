@@ -55,6 +55,7 @@
   var pickupPool = Pool.pickupPool;
   var minePool = Pool.minePool;
   var summonPool = Pool.summonPool;
+  var enemyProjectilePool = Pool.enemyProjectilePool;
 
   // ============================================
   // Application State
@@ -215,6 +216,7 @@
         // Set player reference in systems
         playerSystem.setPlayer(player);
         enemySystem.setPlayer(player);
+        enemyProjectilePool.setPlayer(player);
         traversalEnemySystem.setPlayer(player);
         traversalEnemySystem.setCamera(camera);
         bossSystem.setPlayer(player);
@@ -298,6 +300,7 @@
       game.debugManager.register(summonPool);
       game.debugManager.register(mineSystem);
       game.debugManager.register(summonSystem);
+      game.debugManager.register(enemyProjectilePool);
 
       // Register summary providers for high-priority debug info
       game.debugManager.registerSummary(game);
