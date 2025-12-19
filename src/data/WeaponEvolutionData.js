@@ -46,6 +46,28 @@
     },
 
     // ============================================
+    // Regular Weapon Evolution Recipes (18 recipes)
+    // ============================================
+    'rusty_blade+cleaver': { result: 'blood_cleaver', resultTier: 2, isKnown: true },
+    'ember_bolt+ember_field': { result: 'blazing_bolt', resultTier: 2, isKnown: true },
+    'ice_shard+ice_bomb': { result: 'frozen_burst', resultTier: 2, isKnown: true },
+    'spectral_arrow+spirit_wisps': { result: 'phantom_volley', resultTier: 2, isKnown: true },
+    'scatter_shot+wind_cutter': { result: 'storm_scatter', resultTier: 2, isKnown: true },
+    'venom_fang+poison_puddle': { result: 'venomous_surge', resultTier: 2, isKnown: true },
+    'monks_fist+claw_strike': { result: 'primal_strike', resultTier: 2, isKnown: true },
+    'battle_axe+rusty_blade': { result: 'berserker_blade', resultTier: 2, isKnown: true },
+    'whip_lash+spark_chain': { result: 'lightning_lash', resultTier: 2, isKnown: true },
+    'arcane_dart+spectral_arrow': { result: 'mystic_arrow', resultTier: 2, isKnown: true },
+    'shadow_beam+shadow_pool': { result: 'umbral_wave', resultTier: 2, isKnown: true },
+    'holy_ground+light_ray': { result: 'radiant_ground', resultTier: 2, isKnown: true },
+    'spike_trap+flash_bomb': { result: 'explosive_trap', resultTier: 2, isKnown: true },
+    'orbiting_stones+stone_throw': { result: 'rock_storm', resultTier: 2, isKnown: true },
+    'skeleton_minion+spirit_wisps': { result: 'undead_legion', resultTier: 2, isKnown: true },
+    'frost_circle+fire_motes': { result: 'elemental_clash', resultTier: 2, isKnown: true },
+    'ember_field+fire_sprite': { result: 'inferno_swarm', resultTier: 2, isKnown: true },
+    'scatter_shot+arcane_dart': { result: 'arcane_scatter', resultTier: 2, isKnown: true },
+
+    // ============================================
     // Core Weapon Evolution Recipes (60 recipes)
     // ============================================
 
