@@ -62,6 +62,7 @@
       description: 'Master of burning damage over time. Enemies ignite and spread flames.',
       color: '#FF4500',
       icon: 'flame',
+      imageId: 'tech_fire_core',
       startingWeapon: 'inferno_bolt',
 
       tree: {
@@ -168,6 +169,7 @@
       description: 'Control the battlefield with freezing attacks. Slow and shatter enemies.',
       color: '#00BFFF',
       icon: 'snowflake',
+      imageId: 'tech_ice_core',
       startingWeapon: 'frost_shard',
 
       tree: {
@@ -272,6 +274,7 @@
       description: 'Harness electrical power. Attacks chain between enemies.',
       color: '#FFD700',
       icon: 'bolt',
+      imageId: 'tech_lightning_core',
       startingWeapon: 'thunder_strike',
 
       tree: {
@@ -376,6 +379,7 @@
       description: 'Strike from darkness. High critical damage and evasion.',
       color: '#4B0082',
       icon: 'moon',
+      imageId: 'tech_shadow_core',
       startingWeapon: 'shadow_blade',
 
       tree: {
@@ -476,6 +480,7 @@
       description: 'Drain life from enemies. Sacrifice health for power.',
       color: '#8B0000',
       icon: 'droplet',
+      imageId: 'tech_blood_core',
       startingWeapon: 'blood_scythe',
 
       tree: {
@@ -586,6 +591,7 @@
       description: 'Master of pure magic. Versatile spells and enhanced cooldowns.',
       color: '#9932CC',
       icon: 'star',
+      imageId: 'tech_arcane_core',
       startingWeapon: 'arcane_barrage',
 
       tree: {
@@ -690,6 +696,7 @@
       description: 'Harness nature\'s power. Regenerate and summon plant allies.',
       color: '#228B22',
       icon: 'leaf',
+      imageId: 'tech_nature_core',
       startingWeapon: 'venom_spore',
 
       tree: {
@@ -798,6 +805,7 @@
       description: 'Become an impenetrable fortress. High armor and damage reflection.',
       color: '#708090',
       icon: 'shield',
+      imageId: 'tech_steel_core',
       startingWeapon: 'steel_hammer',
 
       tree: {
@@ -901,6 +909,7 @@
       description: 'Swift as the wind. High movement speed and evasion.',
       color: '#87CEEB',
       icon: 'wind',
+      imageId: 'tech_wind_core',
       startingWeapon: 'wind_cutter',
 
       tree: {
@@ -1002,6 +1011,7 @@
       description: 'Command the earth itself. Powerful area attacks and stuns.',
       color: '#8B4513',
       icon: 'mountain',
+      imageId: 'tech_earth_core',
       startingWeapon: 'earth_spike',
 
       tree: {
@@ -1103,6 +1113,7 @@
       description: 'Tap into the void. Weaken enemies with curses and debuffs.',
       color: '#2F0032',
       icon: 'void',
+      imageId: 'tech_void_core',
       startingWeapon: 'void_rift',
 
       tree: {
@@ -1205,6 +1216,7 @@
       description: 'Channel divine light. Heal yourself and smite enemies.',
       color: '#FFD700',
       icon: 'sun',
+      imageId: 'tech_holy_core',
       startingWeapon: 'holy_lance',
 
       tree: {
@@ -1310,6 +1322,7 @@
       description: 'Advanced technology. Multiple projectiles and ricochets.',
       color: '#00CED1',
       icon: 'gear',
+      imageId: 'tech_tech_core',
       startingWeapon: 'tech_turret',
 
       tree: {
@@ -1411,6 +1424,7 @@
       description: 'Unleash primal fury. Stack frenzy for massive attack speed.',
       color: '#FF6347',
       icon: 'paw',
+      imageId: 'tech_beast_core',
       startingWeapon: 'beast_claw',
 
       tree: {
@@ -1514,6 +1528,7 @@
       description: 'Manipulate time itself. Reduce cooldowns and slow enemies.',
       color: '#DDA0DD',
       icon: 'clock',
+      imageId: 'tech_time_core',
       startingWeapon: 'chrono_beam',
 
       tree: {

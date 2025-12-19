@@ -126,6 +126,9 @@
       var sprite = this.getComponent(Sprite);
       sprite.color = this._config.color;
       sprite.alpha = 1.0;
+      if (this._config.imageId) {
+        sprite.setImageId(this._config.imageId);
+      }
 
       var collider = this.getComponent(Collider);
       collider.radius = size / 2;

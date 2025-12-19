@@ -25,6 +25,7 @@
       size: 6,
       magnetRadius: 80,
       magnetSpeed: 200,
+      imageId: 'pickup_exp_tier1',
     },
     // XP Tier 2: Medium blue gems (10-49 XP)
     exp_tier2: {
@@ -32,6 +33,7 @@
       size: 10,
       magnetRadius: 100,
       magnetSpeed: 250,
+      imageId: 'pickup_exp_tier2',
     },
     // XP Tier 3: Large purple gems (50-199 XP)
     exp_tier3: {
@@ -39,6 +41,7 @@
       size: 14,
       magnetRadius: 120,
       magnetSpeed: 300,
+      imageId: 'pickup_exp_tier3',
     },
     // XP Tier 4: Extra large gold gems (200+ XP, from bosses/elites)
     exp_tier4: {
@@ -46,6 +49,7 @@
       size: 20,
       magnetRadius: 150,
       magnetSpeed: 350,
+      imageId: 'pickup_exp_tier4',
     },
     // Legacy exp config (fallback)
     exp: {
@@ -53,18 +57,21 @@
       size: 8,
       magnetRadius: 100,
       magnetSpeed: 250,
+      imageId: 'pickup_exp_tier1',
     },
     gold: {
       color: '#FFA500', // Orange
       size: 10,
       magnetRadius: 80,
       magnetSpeed: 200,
+      imageId: 'pickup_gold',
     },
     health: {
       color: '#FF0066', // Pink-Red
       size: 12,
       magnetRadius: 60,
       magnetSpeed: 180,
+      imageId: 'pickup_health',
     },
     magnet: {
       color: '#FF00FF', // Magenta
@@ -73,6 +80,7 @@
       magnetSpeed: 300,
       duration: 10, // Seconds the effect lasts
       maxPullSpeed: 600, // Maximum speed pickups can move toward player
+      imageId: 'pickup_magnet',
     },
   };
 

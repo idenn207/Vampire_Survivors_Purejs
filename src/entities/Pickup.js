@@ -65,7 +65,11 @@
       // Add components
       this.addComponent(new Transform(x || 0, y || 0, size, size));
       this.addComponent(new Velocity());
-      this.addComponent(new Sprite(color, 'circle'));
+      var pickupSprite = new Sprite(color, 'circle');
+      if (config && config.imageId) {
+        pickupSprite.setImageId(config.imageId);
+      }
+      this.addComponent(pickupSprite);
       this.addComponent(
         new Collider(
           size / 2, // radius
@@ -130,6 +134,11 @@
       sprite.color = color;
       sprite.isVisible = true;
       sprite.alpha = 1;
+      if (config && config.imageId) {
+        sprite.setImageId(config.imageId);
+      } else {
+        sprite.clearImage();
+      }
 
       // Reset collider
       var collider = this.collider;

@@ -19,6 +19,7 @@
   var Game = Core.Game;
   var Camera = Core.Camera;
   var events = Core.events;
+  var assetLoader = Core.assetLoader;
 
   var Transform = Components.Transform;
   var Weapon = Components.Weapon;
@@ -71,6 +72,10 @@
       // Create game instance
       game = new Game();
       await game.initialize('game-canvas');
+
+      // Load assets (images)
+      console.log('[App] Loading assets...');
+      await assetLoader.loadAll();
 
       // Setup entity manager
       entityManager = new EntityManager();

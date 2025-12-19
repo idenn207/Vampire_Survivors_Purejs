@@ -31,8 +31,11 @@
     _isVisible = true;
     _alpha = 1;
 
-    // For future sprite sheet support
+    // Image support
     _image = null;
+    _imageId = null;
+    _spriteSheetId = null;
+    _frameId = null;
     _sourceX = 0;
     _sourceY = 0;
     _sourceWidth = 0;
@@ -96,6 +99,108 @@
 
     set image(value) {
       this._image = value;
+    }
+
+    get imageId() {
+      return this._imageId;
+    }
+
+    get spriteSheetId() {
+      return this._spriteSheetId;
+    }
+
+    get frameId() {
+      return this._frameId;
+    }
+
+    get sourceX() {
+      return this._sourceX;
+    }
+
+    get sourceY() {
+      return this._sourceY;
+    }
+
+    get sourceWidth() {
+      return this._sourceWidth;
+    }
+
+    get sourceHeight() {
+      return this._sourceHeight;
+    }
+
+    // ----------------------------------------
+    // Image Methods
+    // ----------------------------------------
+
+    /**
+     * Set image by ID (will be loaded from AssetLoader)
+     * @param {string} imageId
+     */
+    setImageId(imageId) {
+      this._imageId = imageId;
+      this._spriteSheetId = null;
+      this._frameId = null;
+      this._sourceX = 0;
+      this._sourceY = 0;
+      this._sourceWidth = 0;
+      this._sourceHeight = 0;
+
+      // Try to get actual image from AssetLoader
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      if (assetLoader && assetLoader.hasImage(imageId)) {
+        this._image = assetLoader.getImage(imageId);
+      } else {
+        this._image = null;
+      }
+    }
+
+    /**
+     * Set sprite from sprite sheet
+     * @param {string} sheetId
+     * @param {string} frameId
+     */
+    setSpriteFrame(sheetId, frameId) {
+      this._spriteSheetId = sheetId;
+      this._frameId = frameId;
+      this._imageId = null;
+
+      // Get frame data from AssetLoader
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      if (assetLoader) {
+        var frameData = assetLoader.getSpriteFrame(sheetId, frameId);
+        if (frameData) {
+          this._image = frameData.image;
+          this._sourceX = frameData.x;
+          this._sourceY = frameData.y;
+          this._sourceWidth = frameData.width;
+          this._sourceHeight = frameData.height;
+        } else {
+          this._image = null;
+        }
+      }
+    }
+
+    /**
+     * Check if sprite has a valid image loaded
+     * @returns {boolean}
+     */
+    hasValidImage() {
+      return this._image !== null;
+    }
+
+    /**
+     * Clear image and revert to shape rendering
+     */
+    clearImage() {
+      this._image = null;
+      this._imageId = null;
+      this._spriteSheetId = null;
+      this._frameId = null;
+      this._sourceX = 0;
+      this._sourceY = 0;
+      this._sourceWidth = 0;
+      this._sourceHeight = 0;
     }
 
     // ----------------------------------------

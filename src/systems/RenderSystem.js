@@ -85,21 +85,21 @@
 
         // Draw sprite
         if (sprite.image) {
-          // Image rendering (future)
-          ctx.drawImage(sprite.image, screenX, screenY, width, height);
-        } else {
-          // Shape rendering
-          ctx.fillStyle = sprite.color;
-
-          if (sprite.shape === ShapeType.CIRCLE) {
-            var radius = Math.min(width, height) / 2;
-            ctx.beginPath();
-            ctx.arc(screenX + width / 2, screenY + height / 2, radius, 0, Math.PI * 2);
-            ctx.fill();
+          // Image rendering
+          if (sprite.sourceWidth > 0 && sprite.sourceHeight > 0) {
+            // Sprite sheet rendering with source coordinates
+            ctx.drawImage(
+              sprite.image,
+              sprite.sourceX, sprite.sourceY, sprite.sourceWidth, sprite.sourceHeight,
+              screenX, screenY, width, height
+            );
           } else {
-            // Default: rectangle
-            ctx.fillRect(screenX, screenY, width, height);
+            // Simple image rendering
+            ctx.drawImage(sprite.image, screenX, screenY, width, height);
           }
+        } else {
+          // Fallback: Shape rendering
+          this._renderShape(ctx, sprite, screenX, screenY, width, height);
         }
 
         // Draw debug selection highlight
@@ -120,6 +120,33 @@
 
         // Restore context state
         ctx.restore();
+      }
+    }
+
+    // ----------------------------------------
+    // Private Methods
+    // ----------------------------------------
+
+    /**
+     * Render a shape (fallback when no image)
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Sprite} sprite
+     * @param {number} screenX
+     * @param {number} screenY
+     * @param {number} width
+     * @param {number} height
+     */
+    _renderShape(ctx, sprite, screenX, screenY, width, height) {
+      ctx.fillStyle = sprite.color;
+
+      if (sprite.shape === ShapeType.CIRCLE) {
+        var radius = Math.min(width, height) / 2;
+        ctx.beginPath();
+        ctx.arc(screenX + width / 2, screenY + height / 2, radius, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        // Default: rectangle
+        ctx.fillRect(screenX, screenY, width, height);
       }
     }
 

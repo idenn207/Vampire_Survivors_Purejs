@@ -16,6 +16,7 @@
       damage: 15,
       size: 40,
       color: '#FFD700', // Gold
+      imageId: 'boss_elite',
       phases: [
         { threshold: 0.5, speedMultiplier: 1.0, attacks: ['dash'], cooldownMultiplier: 1.0 },
         { threshold: 0.0, speedMultiplier: 1.3, attacks: ['dash'], cooldownMultiplier: 0.8 },
@@ -31,6 +32,7 @@
       damage: 20,
       size: 56,
       color: '#FF4500', // Orange-red
+      imageId: 'boss_miniboss',
       phases: [
         { threshold: 0.66, speedMultiplier: 1.0, attacks: ['dash'], cooldownMultiplier: 1.0 },
         { threshold: 0.33, speedMultiplier: 1.2, attacks: ['dash', 'ring'], cooldownMultiplier: 0.9 },
@@ -48,6 +50,7 @@
       damage: 25,
       size: 72,
       color: '#FF0000', // Red
+      imageId: 'boss_main',
       phases: [
         { threshold: 0.75, speedMultiplier: 1.0, attacks: ['projectile'], cooldownMultiplier: 1.0 },
         { threshold: 0.50, speedMultiplier: 1.1, attacks: ['projectile', 'dash'], cooldownMultiplier: 0.9 },

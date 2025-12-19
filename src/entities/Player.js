@@ -56,7 +56,9 @@
       // Add components
       this.addComponent(new Transform(0, 0, DEFAULT_WIDTH, DEFAULT_HEIGHT));
       this.addComponent(new Velocity());
-      this.addComponent(new Sprite(PLAYER_COLOR));
+      var sprite = new Sprite(PLAYER_COLOR);
+      sprite.setImageId('player_default');
+      this.addComponent(sprite);
       this.addComponent(
         new Collider(
           DEFAULT_WIDTH / 2, // radius

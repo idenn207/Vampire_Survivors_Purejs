@@ -299,6 +299,16 @@
       var centerY = y + SLOT_SIZE / 2;
       var iconSize = 20;
 
+      // Try to render image if available
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = weapon && weapon.data ? weapon.data.imageId : null;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        var imgSize = 24;
+        ctx.drawImage(img, centerX - imgSize / 2, centerY - imgSize / 2, imgSize, imgSize);
+        return;
+      }
+
       // Use weapon color if available
       if (weapon && weapon.data && weapon.data.color) {
         iconColor = weapon.data.color;
@@ -491,7 +501,17 @@
       var centerY = y + SLOT_SIZE / 2;
       var depthColor = DEPTH_COLORS[tech.depth] || '#FFFFFF';
 
-      // Get core icon character
+      // Try to render image if available
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = tech.imageId;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        var imgSize = 24;
+        ctx.drawImage(img, centerX - imgSize / 2, centerY - imgSize / 2, imgSize, imgSize);
+        return;
+      }
+
+      // Fallback: Get core icon character
       var coreIcon = tech.coreIcon || 'star';
       var iconChar = TECH_ICONS[coreIcon] || '✦';
 
