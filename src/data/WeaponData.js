@@ -486,6 +486,8 @@
       color: '#88CCFF',
       icon: 'spirit', // Ghostly companion
       imageId: 'weapon_spirit_companion',
+      summonImageId: 'summon_spirit',
+      summonSize: 20,
 
       upgrades: {
         2: { damage: 28, summonHealth: 70, summonCount: 2 },

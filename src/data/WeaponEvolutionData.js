@@ -63,6 +63,7 @@
       range: 500,
       maxLevel: 5,
       icon: 'arcane_cannon',
+      imageId: 'weapon_arcane_cannon',
       isEvolved: true,
       // Tier properties
       tier: 2,
@@ -86,6 +87,7 @@
       laserWidth: 12,
       maxLevel: 5,
       icon: 'death_ray',
+      imageId: 'weapon_death_ray',
       isEvolved: true,
       // Tier properties
       tier: 2,
@@ -110,6 +112,7 @@
       swingDuration: 0.2,
       maxLevel: 5,
       icon: 'blade_storm',
+      imageId: 'weapon_blade_storm',
       isEvolved: true,
       // Tier properties
       tier: 2,
@@ -135,6 +138,7 @@
       tickRate: 0.3,
       maxLevel: 5,
       icon: 'toxic_inferno',
+      imageId: 'weapon_toxic_inferno',
       isEvolved: true,
       // Tier properties
       tier: 2,
@@ -159,6 +163,7 @@
       orbitSpeed: 4.0,
       maxLevel: 5,
       icon: 'storm_blades',
+      imageId: 'weapon_storm_blades',
       isEvolved: true,
       // Tier properties
       tier: 2,
@@ -185,6 +190,7 @@
       range: 400,
       maxLevel: 5,
       icon: 'spread_seeker',
+      imageId: 'weapon_spread_seeker',
       isEvolved: true,
       // Tier properties
       tier: 2,

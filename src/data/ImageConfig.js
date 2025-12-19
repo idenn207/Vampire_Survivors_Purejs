@@ -18,8 +18,14 @@
     player_default: { path: 'players/player_default.png' },
 
     // ------------- ENEMIES -------------
-    enemy_basic: { path: 'enemies/enemy_basic.png' },
+    enemy_normal: { path: 'enemies/enemy_normal.png' },
     enemy_fast: { path: 'enemies/enemy_fast.png' },
+    enemy_flying: { path: 'enemies/enemy_flying.png' },
+    enemy_self_destruct: { path: 'enemies/enemy_self_destruct.png' },
+    enemy_invisible: { path: 'enemies/enemy_invisible.png' },
+    enemy_dash_attack: { path: 'enemies/enemy_dash_attack.png' },
+    enemy_projectile: { path: 'enemies/enemy_projectile.png' },
+    enemy_jump_drop: { path: 'enemies/enemy_jump_drop.png' },
     enemy_tank: { path: 'enemies/enemy_tank.png' },
     enemy_traversal_circular: { path: 'enemies/traversal_circular.png' },
     enemy_traversal_dash: { path: 'enemies/traversal_dash.png' },
@@ -116,6 +122,9 @@
     // ------------- SUMMONS -------------
     summon_spirit: { path: 'summons/spirit.png' },
     summon_turret: { path: 'summons/turret.png' },
+    summon_wolf: { path: 'summons/wolf.png' },
+    summon_golem: { path: 'summons/golem.png' },
+    summon_fairy: { path: 'summons/fairy.png' },
   };
 
   // ============================================

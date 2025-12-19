@@ -29,6 +29,7 @@
       decayTime: 15.0, // Seconds before disappearing
       color: '#FF6600', // Orange
       size: 24,
+      imageId: 'enemy_traversal_circular',
     },
     DASH: {
       enemyCount: { min: 12, max: 15 }, // Spawn count
@@ -40,6 +41,7 @@
       size: 18,
       chargeTime: 0.8, // Pause before dashing
       groupSpread: 80, // Cluster spread radius
+      imageId: 'enemy_traversal_dash',
     },
     LASER: {
       enemiesPerLine: { min: 8, max: 12 }, // Per-line count
@@ -51,6 +53,7 @@
       decayTime: 12.0, // Longer lifetime
       color: '#00FFFF', // Cyan
       size: 26,
+      imageId: 'enemy_traversal_laser',
     },
   };
 

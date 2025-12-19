@@ -71,14 +71,18 @@
      * @param {string} color
      * @param {string} sourceWeaponId
      * @param {Entity} owner
+     * @param {string} [imageId] - Optional image ID for sprite
+     * @param {number} [size] - Optional custom size
      */
-    reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner) {
+    reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size) {
+      var actualSize = size || DEFAULT_SIZE;
+
       // Reset transform
       var transform = this.transform;
-      transform.x = x - DEFAULT_SIZE / 2;
-      transform.y = y - DEFAULT_SIZE / 2;
-      transform.width = DEFAULT_SIZE;
-      transform.height = DEFAULT_SIZE;
+      transform.x = x - actualSize / 2;
+      transform.y = y - actualSize / 2;
+      transform.width = actualSize;
+      transform.height = actualSize;
 
       // Reset velocity
       var velocity = this.velocity;
@@ -90,6 +94,11 @@
       sprite.color = color || DEFAULT_COLOR;
       sprite.isVisible = true;
       sprite.alpha = 1;
+      if (imageId) {
+        sprite.setImageId(imageId);
+      } else {
+        sprite.clearImage();
+      }
 
       // Reset health
       var healthComp = this.health;

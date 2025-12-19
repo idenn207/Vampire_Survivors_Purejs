@@ -14,7 +14,7 @@
   var Health = window.VampireSurvivors.Components.Health;
   var Enemy = window.VampireSurvivors.Entities.Enemy;
   var events = window.VampireSurvivors.Core.events;
-  var EnemyTypeData = window.VampireSurvivors.Data.EnemyTypeData;
+  var EnemyData = window.VampireSurvivors.Data.EnemyData;
   var Behaviors = window.VampireSurvivors.Behaviors;
   var Pool = window.VampireSurvivors.Pool;
 
@@ -168,8 +168,8 @@
       if (!playerTransform) return;
 
       // Select enemy type based on current wave
-      var enemyType = EnemyTypeData.selectRandomType(this._currentWave);
-      var config = EnemyTypeData.getConfig(enemyType);
+      var enemyType = EnemyData.selectRandomType(this._currentWave);
+      var config = EnemyData.getConfig(enemyType);
 
       // Random angle around player
       var angle = Math.random() * Math.PI * 2;

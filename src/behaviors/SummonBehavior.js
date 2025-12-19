@@ -44,6 +44,8 @@
       var summonSpeed = weapon.getStat('summonSpeed', 150);
       var baseDuration = weapon.getStat('duration', 15);
       var color = weapon.getStat('color', '#88CCFF');
+      var summonImageId = weapon.getStat('summonImageId', null);
+      var summonSize = weapon.getStat('summonSize', null);
 
       // Apply player stat bonuses
       var damageResult = this.calculateDamage(weapon);
@@ -66,7 +68,9 @@
           duration,
           color,
           weapon.id,
-          player
+          player,
+          summonImageId,
+          summonSize
         );
 
         if (summon) {

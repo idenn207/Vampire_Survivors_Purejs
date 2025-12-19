@@ -67,9 +67,11 @@
      * @param {string} color - Summon color
      * @param {string} sourceWeaponId - ID of weapon that summoned this
      * @param {Entity} owner - The player who owns this summon
+     * @param {string} [imageId] - Optional image ID for sprite
+     * @param {number} [size] - Optional custom size
      * @returns {Summon|null}
      */
-    spawn(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner) {
+    spawn(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size) {
       var summon = this._pool.get();
       if (!summon) {
         console.warn('[SummonPool] Pool exhausted');
@@ -88,7 +90,9 @@
         duration,
         color,
         sourceWeaponId,
-        owner
+        owner,
+        imageId,
+        size
       );
 
       // Add to entity manager if available

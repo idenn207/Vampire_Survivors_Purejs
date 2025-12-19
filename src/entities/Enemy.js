@@ -95,10 +95,15 @@
         collider.radius = size / 2;
       }
 
-      // Update color
+      // Update sprite (color and image)
       var sprite = this.getComponent(Sprite);
       if (sprite) {
         sprite.color = config.color || ENEMY_COLOR;
+
+        // Set image from config if available
+        if (config.imageId) {
+          sprite.setImageId(config.imageId);
+        }
       }
 
       // Update health

@@ -1,6 +1,6 @@
 /**
- * @fileoverview Enemy type data - configures different enemy types and their behaviors
- * @module Data/EnemyTypeData
+ * @fileoverview Enemy data - configures different enemy types and their behaviors
+ * @module Data/EnemyData
  */
 (function (Data) {
   'use strict';
@@ -34,6 +34,7 @@
       behavior: 'chase',
       spawnWeight: 50,
       startWave: 1,
+      imageId: 'enemy_normal',
     },
 
     // Fast enemy - higher speed, lower health
@@ -47,6 +48,7 @@
       behavior: 'chase',
       spawnWeight: 30,
       startWave: 2,
+      imageId: 'enemy_fast',
     },
 
     // Flying enemy - chase with sinusoidal hover
@@ -60,6 +62,7 @@
       behavior: 'flying',
       spawnWeight: 20,
       startWave: 3,
+      imageId: 'enemy_flying',
       // Flying-specific config
       hoverAmplitude: 30,
       hoverFrequency: 2,
@@ -76,6 +79,7 @@
       behavior: 'self_destruct',
       spawnWeight: 15,
       startWave: 4,
+      imageId: 'enemy_self_destruct',
       // Self-destruct specific config
       explosionRadius: 60,
       explosionDamage: 30,
@@ -94,6 +98,7 @@
       behavior: 'invisible',
       spawnWeight: 15,
       startWave: 5,
+      imageId: 'enemy_invisible',
       // Invisible-specific config
       visibilityRadius: 120,
       fadeSpeed: 2.0,
@@ -111,6 +116,7 @@
       behavior: 'dash_attack',
       spawnWeight: 20,
       startWave: 5,
+      imageId: 'enemy_dash_attack',
       // Dash-specific config
       chargeTime: 1.0,
       dashSpeed: 400,
@@ -130,6 +136,7 @@
       behavior: 'projectile',
       spawnWeight: 15,
       startWave: 6,
+      imageId: 'enemy_projectile',
       // Projectile-specific config
       projectileSpeed: 180,
       projectileDamage: 15,
@@ -151,6 +158,7 @@
       behavior: 'jump_drop',
       spawnWeight: 10,
       startWave: 7,
+      imageId: 'enemy_jump_drop',
       // Jump-specific config
       jumpHeight: 200,
       jumpDuration: 1.0,
@@ -238,7 +246,7 @@
   // ============================================
   // Export to Namespace
   // ============================================
-  Data.EnemyTypeData = {
+  Data.EnemyData = {
     EnemyType: EnemyType,
     EnemyTypeConfig: EnemyTypeConfig,
     getEnemyTypesForWave: getEnemyTypesForWave,
