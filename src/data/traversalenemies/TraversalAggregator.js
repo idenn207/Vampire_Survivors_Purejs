@@ -1,75 +1,35 @@
 /**
- * @fileoverview Traversal enemy data - configures traversal enemy types and patterns
- * @module Data/TraversalEnemyData
+ * @fileoverview Traversal Enemy Aggregator - Merges all patterns from registry
+ * @module Data/TraversalEnemies/TraversalAggregator
  */
 (function (Data) {
   'use strict';
 
   // ============================================
-  // Spawn Configuration
+  // Aggregate Patterns from Registry
   // ============================================
-  var TraversalConfig = {
-    BASE_SPAWN_INTERVAL: 12.0, // seconds between spawns (longer for group spawns)
-    MIN_SPAWN_INTERVAL: 6.0, // minimum interval
-    SPAWN_INTERVAL_DECAY: 0.5, // reduce per wave
-    START_WAVE: 2, // Start spawning from wave 2
-    WARNING_TIME: 3.0, // seconds before spawn to show arrow indicator
-  };
+  var PatternConfig = {};
+  var PatternWeights = {};
 
-  // ============================================
-  // Pattern Configurations (Group Spawning)
-  // ============================================
-  var PatternConfig = {
-    CIRCULAR: {
-      enemyCount: { min: 40, max: 60 }, // More enemies for wider ring
-      spawnRadius: 400, // Distance from player at spawn (wider)
-      moveSpeed: 0, // STATIONARY - no movement
-      health: 40, // Lower health (more enemies)
-      damage: 10,
-      decayTime: 15.0, // Seconds before disappearing
-      color: '#FF6600', // Orange
-      size: 24,
-      imageId: 'enemy_traversal_circular',
-    },
-    DASH: {
-      enemyCount: { min: 12, max: 15 }, // Spawn count
-      dashSpeed: 350, // Dash speed toward player
-      health: 30, // Weaker individuals
-      damage: 15,
-      decayTime: 6.0,
-      color: '#FF00FF', // Magenta
-      size: 18,
-      chargeTime: 0.8, // Pause before dashing
-      groupSpread: 80, // Cluster spread radius
-      imageId: 'enemy_traversal_dash',
-    },
-    LASER: {
-      enemiesPerLine: { min: 8, max: 12 }, // Per-line count
-      enemySpacing: 150, // Pixels between enemies in line (3x spacing)
-      spawnOffset: 300, // Extra offset outside viewport for wider spawn
-      moveSpeed: 200, // Constant speed across map
-      health: 50,
-      damage: 15,
-      decayTime: 12.0, // Longer lifetime
-      color: '#00FFFF', // Cyan
-      size: 26,
-      imageId: 'enemy_traversal_laser',
-    },
-  };
+  // Copy patterns from registry
+  var patternRegistry = Data.TraversalPatternRegistry || {};
+  for (var patternId in patternRegistry) {
+    if (patternRegistry.hasOwnProperty(patternId)) {
+      PatternConfig[patternId] = patternRegistry[patternId];
+    }
+  }
 
-  // ============================================
-  // LASER Direction Options
-  // ============================================
-  var LASER_DIRECTIONS = ['top', 'bottom', 'left', 'right'];
+  // Copy weights from registry
+  var weightsRegistry = Data.TraversalPatternWeights || {};
+  for (var weightId in weightsRegistry) {
+    if (weightsRegistry.hasOwnProperty(weightId)) {
+      PatternWeights[weightId] = weightsRegistry[weightId];
+    }
+  }
 
-  // ============================================
-  // Pattern Weights (for random selection)
-  // ============================================
-  var PatternWeights = {
-    CIRCULAR: 0.35, // 35% chance
-    DASH: 0.35, // 35% chance
-    LASER: 0.3, // 30% chance
-  };
+  // Get references to constants
+  var TraversalConfig = Data.TraversalConfig;
+  var LASER_DIRECTIONS = Data.LASER_DIRECTIONS;
 
   // ============================================
   // Helper Functions

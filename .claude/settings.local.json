@@ -15,7 +15,15 @@
       "Bash(done)",
       "Bash(npx http-server -p 8081 -o)",
       "Bash(cat:*)",
-      "Bash(npx http-server -p 3000 -o)"
+      "Bash(npx http-server -p 3000 -o)",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\techcores\"/*.js)",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\weapons\\\\core\"/*.js)",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\enemies\"/*.js)",
+      "Bash(do echo \"Checking $f\")",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\summons\"/*.js)",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\traversalenemies\"/*.js \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\data\\\\bosses\"/*.js)",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\systems\\\\combat\"/*.js)",
+      "Bash(for f in \"C:\\\\_project\\\\my\\\\Vampire_Survivors_Purejs\\\\src\\\\systems\\\\levelup\"/*.js)"
     ]
   }
 }

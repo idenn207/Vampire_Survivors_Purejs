@@ -1,82 +1,27 @@
 /**
- * @fileoverview Boss data definitions - data-driven boss configurations
- * @module Data/BossData
+ * @fileoverview Boss Aggregator - Merges all bosses from registry
+ * @module Data/Bosses/BossAggregator
  */
 (function (Data) {
   'use strict';
 
   // ============================================
-  // Boss Configuration
+  // Aggregate Bosses from Registry
   // ============================================
-  var BossConfig = {
-    elite: {
-      name: 'Elite',
-      health: 200,
-      speed: 80,
-      damage: 15,
-      size: 40,
-      color: '#FFD700', // Gold
-      imageId: 'boss_elite',
-      phases: [
-        { threshold: 0.5, speedMultiplier: 1.0, attacks: ['dash'], cooldownMultiplier: 1.0 },
-        { threshold: 0.0, speedMultiplier: 1.3, attacks: ['dash'], cooldownMultiplier: 0.8 },
-      ],
-      attacks: {
-        dash: { cooldown: 3.0, damage: 20, speed: 400, duration: 0.5, telegraph: 0.3 },
-      },
-    },
-    miniboss: {
-      name: 'Miniboss',
-      health: 500,
-      speed: 60,
-      damage: 20,
-      size: 56,
-      color: '#FF4500', // Orange-red
-      imageId: 'boss_miniboss',
-      phases: [
-        { threshold: 0.66, speedMultiplier: 1.0, attacks: ['dash'], cooldownMultiplier: 1.0 },
-        { threshold: 0.33, speedMultiplier: 1.2, attacks: ['dash', 'ring'], cooldownMultiplier: 0.9 },
-        { threshold: 0.0, speedMultiplier: 1.5, attacks: ['dash', 'ring'], cooldownMultiplier: 0.7 },
-      ],
-      attacks: {
-        dash: { cooldown: 4.0, damage: 25, speed: 350, duration: 0.6, telegraph: 0.4 },
-        ring: { cooldown: 5.0, damage: 15, projectileCount: 8, projectileSpeed: 200, telegraph: 0.5 },
-      },
-    },
-    boss: {
-      name: 'Boss',
-      health: 1000,
-      speed: 50,
-      damage: 25,
-      size: 72,
-      color: '#FF0000', // Red
-      imageId: 'boss_main',
-      phases: [
-        { threshold: 0.75, speedMultiplier: 1.0, attacks: ['projectile'], cooldownMultiplier: 1.0 },
-        { threshold: 0.50, speedMultiplier: 1.1, attacks: ['projectile', 'dash'], cooldownMultiplier: 0.9 },
-        { threshold: 0.25, speedMultiplier: 1.3, attacks: ['projectile', 'dash', 'ring'], cooldownMultiplier: 0.8 },
-        { threshold: 0.0, speedMultiplier: 1.6, attacks: ['projectile', 'dash', 'ring'], cooldownMultiplier: 0.6 },
-      ],
-      attacks: {
-        projectile: { cooldown: 2.0, damage: 15, speed: 250, count: 1, telegraph: 0.2 },
-        dash: { cooldown: 5.0, damage: 30, speed: 300, duration: 0.8, telegraph: 0.5 },
-        ring: { cooldown: 6.0, damage: 12, projectileCount: 12, projectileSpeed: 180, telegraph: 0.6 },
-      },
-    },
-  };
+  var BossConfig = {};
 
-  // ============================================
-  // Scaling Configuration
-  // ============================================
-  var ScalingConfig = {
-    HEALTH_PER_WAVE: 0.2, // +20% health per wave after first boss wave
-    DAMAGE_PER_WAVE: 0.15, // +15% damage per wave
-  };
+  // Copy all bosses from registry
+  var registry = Data.BossRegistry || {};
+  for (var bossId in registry) {
+    if (registry.hasOwnProperty(bossId)) {
+      BossConfig[bossId] = registry[bossId];
+    }
+  }
 
-  // ============================================
-  // Phase Colors (for health bar)
-  // ============================================
-  var PhaseColors = ['#2ECC71', '#F1C40F', '#E67E22', '#E74C3C']; // Green, Yellow, Orange, Red
+  // Get references to constants
+  var ScalingConfig = Data.BossScalingConfig;
+  var PhaseColors = Data.BossPhaseColors;
+  var FirstWaves = Data.BossFirstWaves;
 
   // ============================================
   // Helper Functions
@@ -98,14 +43,7 @@
    * @returns {number}
    */
   function getWaveHealthMultiplier(wave, bossType) {
-    // First appearance waves for each boss type
-    var firstWave = {
-      elite: 5,
-      miniboss: 10,
-      boss: 15,
-    };
-
-    var baseWave = firstWave[bossType] || 5;
+    var baseWave = FirstWaves[bossType] || 5;
     var wavesPastFirst = Math.max(0, wave - baseWave);
     return 1.0 + wavesPastFirst * ScalingConfig.HEALTH_PER_WAVE;
   }
@@ -117,13 +55,7 @@
    * @returns {number}
    */
   function getWaveDamageMultiplier(wave, bossType) {
-    var firstWave = {
-      elite: 5,
-      miniboss: 10,
-      boss: 15,
-    };
-
-    var baseWave = firstWave[bossType] || 5;
+    var baseWave = FirstWaves[bossType] || 5;
     var wavesPastFirst = Math.max(0, wave - baseWave);
     return 1.0 + wavesPastFirst * ScalingConfig.DAMAGE_PER_WAVE;
   }

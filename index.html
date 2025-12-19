@@ -199,16 +199,87 @@
   <script src="src/data/WeaponEvolutionData.js"></script>
   <script src="src/data/DropTable.js"></script>
   <script src="src/data/WaveData.js"></script>
-  <script src="src/data/TraversalEnemyData.js"></script>
-  <script src="src/data/BossData.js"></script>
-  <script src="src/data/EnemyData.js"></script>
-  <script src="src/data/SummonData.js"></script>
+
+  <!-- Traversal Enemy Data (Constants, Patterns, Aggregator) -->
+  <script src="src/data/traversalenemies/TraversalConstants.js"></script>
+  <script src="src/data/traversalenemies/circular.js"></script>
+  <script src="src/data/traversalenemies/dash.js"></script>
+  <script src="src/data/traversalenemies/laser.js"></script>
+  <script src="src/data/traversalenemies/TraversalAggregator.js"></script>
+
+  <!-- Boss Data (Constants, Individual Bosses, Aggregator) -->
+  <script src="src/data/bosses/BossConstants.js"></script>
+  <script src="src/data/bosses/elite.js"></script>
+  <script src="src/data/bosses/miniboss.js"></script>
+  <script src="src/data/bosses/boss.js"></script>
+  <script src="src/data/bosses/BossAggregator.js"></script>
+  <!-- Enemy Data (Constants, Individual Types, Aggregator) -->
+  <script src="src/data/enemies/EnemyConstants.js"></script>
+  <script src="src/data/enemies/normal.js"></script>
+  <script src="src/data/enemies/fast.js"></script>
+  <script src="src/data/enemies/flying.js"></script>
+  <script src="src/data/enemies/self_destruct.js"></script>
+  <script src="src/data/enemies/invisible.js"></script>
+  <script src="src/data/enemies/dash_attack.js"></script>
+  <script src="src/data/enemies/projectile.js"></script>
+  <script src="src/data/enemies/jump_drop.js"></script>
+  <script src="src/data/enemies/EnemyAggregator.js"></script>
+
+  <!-- Summon Data (Constants, Individual Types, Aggregator) -->
+  <script src="src/data/summons/SummonConstants.js"></script>
+  <script src="src/data/summons/spirit.js"></script>
+  <script src="src/data/summons/turret.js"></script>
+  <script src="src/data/summons/wolf.js"></script>
+  <script src="src/data/summons/golem.js"></script>
+  <script src="src/data/summons/fairy.js"></script>
+  <script src="src/data/summons/SummonAggregator.js"></script>
 
   <!-- Phase 5.75: Tech Tree Data (depends on WeaponData for AttackType/TargetingMode) -->
   <script src="src/data/TechEffectData.js"></script>
   <script src="src/data/StatusEffectConfig.js"></script>
-  <script src="src/data/TechCoreData.js"></script>
-  <script src="src/data/CoreWeaponData.js"></script>
+
+  <!-- Tech Core Constants and Registry (must load before individual cores) -->
+  <script src="src/data/techcores/TechCoreConstants.js"></script>
+
+  <!-- Individual Tech Core Files (15 cores) -->
+  <script src="src/data/techcores/fire_core.js"></script>
+  <script src="src/data/techcores/ice_core.js"></script>
+  <script src="src/data/techcores/lightning_core.js"></script>
+  <script src="src/data/techcores/shadow_core.js"></script>
+  <script src="src/data/techcores/blood_core.js"></script>
+  <script src="src/data/techcores/arcane_core.js"></script>
+  <script src="src/data/techcores/nature_core.js"></script>
+  <script src="src/data/techcores/steel_core.js"></script>
+  <script src="src/data/techcores/wind_core.js"></script>
+  <script src="src/data/techcores/earth_core.js"></script>
+  <script src="src/data/techcores/void_core.js"></script>
+  <script src="src/data/techcores/holy_core.js"></script>
+  <script src="src/data/techcores/tech_core.js"></script>
+  <script src="src/data/techcores/beast_core.js"></script>
+  <script src="src/data/techcores/time_core.js"></script>
+
+  <!-- Tech Core Aggregator (merges all cores into TechCoreData) -->
+  <script src="src/data/techcores/TechCoreAggregator.js"></script>
+
+  <!-- Individual Core Weapon Files (15 weapons) -->
+  <script src="src/data/weapons/core/inferno_bolt.js"></script>
+  <script src="src/data/weapons/core/frost_shard.js"></script>
+  <script src="src/data/weapons/core/thunder_strike.js"></script>
+  <script src="src/data/weapons/core/shadow_blade.js"></script>
+  <script src="src/data/weapons/core/blood_scythe.js"></script>
+  <script src="src/data/weapons/core/arcane_barrage.js"></script>
+  <script src="src/data/weapons/core/venom_spore.js"></script>
+  <script src="src/data/weapons/core/steel_hammer.js"></script>
+  <script src="src/data/weapons/core/wind_cutter_core.js"></script>
+  <script src="src/data/weapons/core/earth_spike.js"></script>
+  <script src="src/data/weapons/core/void_rift.js"></script>
+  <script src="src/data/weapons/core/holy_lance.js"></script>
+  <script src="src/data/weapons/core/tech_turret.js"></script>
+  <script src="src/data/weapons/core/beast_claw.js"></script>
+  <script src="src/data/weapons/core/chrono_beam.js"></script>
+
+  <!-- Core Weapon Aggregator (merges all core weapons into CoreWeaponData) -->
+  <script src="src/data/weapons/core/CoreWeaponAggregator.js"></script>
 
   <!-- Phase 5.77: Tech Tree Component (depends on TechCoreData) -->
   <script src="src/components/TechTree.js"></script>
@@ -238,7 +309,13 @@
   <script src="src/systems/SummonSystem.js"></script>
   <script src="src/systems/CollisionSystem.js"></script>
   <script src="src/systems/StatusEffectSystem.js"></script>
-  <script src="src/systems/CombatSystem.js"></script>
+  <!-- Combat System Modules -->
+  <script src="src/systems/combat/CombatConstants.js"></script>
+  <script src="src/systems/combat/DamageProcessor.js"></script>
+  <script src="src/systems/combat/EffectHandlers.js"></script>
+  <script src="src/systems/combat/RicochetHandler.js"></script>
+  <script src="src/systems/combat/ExplosionHandler.js"></script>
+  <script src="src/systems/combat/CombatSystem.js"></script>
   <script src="src/systems/DropSystem.js"></script>
   <script src="src/systems/PickupSystem.js"></script>
   <script src="src/systems/CameraSystem.js"></script>
@@ -286,7 +363,12 @@
   <script src="src/ui/EvolutionPopup.js"></script>
   <script src="src/ui/TechUpgradePanel.js"></script>
   <script src="src/ui/LevelUpScreen.js"></script>
-  <script src="src/systems/LevelUpSystem.js"></script>
+  <!-- Level-Up System Modules -->
+  <script src="src/systems/levelup/LevelUpConstants.js"></script>
+  <script src="src/systems/levelup/OptionGenerator.js"></script>
+  <script src="src/systems/levelup/UpgradeProcessor.js"></script>
+  <script src="src/systems/levelup/EvolutionHandler.js"></script>
+  <script src="src/systems/levelup/LevelUpSystem.js"></script>
 
   <!-- Phase 7.92: Tech Tree UI Components -->
   <script src="src/ui/CoreSelectionScreen.js"></script>
