@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var StatUpgradeData = window.VampireSurvivors.Data.StatUpgradeData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -138,7 +139,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('STATS', this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
+      ctx.fillText(i18n.t('stats.title'), this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
 
       // Separator line
       ctx.strokeStyle = BORDER_COLOR;
@@ -204,7 +205,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(stat.name, x + ICON_SIZE + 6, y + ROW_HEIGHT / 2);
+      ctx.fillText(i18n.tsn(stat.id, stat.name), x + ICON_SIZE + 6, y + ROW_HEIGHT / 2);
 
       // Upgrade button (right side)
       var buttonX = this._x + this._width - BUTTON_MARGIN - BUTTON_SIZE;
@@ -224,7 +225,7 @@
         ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('MAX', buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE / 2);
+        ctx.fillText(i18n.t('stats.max'), buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE / 2);
       } else {
         // Cost (left of button)
         ctx.font = 'bold 11px Arial';
@@ -331,7 +332,7 @@
 
       return {
         type: 'stat',
-        name: config.name,
+        name: i18n.tsn(statId, config.name),
         currentPercent: Math.round(currentBonus * 100),
         nextPercent: Math.round(nextBonus * 100),
         cost: cost,

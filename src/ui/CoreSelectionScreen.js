@@ -10,6 +10,7 @@
   // ============================================
   var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
   var CoreWeaponData = window.VampireSurvivors.Data.CoreWeaponData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -106,13 +107,13 @@
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('SELECT YOUR CORE', this._canvasWidth / 2, 50);
+      ctx.fillText(i18n.t('core.title'), this._canvasWidth / 2, 50);
 
       // Subtitle
       ctx.font = '16px Arial';
       ctx.fillStyle = '#BDC3C7';
       ctx.fillText(
-        'Choose your path - each core has unique abilities and a dedicated weapon',
+        i18n.t('core.subtitle'),
         this._canvasWidth / 2,
         85
       );
@@ -125,7 +126,7 @@
       // Instructions
       ctx.font = '14px Arial';
       ctx.fillStyle = '#7F8C8D';
-      ctx.fillText('Click a core to begin', this._canvasWidth / 2, this._canvasHeight - 30);
+      ctx.fillText(i18n.t('core.subtitle'), this._canvasWidth / 2, this._canvasHeight - 30);
 
       // Restore context state
       ctx.restore();
@@ -236,19 +237,19 @@
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(core.name, rect.x + rect.width / 2, rect.y + 95);
+      ctx.fillText(i18n.tcn(core.id, core.name), rect.x + rect.width / 2, rect.y + 95);
 
       // Theme indicator
       ctx.font = '11px Arial';
       ctx.fillStyle = core.color;
-      ctx.fillText(core.theme.toUpperCase(), rect.x + rect.width / 2, rect.y + 112);
+      ctx.fillText(i18n.tth(core.theme).toUpperCase(), rect.x + rect.width / 2, rect.y + 112);
 
       // Core description (wrapped)
       ctx.font = '11px Arial';
       ctx.fillStyle = '#BDC3C7';
       this._renderWrappedText(
         ctx,
-        core.description,
+        i18n.tcd(core.id, core.description),
         rect.x + 10,
         rect.y + 130,
         rect.width - 20,
@@ -260,17 +261,17 @@
       if (weaponData) {
         ctx.font = '10px Arial';
         ctx.fillStyle = '#95A5A6';
-        ctx.fillText('Starting Weapon:', rect.x + rect.width / 2, rect.y + rect.height - 45);
+        ctx.fillText(i18n.t('core.startingWeapon'), rect.x + rect.width / 2, rect.y + rect.height - 45);
 
         ctx.font = 'bold 11px Arial';
         ctx.fillStyle = weaponData.color || '#FFFFFF';
-        ctx.fillText(weaponData.name, rect.x + rect.width / 2, rect.y + rect.height - 30);
+        ctx.fillText(i18n.tw(core.startingWeapon, weaponData.name), rect.x + rect.width / 2, rect.y + rect.height - 30);
 
         // Weapon type indicator
         ctx.font = '9px Arial';
         ctx.fillStyle = '#7F8C8D';
         ctx.fillText(
-          weaponData.attackType.replace('_', ' ').toUpperCase(),
+          i18n.tat(weaponData.attackType).toUpperCase(),
           rect.x + rect.width / 2,
           rect.y + rect.height - 15
         );

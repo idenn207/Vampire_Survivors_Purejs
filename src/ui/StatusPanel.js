@@ -10,6 +10,7 @@
   // ============================================
   var events = window.VampireSurvivors.Core.events;
   var UIScale = window.VampireSurvivors.Core.UIScale;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants (base values at 800x600)
@@ -183,7 +184,7 @@
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText('HP', x, y + barHeight / 2);
+      ctx.fillText(i18n.t('status.hp'), x, y + barHeight / 2);
 
       var barX = x + labelOffset;
       var actualBarWidth = barWidth - labelOffset;
@@ -220,7 +221,7 @@
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText('SG', x, y + barHeight / 2);
+      ctx.fillText(i18n.t('status.sg'), x, y + barHeight / 2);
 
       var barX = x + labelOffset;
       var actualBarWidth = barWidth - labelOffset;

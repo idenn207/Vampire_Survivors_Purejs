@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -163,13 +164,13 @@
       ctx.strokeRect(this._x, this._y, this._width, this._height);
 
       // Title - changes based on evolution state
-      var title = 'SELECT ONE';
+      var title = i18n.t('levelUp.selectOne');
       var subtitle = '';
 
       if (this._evolutionState === 'selecting_material') {
-        title = 'SELECT MATERIAL';
+        title = i18n.t('levelUp.selectMaterial');
         if (this._selectedMainWeapon) {
-          subtitle = 'Main: ' + this._selectedMainWeapon.name;
+          subtitle = i18n.t('levelUp.main') + ' ' + i18n.tw(this._selectedMainWeapon.id, this._selectedMainWeapon.name);
         }
       }
 
@@ -203,8 +204,8 @@
       ctx.fillStyle = DESC_COLOR;
       ctx.textAlign = 'center';
       var hintText = this._evolutionState === 'selecting_material'
-        ? 'Select material to evolve, or cancel'
-        : 'Click to select (closes screen)';
+        ? i18n.t('levelUp.selectMaterialHint')
+        : i18n.t('levelUp.selectHint');
       ctx.fillText(
         hintText,
         this._x + this._width / 2,
@@ -257,31 +258,31 @@
 
       switch (option.type) {
         case 'new':
-          badgeText = 'NEW';
+          badgeText = i18n.t('levelUp.new');
           badgeColor = NEW_BADGE_COLOR;
           break;
         case 'upgrade':
-          badgeText = 'Lv.' + option.currentLevel + ' -> ' + (option.currentLevel + 1);
+          badgeText = i18n.t('tech.lv') + option.currentLevel + ' -> ' + (option.currentLevel + 1);
           badgeColor = UPGRADE_BADGE_COLOR;
           break;
         case 'evolution':
-          badgeText = 'EVOLUTION';
+          badgeText = i18n.t('levelUp.evolution');
           badgeColor = EVOLUTION_BADGE_COLOR;
           break;
         case 'evolution_main':
-          badgeText = 'MAIN';
+          badgeText = i18n.t('evolution.main');
           badgeColor = EVOLUTION_MAIN_BADGE_COLOR;
           break;
         case 'evolution_material':
-          badgeText = 'MATERIAL';
+          badgeText = i18n.t('evolution.material');
           badgeColor = EVOLUTION_MATERIAL_BADGE_COLOR;
           break;
         case 'evolution_cancel':
-          badgeText = 'CANCEL';
+          badgeText = i18n.t('levelUp.cancel');
           badgeColor = CANCEL_BADGE_COLOR;
           break;
         case 'stat':
-          badgeText = 'STAT BOOST';
+          badgeText = i18n.t('levelUp.statBoost');
           badgeColor = STAT_BADGE_COLOR;
           break;
       }
@@ -607,38 +608,38 @@
 
     _getOptionName(option) {
       if (option.type === 'stat' && option.statConfig) {
-        return option.statConfig.name;
+        return i18n.tsn(option.statId, option.statConfig.name);
       }
       if (option.type === 'evolution_cancel') {
-        return 'Cancel';
+        return i18n.t('levelUp.cancelLabel');
       }
       if (option.type === 'evolution_material' && option.evolutionResult) {
-        return option.weaponData.name;
+        return i18n.tw(option.weaponData.id, option.weaponData.name);
       }
       if (option.weaponData) {
-        return option.weaponData.name;
+        return i18n.tw(option.weaponData.id, option.weaponData.name);
       }
       if (option.type === 'evolution' && option.evolutionResult) {
-        return option.evolutionResult.name;
+        return i18n.tw(option.evolutionResult.id, option.evolutionResult.name);
       }
-      return 'Unknown';
+      return i18n.t('levelUp.unknown');
     }
 
     _getOptionDescription(option) {
       if (option.type === 'stat' && option.statConfig) {
-        return option.statConfig.description;
+        return i18n.tsd(option.statId, option.statConfig.description);
       }
       if (option.type === 'evolution_cancel') {
-        return 'Return to weapon selection';
+        return i18n.t('levelUp.returnToSelection');
       }
       if (option.type === 'evolution_main' && option.weaponData) {
-        return 'Select as main weapon for evolution';
+        return i18n.t('levelUp.selectAsMain');
       }
       if (option.type === 'evolution_material' && option.evolutionResult) {
-        return 'Evolves into: ' + option.evolutionResult.name;
+        return i18n.t('levelUp.evolvesInto') + ' ' + i18n.tw(option.evolutionResult.id, option.evolutionResult.name);
       }
       if (option.type === 'new' && option.weaponData) {
-        return option.weaponData.attackType + ' - ' + (option.weaponData.isAuto ? 'Auto' : 'Manual');
+        return i18n.tat(option.weaponData.attackType) + ' - ' + (option.weaponData.isAuto ? i18n.t('levelUp.auto') : i18n.t('levelUp.manual'));
       }
       if (option.type === 'upgrade' && option.weaponData) {
         var upgrades = option.weaponData.upgrades;
@@ -653,10 +654,10 @@
           }
           return parts.slice(0, 2).join(', ');
         }
-        return 'Enhanced stats';
+        return i18n.t('levelUp.enhancedStats');
       }
       if (option.type === 'evolution') {
-        return 'Combine weapons to create a powerful evolved weapon';
+        return i18n.t('levelUp.combineWeapons');
       }
       return '';
     }
@@ -668,9 +669,9 @@
       if (option.type === 'new') {
         return {
           type: 'newWeapon',
-          name: option.weaponData.name,
+          name: i18n.tw(option.weaponData.id, option.weaponData.name),
           attackType: option.weaponData.attackType,
-          description: option.weaponData.isAuto ? 'Auto-fires at enemies' : 'Manual aim and fire',
+          description: i18n.twd(option.weaponData.id, option.weaponData.description),
           isNew: true,
           level: 1,
         };
@@ -679,7 +680,7 @@
       if (option.type === 'upgrade') {
         return {
           type: 'newWeapon',
-          name: option.weaponData.name,
+          name: i18n.tw(option.weaponData.id, option.weaponData.name),
           attackType: option.weaponData.attackType,
           description: this._getOptionDescription(option),
           isNew: false,

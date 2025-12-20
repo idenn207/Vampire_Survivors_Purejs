@@ -17,6 +17,7 @@
   var BossHealthBar = UI.BossHealthBar;
   var events = window.VampireSurvivors.Core.events;
   var UIScale = window.VampireSurvivors.Core.UIScale;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants (base values at 800x600)
@@ -211,11 +212,11 @@
       ctx.fillStyle = EXP_TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText('LV. ' + level, textPadding, expBarY + expBarHeight / 2);
+      ctx.fillText(i18n.t('hud.level') + ' ' + level, textPadding, expBarY + expBarHeight / 2);
 
       // EXP label in center
       ctx.textAlign = 'center';
-      ctx.fillText('EXP', canvasWidth / 2, expBarY + expBarHeight / 2);
+      ctx.fillText(i18n.t('hud.exp'), canvasWidth / 2, expBarY + expBarHeight / 2);
 
       // XP numbers on right (optional, can be hidden)
       ctx.textAlign = 'right';
@@ -243,10 +244,10 @@
       }
 
       // Wave
-      parts.push('Wave ' + this._currentWave);
+      parts.push(i18n.t('hud.wave') + ' ' + this._currentWave);
 
       // Kills
-      parts.push('Kills: ' + this._killCount);
+      parts.push(i18n.t('hud.kills') + ': ' + this._killCount);
 
       var infoText = parts.join('  |  ');
 

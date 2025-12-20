@@ -17,6 +17,7 @@
   var TechTreePanel = UI.TechTreePanel;
   var WeaponEvolutionData = window.VampireSurvivors.Data.WeaponEvolutionData;
   var StatUpgradeData = window.VampireSurvivors.Data.StatUpgradeData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -391,7 +392,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillText('CHARACTER STATUS', this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
+      ctx.fillText(i18n.t('tab.characterStatus'), this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
 
       // Timer
       var time = this._game ? this._game._time : null;
@@ -416,7 +417,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText('CHARACTER STATS', section.x, section.y);
+      ctx.fillText(i18n.t('tab.characterStats'), section.x, section.y);
 
       // Get stats
       var stats = this._getPlayerStats();
@@ -446,7 +447,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(stat.name, x + 20, centerY);
+      ctx.fillText(i18n.tsn(stat.id, stat.name), x + 20, centerY);
 
       // Stat value in format: base (+increase%) = final
       ctx.textAlign = 'right';
@@ -489,7 +490,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText('WEAPONS', section.x, section.y);
+      ctx.fillText(i18n.t('tab.weapons'), section.x, section.y);
 
       // Get weapons
       var weapons = this._getPlayerWeapons();
@@ -509,7 +510,7 @@
         ctx.font = '12px Arial';
         ctx.fillStyle = DESC_COLOR;
         ctx.textAlign = 'center';
-        ctx.fillText('No weapons equipped', section.x + section.width / 2, section.y + 50);
+        ctx.fillText(i18n.t('weapons.noWeapons'), section.x + section.width / 2, section.y + 50);
       }
     }
 
@@ -544,7 +545,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      var name = weapon.name;
+      var name = i18n.tw(weapon.id, weapon.name);
       if (name.length > 12) name = name.substring(0, 11) + '..';
       ctx.fillText(name + ' Lv.' + weapon.level, x + WEAPON_ICON_SIZE + 12, y + 5);
 
@@ -553,8 +554,8 @@
       ctx.fillStyle = DESC_COLOR;
       var dps = weapon.dps || 0;
       var totalDamage = weapon.totalDamageDealt || 0;
-      ctx.fillText('DPS: ' + dps.toFixed(1), x + WEAPON_ICON_SIZE + 12, y + 20);
-      ctx.fillText('TD: ' + this._formatNumber(totalDamage), x + WEAPON_ICON_SIZE + 12, y + 32);
+      ctx.fillText(i18n.t('tab.dps') + ' ' + dps.toFixed(1), x + WEAPON_ICON_SIZE + 12, y + 20);
+      ctx.fillText(i18n.t('tab.td') + ' ' + this._formatNumber(totalDamage), x + WEAPON_ICON_SIZE + 12, y + 32);
     }
 
     _renderTechSection(ctx) {
@@ -565,7 +566,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
-      ctx.fillText('TECH PROGRESS', section.x, section.y);
+      ctx.fillText(i18n.t('tab.techProgress'), section.x, section.y);
 
       // Get tech data
       var techDisplay = this._getTechDisplayInfo();
@@ -585,7 +586,7 @@
         ctx.font = '12px Arial';
         ctx.fillStyle = DESC_COLOR;
         ctx.textAlign = 'center';
-        ctx.fillText('No tech unlocked', section.x + section.width / 2, section.y + 50);
+        ctx.fillText(i18n.t('tech.noTech'), section.x + section.width / 2, section.y + 50);
       }
     }
 
@@ -615,7 +616,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      var name = tech.name;
+      var name = i18n.ttn(tech.techId, tech.name);
       if (name.length > 15) name = name.substring(0, 14) + '..';
       ctx.fillText(name, x + TECH_ICON_SIZE + 12, y + TECH_ROW_HEIGHT / 2 - 7);
 
@@ -627,10 +628,10 @@
 
     _renderNavigationButtons(ctx) {
       // Evolution List button
-      this._renderButton(ctx, this._evolutionButtonRect, 'Evolution List', this._hoveredButton === 'evolution');
+      this._renderButton(ctx, this._evolutionButtonRect, i18n.t('menu.evolutionList'), this._hoveredButton === 'evolution');
 
       // Tech Tree button
-      this._renderButton(ctx, this._techTreeButtonRect, 'Tech Tree', this._hoveredButton === 'techTree');
+      this._renderButton(ctx, this._techTreeButtonRect, i18n.t('menu.techTree'), this._hoveredButton === 'techTree');
 
       // Close button
       this._renderCloseButton(ctx, this._closeButtonRect, this._hoveredButton === 'close');
@@ -683,16 +684,16 @@
 
       var filterName = this._evolutionPanel.getFilterWeaponName();
       if (filterName) {
-        ctx.fillText('EVOLUTION: ' + filterName, this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
+        ctx.fillText(i18n.t('tab.evolution') + ' ' + filterName, this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
       } else {
-        ctx.fillText('EVOLUTION LIST', this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
+        ctx.fillText(i18n.t('tab.evolutionList'), this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
       }
 
       // Render evolution panel
       this._evolutionPanel.render(ctx);
 
       // Back button
-      this._renderButton(ctx, this._backButtonRect, 'Back', this._hoveredButton === 'back');
+      this._renderButton(ctx, this._backButtonRect, i18n.t('settings.back'), this._hoveredButton === 'back');
     }
 
     _renderTechTreeView(ctx) {
@@ -710,13 +711,13 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      ctx.fillText('TECH TREE', this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
+      ctx.fillText(i18n.t('tech.title'), this._panelRect.x + this._panelRect.width / 2, this._panelRect.y + 15);
 
       // Render tech tree panel
       this._techTreePanel.render(ctx);
 
       // Back button
-      this._renderButton(ctx, this._backButtonRect, 'Back', this._hoveredButton === 'back');
+      this._renderButton(ctx, this._backButtonRect, i18n.t('settings.back'), this._hoveredButton === 'back');
     }
 
     // ----------------------------------------
@@ -785,8 +786,8 @@
 
       // Get weapon traits
       var traits = [];
-      if (weapon.attackType) traits.push(weapon.attackType);
-      if (weapon.targetingMode) traits.push(weapon.targetingMode);
+      if (weapon.attackType) traits.push(i18n.tat(weapon.attackType));
+      if (weapon.targetingMode) traits.push(i18n.ttm(weapon.targetingMode));
       if (weapon.isAuto === false) traits.push('Manual');
       if (piercing > 0) traits.push('Piercing: ' + piercing);
       if (projectileCount > 1) traits.push('Multi-shot: ' + projectileCount);
@@ -794,7 +795,7 @@
 
       var content = {
         type: 'weaponDetail',
-        name: weapon.name,
+        name: i18n.tw(weapon.id, weapon.name),
         level: weapon.level,
         maxLevel: weapon.maxLevel,
         tier: weapon.tier || 1,
@@ -813,7 +814,7 @@
     _showTechTooltip(tech, mouseX, mouseY) {
       var content = {
         type: 'tech',
-        title: tech.name,
+        title: i18n.ttn(tech.techId, tech.name),
         depth: tech.depth,
         level: tech.level,
         maxLevel: tech.maxLevel,

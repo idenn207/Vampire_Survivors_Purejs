@@ -10,6 +10,7 @@
   // ============================================
   var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
   var TechEffectData = window.VampireSurvivors.Data.TechEffectData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -137,14 +138,14 @@
       ctx.fillStyle = '#2ECC71';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('BOSS DEFEATED!', this._popupX + POPUP_WIDTH / 2, this._popupY + 35);
+      ctx.fillText(i18n.t('tech.bossDefeated'), this._popupX + POPUP_WIDTH / 2, this._popupY + 35);
       ctx.shadowBlur = 0;
 
       // Subtitle
       ctx.font = '16px Arial';
       ctx.fillStyle = '#FFFFFF';
       ctx.fillText(
-        'Choose a new tech to unlock:',
+        i18n.t('tech.chooseTech'),
         this._popupX + POPUP_WIDTH / 2,
         this._popupY + 65
       );
@@ -154,7 +155,7 @@
         ctx.font = '12px Arial';
         ctx.fillStyle = this._coreData.color;
         ctx.fillText(
-          this._coreData.name + ' Tech Tree',
+          this._coreData.name + ' ' + i18n.t('tech.techTree'),
           this._popupX + POPUP_WIDTH / 2,
           this._popupY + 85
         );
@@ -263,7 +264,7 @@
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('DEPTH ' + tech.depth, rect.x + rect.width / 2, rect.y + 11);
+      ctx.fillText(i18n.t('tech.depth') + ' ' + tech.depth, rect.x + rect.width / 2, rect.y + 11);
 
       // Tech name
       ctx.font = 'bold 13px Arial';
@@ -273,7 +274,7 @@
       // Max level indicator
       ctx.font = '10px Arial';
       ctx.fillStyle = '#95A5A6';
-      ctx.fillText('Max Level: ' + tech.maxLevel, rect.x + rect.width / 2, rect.y + 62);
+      ctx.fillText(i18n.t('tech.maxLevel') + ' ' + tech.maxLevel, rect.x + rect.width / 2, rect.y + 62);
 
       // Effects list
       this._renderEffects(ctx, tech.effects, rect.x + 8, rect.y + 80, rect.width - 16);
@@ -282,7 +283,7 @@
       if (isHovered) {
         ctx.font = 'bold 11px Arial';
         ctx.fillStyle = '#2ECC71';
-        ctx.fillText('CLICK TO UNLOCK', rect.x + rect.width / 2, rect.y + rect.height - 15);
+        ctx.fillText(i18n.t('tech.clickToUnlock'), rect.x + rect.width / 2, rect.y + rect.height - 15);
       }
     }
 

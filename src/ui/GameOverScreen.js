@@ -6,6 +6,11 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var i18n = window.VampireSurvivors.Core.i18n;
+
+  // ============================================
   // Constants
   // ============================================
   var OVERLAY_COLOR = 'rgba(0, 0, 0, 0.85)';
@@ -18,7 +23,6 @@
   var PANEL_BORDER_WIDTH = 4;
 
   // Title styling
-  var TITLE_TEXT = 'GAME OVER';
   var TITLE_COLOR = '#E74C3C';
   var TITLE_FONT = 'bold 48px Arial';
   var TITLE_SHADOW_COLOR = '#000000';
@@ -186,11 +190,11 @@
 
       // Shadow
       ctx.fillStyle = TITLE_SHADOW_COLOR;
-      ctx.fillText(TITLE_TEXT, centerX + TITLE_SHADOW_OFFSET, titleY + TITLE_SHADOW_OFFSET);
+      ctx.fillText(i18n.t('gameOver.title'), centerX + TITLE_SHADOW_OFFSET, titleY + TITLE_SHADOW_OFFSET);
 
       // Title
       ctx.fillStyle = TITLE_COLOR;
-      ctx.fillText(TITLE_TEXT, centerX, titleY);
+      ctx.fillText(i18n.t('gameOver.title'), centerX, titleY);
     }
 
     _renderStats(ctx, panelX, panelY) {
@@ -200,10 +204,10 @@
       var statsY = panelY + STAT_START_Y;
 
       var statsList = [
-        { label: 'Time Survived', value: this._formatTime(this._stats.timeSurvived) },
-        { label: 'Level Reached', value: this._stats.level.toString() },
-        { label: 'Enemies Killed', value: this._stats.kills.toString() },
-        { label: 'Gold Earned', value: this._stats.gold.toString() },
+        { label: i18n.t('gameOver.timeSurvived'), value: this._formatTime(this._stats.timeSurvived) },
+        { label: i18n.t('gameOver.levelReached'), value: this._stats.level.toString() },
+        { label: i18n.t('gameOver.enemiesKilled'), value: this._stats.kills.toString() },
+        { label: i18n.t('gameOver.goldEarned'), value: this._stats.gold.toString() },
       ];
 
       ctx.textAlign = 'center';
@@ -242,7 +246,7 @@
       ctx.fillStyle = BUTTON_TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('RESTART', rect.x + rect.width / 2, rect.y + rect.height / 2);
+      ctx.fillText(i18n.t('gameOver.restart'), rect.x + rect.width / 2, rect.y + rect.height / 2);
     }
 
     _formatTime(seconds) {

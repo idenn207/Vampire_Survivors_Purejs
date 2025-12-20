@@ -6,6 +6,11 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var i18n = window.VampireSurvivors.Core.i18n;
+
+  // ============================================
   // Constants
   // ============================================
   var PADDING = 10;
@@ -132,6 +137,16 @@
         return;
       } else if (this._content.type === 'newWeapon') {
         lines = 4; // Title + type + description + NEW
+        // Add lines for stats if present
+        if (this._content.damage && this._content.damage > 0) {
+          lines += 2; // Damage/DPS + Cooldown
+        }
+        if (this._content.range && this._content.range > 0) {
+          lines += 1; // Range
+        }
+        this._width = 220; // Wider for stats
+        this._height = PADDING * 2 + lines * LINE_HEIGHT;
+        return;
       } else if (this._content.type === 'tech') {
         lines = 4; // Title + depth + level + cost
         if (this._content.effects && this._content.effects.length > 0) {
@@ -157,21 +172,21 @@
       // Current value
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
-      ctx.fillText('Current: +' + content.currentPercent + '%', x, y);
+      ctx.fillText(i18n.t('tooltip.current') + ' +' + content.currentPercent + '%', x, y);
       y += LINE_HEIGHT;
 
       // Next value
       ctx.fillStyle = VALUE_COLOR;
-      ctx.fillText('Next: +' + content.nextPercent + '%', x, y);
+      ctx.fillText(i18n.t('tooltip.next') + ' +' + content.nextPercent + '%', x, y);
       y += LINE_HEIGHT;
 
       // Cost
       if (content.isMaxLevel) {
         ctx.fillStyle = DESC_COLOR;
-        ctx.fillText('MAX LEVEL', x, y);
+        ctx.fillText(i18n.t('tooltip.maxLevel'), x, y);
       } else {
         ctx.fillStyle = content.canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
-        ctx.fillText('Cost: ' + content.cost + ' Gold', x, y);
+        ctx.fillText(i18n.t('tooltip.cost') + ' ' + content.cost + ' ' + i18n.t('tooltip.gold'), x, y);
       }
       y += LINE_HEIGHT;
 
@@ -192,23 +207,23 @@
       // Level
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
-      ctx.fillText('Level: ' + content.level + ' / ' + content.maxLevel, x, y);
+      ctx.fillText(i18n.t('tooltip.level') + ' ' + content.level + ' / ' + content.maxLevel, x, y);
       y += LINE_HEIGHT;
 
       // Stats preview
       if (content.nextStats) {
         ctx.fillStyle = VALUE_COLOR;
-        ctx.fillText('Next: ' + content.nextStats, x, y);
+        ctx.fillText(i18n.t('tooltip.next') + ' ' + content.nextStats, x, y);
         y += LINE_HEIGHT;
       }
 
       // Cost
       if (content.isMaxLevel) {
         ctx.fillStyle = DESC_COLOR;
-        ctx.fillText('MAX LEVEL', x, y);
+        ctx.fillText(i18n.t('tooltip.maxLevel'), x, y);
       } else {
         ctx.fillStyle = content.canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
-        ctx.fillText('Cost: ' + content.cost + ' Gold', x, y);
+        ctx.fillText(i18n.t('tooltip.cost') + ' ' + content.cost + ' ' + i18n.t('tooltip.gold'), x, y);
       }
       y += LINE_HEIGHT;
 
@@ -227,11 +242,11 @@
         5: '#E74C3C',
       };
       var tierNames = {
-        1: 'Common',
-        2: 'Uncommon',
-        3: 'Rare',
-        4: 'Epic',
-        5: 'Legendary',
+        1: i18n.t('tier.common'),
+        2: i18n.t('tier.uncommon'),
+        3: i18n.t('tier.rare'),
+        4: i18n.t('tier.epic'),
+        5: i18n.t('tier.legendary'),
       };
 
       // Title (weapon name) with tier color
@@ -245,27 +260,27 @@
       // Level and Tier
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
-      ctx.fillText('Lv.' + content.level + '/' + content.maxLevel + '  ', x, y);
+      ctx.fillText(i18n.t('tech.lv') + content.level + '/' + content.maxLevel + '  ', x, y);
       ctx.fillStyle = tierColors[content.tier] || DESC_COLOR;
       ctx.fillText('[' + (tierNames[content.tier] || 'T' + content.tier) + ']', x + 55, y);
       y += LINE_HEIGHT;
 
       // Damage and DPS
       ctx.fillStyle = '#E67E22'; // Orange for damage
-      ctx.fillText('Damage: ' + content.damage, x, y);
+      ctx.fillText(i18n.t('tooltip.damage') + ' ' + content.damage, x, y);
       ctx.fillStyle = VALUE_COLOR;
-      ctx.fillText('  DPS: ' + content.dps.toFixed(1), x + 80, y);
+      ctx.fillText('  ' + i18n.t('tooltip.dps') + ' ' + content.dps.toFixed(1), x + 80, y);
       y += LINE_HEIGHT;
 
       // Cooldown
       ctx.fillStyle = '#1ABC9C'; // Teal for cooldown
-      ctx.fillText('Cooldown: ' + content.cooldown.toFixed(2) + 's', x, y);
+      ctx.fillText(i18n.t('tooltip.cooldown') + ' ' + content.cooldown.toFixed(2) + 's', x, y);
       y += LINE_HEIGHT;
 
       // Range (if applicable)
       if (content.range > 0) {
         ctx.fillStyle = '#9B59B6'; // Purple for range
-        ctx.fillText('Range: ' + content.range, x, y);
+        ctx.fillText(i18n.t('tooltip.range') + ' ' + content.range, x, y);
         y += LINE_HEIGHT;
       }
 
@@ -282,7 +297,7 @@
 
       // Total Damage Dealt
       ctx.fillStyle = COST_COLOR;
-      ctx.fillText('Total Dealt: ' + this._formatNumber(content.totalDamageDealt), x, y);
+      ctx.fillText(i18n.t('tooltip.totalDealt') + ' ' + this._formatNumber(content.totalDamageDealt), x, y);
       y += LINE_HEIGHT;
 
       return y;
@@ -300,9 +315,9 @@
     _renderNewWeaponTooltip(ctx, x, y) {
       var content = this._content;
 
-      // Title (weapon name)
+      // Title (weapon name) with tier color if available
       ctx.font = 'bold 14px Arial';
-      ctx.fillStyle = TITLE_COLOR;
+      ctx.fillStyle = content.tierColor || TITLE_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'top';
       ctx.fillText(content.name, x, y);
@@ -311,22 +326,49 @@
       // Type
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
-      ctx.fillText('Type: ' + content.attackType, x, y);
+      ctx.fillText(i18n.t('tooltip.type') + ' ' + i18n.tat(content.attackType), x, y);
       y += LINE_HEIGHT;
 
       // Description
       if (content.description) {
         ctx.fillStyle = DESC_COLOR;
-        var lines = this._wrapText(ctx, content.description, MAX_WIDTH - PADDING * 2);
+        var wrapWidth = 200 - PADDING * 2; // Use wider width for stats tooltip
+        var lines = this._wrapText(ctx, content.description, wrapWidth);
         for (var i = 0; i < lines.length && i < 2; i++) {
           ctx.fillText(lines[i], x, y);
           y += LINE_HEIGHT;
         }
       }
 
+      // Stats section (if weapon has stats)
+      if (content.damage && content.damage > 0) {
+        // Damage and DPS
+        ctx.fillStyle = '#E67E22'; // Orange for damage
+        ctx.fillText(i18n.t('tooltip.damage') + ' ' + content.damage, x, y);
+        if (content.dps !== undefined) {
+          ctx.fillStyle = VALUE_COLOR;
+          ctx.fillText('  ' + i18n.t('tooltip.dps') + ' ' + content.dps.toFixed(1), x + 75, y);
+        }
+        y += LINE_HEIGHT;
+
+        // Cooldown
+        if (content.cooldown) {
+          ctx.fillStyle = '#1ABC9C'; // Teal for cooldown
+          ctx.fillText(i18n.t('tooltip.cooldown') + ' ' + content.cooldown.toFixed(2) + 's', x, y);
+          y += LINE_HEIGHT;
+        }
+      }
+
+      // Range (if applicable)
+      if (content.range && content.range > 0) {
+        ctx.fillStyle = '#9B59B6'; // Purple for range
+        ctx.fillText(i18n.t('tooltip.range') + ' ' + content.range, x, y);
+        y += LINE_HEIGHT;
+      }
+
       // NEW badge or UPGRADE indicator
       ctx.fillStyle = content.isNew ? '#2ECC71' : '#3498DB';
-      ctx.fillText(content.isNew ? 'NEW WEAPON' : 'Lv.' + content.level + ' -> ' + (content.level + 1), x, y);
+      ctx.fillText(content.isNew ? i18n.t('tooltip.newWeapon') : i18n.t('tech.lv') + content.level + ' -> ' + (content.level + 1), x, y);
       y += LINE_HEIGHT;
 
       return y;
@@ -347,12 +389,12 @@
       ctx.font = '12px Arial';
       var depthColors = { 0: '#FFFFFF', 1: '#3498DB', 2: '#9B59B6', 3: '#F39C12' };
       ctx.fillStyle = depthColors[content.depth] || DESC_COLOR;
-      ctx.fillText('Depth ' + content.depth, x, y);
+      ctx.fillText(i18n.t('tech.depth') + ' ' + content.depth, x, y);
       y += LINE_HEIGHT;
 
       // Level
       ctx.fillStyle = DESC_COLOR;
-      ctx.fillText('Level: ' + content.level + ' / ' + content.maxLevel, x, y);
+      ctx.fillText(i18n.t('tooltip.level') + ' ' + content.level + ' / ' + content.maxLevel, x, y);
       y += LINE_HEIGHT;
 
       // Effects (up to 3)
@@ -369,10 +411,10 @@
       // Cost
       if (content.level >= content.maxLevel) {
         ctx.fillStyle = DESC_COLOR;
-        ctx.fillText('MAX LEVEL', x, y);
+        ctx.fillText(i18n.t('tooltip.maxLevel'), x, y);
       } else if (content.cost !== null) {
         ctx.fillStyle = content.canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
-        ctx.fillText('Cost: ' + content.cost + ' Gold', x, y);
+        ctx.fillText(i18n.t('tooltip.cost') + ' ' + content.cost + ' ' + i18n.t('tooltip.gold'), x, y);
       }
       y += LINE_HEIGHT;
 

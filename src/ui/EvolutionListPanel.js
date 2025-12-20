@@ -11,6 +11,7 @@
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
   var WeaponEvolutionData = window.VampireSurvivors.Data.WeaponEvolutionData;
   var ScrollBar = UI.ScrollBar;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -33,6 +34,7 @@
   var ICON_GAP = 15;
   var SCROLLBAR_WIDTH = 14;
   var PADDING = 15;
+  var FILTER_HEADER_HEIGHT = 35;
 
   // Brightness
   var OWNED_BRIGHTNESS = 1.0;
@@ -75,6 +77,14 @@
     // Hover state
     _hoveredRow = -1;
     _hoveredWeaponInRow = null; // 'result', 'main', or 'material'
+
+    // Content drag scrolling
+    _isDraggingContent = false;
+    _contentDragStartY = 0;
+    _contentDragStartOffset = 0;
+
+    // View All button rect (for filter header)
+    _viewAllButtonRect = null;
 
     // ----------------------------------------
     // Constructor
@@ -172,6 +182,16 @@
     handleMouseMove(mouseX, mouseY) {
       if (!this._isVisible) return null;
 
+      // Handle content drag scrolling
+      if (this._isDraggingContent) {
+        var deltaY = mouseY - this._contentDragStartY;
+        var newOffset = this._contentDragStartOffset - deltaY;
+        var maxScroll = Math.max(0, this._contentHeight - this._viewportHeight);
+        newOffset = Math.max(0, Math.min(maxScroll, newOffset));
+        this._scrollBar.setScrollOffset(newOffset);
+        return null; // Don't show tooltip while dragging
+      }
+
       this._hoveredRow = -1;
       this._hoveredWeaponInRow = null;
 
@@ -188,7 +208,8 @@
       // Check row hover
       var evolutions = this._evolutionsByTier[this._selectedTier] || [];
       var scrollOffset = this._scrollBar.getScrollOffset();
-      var listY = this._y + TAB_HEIGHT + PADDING;
+      var headerOffset = this._filterWeaponId ? FILTER_HEADER_HEIGHT : 0;
+      var listY = this._y + TAB_HEIGHT + PADDING + headerOffset;
       var listX = this._x + PADDING;
 
       for (var i = 0; i < evolutions.length; i++) {
@@ -232,6 +253,15 @@
     handleMouseDown(mouseX, mouseY) {
       if (!this._isVisible) return false;
 
+      // Check View All button (in filter header)
+      if (this._filterWeaponId && this._viewAllButtonRect) {
+        if (this._isPointInRect(mouseX, mouseY, this._viewAllButtonRect)) {
+          this.clearFilter();
+          this.refresh();
+          return true;
+        }
+      }
+
       // Check scrollbar
       if (this._scrollBar.handleMouseDown(mouseX, mouseY)) {
         return true;
@@ -247,6 +277,65 @@
         }
       }
 
+      // Check weapon icon click to set filter
+      var evolutions = this._evolutionsByTier[this._selectedTier] || [];
+      var scrollOffset = this._scrollBar.getScrollOffset();
+      var headerOffset = this._filterWeaponId ? FILTER_HEADER_HEIGHT : 0;
+      var iconListY = this._y + TAB_HEIGHT + PADDING + headerOffset;
+      var iconListX = this._x + PADDING;
+
+      for (var i = 0; i < evolutions.length; i++) {
+        var rowY = iconListY + i * ROW_HEIGHT - scrollOffset;
+
+        // Skip rows outside viewport
+        if (rowY + ROW_HEIGHT < iconListY || rowY > iconListY + this._viewportHeight) {
+          continue;
+        }
+
+        var evolution = evolutions[i];
+        var iconPositions = this._getIconPositions(iconListX, rowY);
+
+        // Check result icon click
+        if (this._isPointInIcon(mouseX, mouseY, iconPositions.result)) {
+          var weaponName = i18n.tw(evolution.result, evolution.resultData.name || evolution.result);
+          this.setFilterWeapon(evolution.result, weaponName);
+          this.refresh();
+          return true;
+        }
+
+        // Check main icon click
+        if (this._isPointInIcon(mouseX, mouseY, iconPositions.main)) {
+          var weaponName = i18n.tw(evolution.main, evolution.mainData.name || evolution.main);
+          this.setFilterWeapon(evolution.main, weaponName);
+          this.refresh();
+          return true;
+        }
+
+        // Check material icon click
+        if (this._isPointInIcon(mouseX, mouseY, iconPositions.material)) {
+          var weaponName = i18n.tw(evolution.material, evolution.materialData.name || evolution.material);
+          this.setFilterWeapon(evolution.material, weaponName);
+          this.refresh();
+          return true;
+        }
+      }
+
+      // Check if click is in list area for content drag
+      var listY = this._y + TAB_HEIGHT + PADDING;
+      if (this._filterWeaponId) {
+        listY += FILTER_HEADER_HEIGHT;
+      }
+      var listX = this._x + PADDING;
+      var listWidth = this._width - PADDING * 2 - SCROLLBAR_WIDTH - 10;
+
+      if (mouseX >= listX && mouseX <= listX + listWidth &&
+          mouseY >= listY && mouseY <= listY + this._viewportHeight) {
+        this._isDraggingContent = true;
+        this._contentDragStartY = mouseY;
+        this._contentDragStartOffset = this._scrollBar.getScrollOffset();
+        return true;
+      }
+
       return false;
     }
 
@@ -254,6 +343,7 @@
      * Handle mouse up
      */
     handleMouseUp() {
+      this._isDraggingContent = false;
       this._scrollBar.handleMouseUp();
     }
 
@@ -275,6 +365,11 @@
 
       // Render tabs
       this._renderTabs(ctx);
+
+      // Render filter header if filter is active
+      if (this._filterWeaponId) {
+        this._renderFilterHeader(ctx);
+      }
 
       // Render evolution list
       this._renderEvolutionList(ctx);
@@ -379,13 +474,32 @@
       }
 
       // Calculate viewport and content heights
-      this._viewportHeight = this._height - TAB_HEIGHT - PADDING * 2;
+      // Reserve space for filter header if filter is active
+      var headerOffset = this._filterWeaponId ? FILTER_HEADER_HEIGHT : 0;
+      this._viewportHeight = this._height - TAB_HEIGHT - PADDING * 2 - headerOffset;
       var evolutions = this._evolutionsByTier[this._selectedTier] || [];
       this._contentHeight = evolutions.length * ROW_HEIGHT;
 
+      // Calculate View All button rect if filter is active
+      if (this._filterWeaponId) {
+        var headerY = this._y + TAB_HEIGHT + PADDING;
+        var buttonWidth = 80;
+        var buttonHeight = 25;
+        var buttonX = this._x + this._width - PADDING - buttonWidth - SCROLLBAR_WIDTH - 5;
+        var buttonY = headerY + (FILTER_HEADER_HEIGHT - buttonHeight) / 2;
+        this._viewAllButtonRect = {
+          x: buttonX,
+          y: buttonY,
+          width: buttonWidth,
+          height: buttonHeight
+        };
+      } else {
+        this._viewAllButtonRect = null;
+      }
+
       // Update scrollbar
       var scrollbarX = this._x + this._width - SCROLLBAR_WIDTH - 5;
-      var scrollbarY = this._y + TAB_HEIGHT + PADDING;
+      var scrollbarY = this._y + TAB_HEIGHT + PADDING + headerOffset;
       this._scrollBar.setBounds(scrollbarX, scrollbarY, SCROLLBAR_WIDTH, this._viewportHeight);
       this._scrollBar.setContentHeight(this._contentHeight, this._viewportHeight);
     }
@@ -419,16 +533,26 @@
       var isOwned = this._ownedWeaponIds.indexOf(weaponId) !== -1;
       var tierConfig = WeaponTierData.getTierConfig(weaponData.tier || 1);
 
+      // Calculate DPS
+      var damage = weaponData.damage || 0;
+      var cooldown = weaponData.cooldown || 1;
+      var dps = cooldown > 0 ? damage / cooldown : 0;
+
       return {
         type: 'newWeapon',
-        name: weaponData.name || weaponId,
-        attackType: weaponData.attackType || 'Unknown',
-        description: weaponData.description || '',
+        name: i18n.tw(weaponId, weaponData.name || weaponId),
+        attackType: i18n.tat(weaponData.attackType || 'projectile'),
+        description: i18n.twd(weaponId, weaponData.description || ''),
         isNew: !isOwned,
         level: 1,
         tier: weaponData.tier || 1,
         tierName: tierConfig.name,
         tierColor: tierConfig.color,
+        // New performance stats
+        damage: damage,
+        dps: dps,
+        cooldown: cooldown,
+        range: weaponData.range || 0
       };
     }
 
@@ -463,10 +587,55 @@
       }
     }
 
+    _renderFilterHeader(ctx) {
+      var headerX = this._x + PADDING;
+      var headerY = this._y + TAB_HEIGHT + PADDING;
+      var headerWidth = this._width - PADDING * 2;
+
+      // Background
+      ctx.fillStyle = TAB_BG;
+      this._roundRect(ctx, headerX, headerY, headerWidth, FILTER_HEADER_HEIGHT, 5);
+      ctx.fill();
+
+      // Border
+      ctx.strokeStyle = BORDER_COLOR;
+      ctx.lineWidth = 1;
+      this._roundRect(ctx, headerX, headerY, headerWidth, FILTER_HEADER_HEIGHT, 5);
+      ctx.stroke();
+
+      // Filter text
+      ctx.font = '13px Arial';
+      ctx.fillStyle = DESC_COLOR;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      var filterText = i18n.t('evolution.filtering') + ': ';
+      ctx.fillText(filterText, headerX + 10, headerY + FILTER_HEADER_HEIGHT / 2);
+
+      // Weapon name in white
+      var filterTextWidth = ctx.measureText(filterText).width;
+      ctx.fillStyle = TITLE_COLOR;
+      ctx.fillText(this._filterWeaponName || this._filterWeaponId, headerX + 10 + filterTextWidth, headerY + FILTER_HEADER_HEIGHT / 2);
+
+      // View All button
+      if (this._viewAllButtonRect) {
+        var btn = this._viewAllButtonRect;
+        ctx.fillStyle = '#3498DB';
+        this._roundRect(ctx, btn.x, btn.y, btn.width, btn.height, 4);
+        ctx.fill();
+
+        ctx.font = 'bold 11px Arial';
+        ctx.fillStyle = TITLE_COLOR;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(i18n.t('evolution.viewAll'), btn.x + btn.width / 2, btn.y + btn.height / 2);
+      }
+    }
+
     _renderEvolutionList(ctx) {
       var evolutions = this._evolutionsByTier[this._selectedTier] || [];
       var scrollOffset = this._scrollBar.getScrollOffset();
-      var listY = this._y + TAB_HEIGHT + PADDING;
+      var headerOffset = this._filterWeaponId ? FILTER_HEADER_HEIGHT : 0;
+      var listY = this._y + TAB_HEIGHT + PADDING + headerOffset;
       var listX = this._x + PADDING;
       var listWidth = this._width - PADDING * 2 - SCROLLBAR_WIDTH - 10;
 
@@ -497,7 +666,7 @@
         ctx.fillStyle = DESC_COLOR;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('No evolutions available', this._x + this._width / 2, listY + this._viewportHeight / 2);
+        ctx.fillText(i18n.t('evolution.noEvolutions'), this._x + this._width / 2, listY + this._viewportHeight / 2);
       }
     }
 
@@ -548,7 +717,7 @@
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.globalAlpha = resultOwned ? 1.0 : 0.6;
-      ctx.fillText(evolution.resultData.name || evolution.result, nameX, centerY);
+      ctx.fillText(i18n.tw(evolution.result, evolution.resultData.name || evolution.result), nameX, centerY);
       ctx.globalAlpha = 1.0;
     }
 

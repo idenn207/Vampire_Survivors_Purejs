@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -170,7 +171,7 @@
         ctx.fillStyle = this._coreData.color || TITLE_COLOR;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'top';
-        ctx.fillText(this._coreData.name + ' Tech Tree', this._x + this._width / 2, this._y + 10);
+        ctx.fillText(i18n.tcn(this._coreData.id, this._coreData.name) + ' ' + i18n.t('tech.techTree'), this._x + this._width / 2, this._y + 10);
       }
 
       // Render connections first (behind nodes)
@@ -314,7 +315,7 @@
 
       return {
         type: 'tech',
-        title: techData.name,
+        title: i18n.ttn(node.techId, techData.name),
         depth: node.depth,
         level: node.level,
         maxLevel: node.maxLevel,
@@ -450,7 +451,7 @@
           ctx.fillStyle = TEXT_COLOR;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
-          ctx.fillText('Lv.' + node.level, centerX, centerY + 10);
+          ctx.fillText(i18n.t('tech.lv') + node.level, centerX, centerY + 10);
         } else {
           // Lock icon for locked nodes
           ctx.font = '12px Arial';
@@ -478,7 +479,7 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      var labels = ['Base', 'Depth 1', 'Depth 2', 'Depth 3'];
+      var labels = [i18n.t('tech.base'), i18n.t('tech.depth') + ' 1', i18n.t('tech.depth') + ' 2', i18n.t('tech.depth') + ' 3'];
       for (var i = 0; i < 4; i++) {
         var labelX = this._x + PADDING + i * colWidth + colWidth / 2;
         ctx.fillStyle = DEPTH_COLORS[i];

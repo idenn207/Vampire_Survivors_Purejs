@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -152,7 +153,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('WEAPONS (Gold Upgrade)', this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
+      ctx.fillText(i18n.t('weapons.title'), this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
 
       // Separator line
       ctx.strokeStyle = BORDER_COLOR;
@@ -259,7 +260,7 @@
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
           ctx.fillStyle = MAX_LEVEL_COLOR;
-          ctx.fillText('MAX', rect.x + rect.width / 2, rect.y + rect.height + 3);
+          ctx.fillText(i18n.t('stats.max'), rect.x + rect.width / 2, rect.y + rect.height + 3);
         }
       } else {
         // Empty slot X
@@ -568,7 +569,7 @@
 
       return {
         type: 'weapon',
-        name: weapon.name || (weapon.data ? weapon.data.name : 'Unknown'),
+        name: i18n.tw(weapon.id, weapon.name || (weapon.data ? weapon.data.name : 'Unknown')),
         level: weapon.level,
         maxLevel: weapon.data ? weapon.data.maxLevel : 5,
         nextStats: nextStats,

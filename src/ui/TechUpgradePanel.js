@@ -11,6 +11,7 @@
   var TechTree = window.VampireSurvivors.Components.TechTree;
   var Gold = window.VampireSurvivors.Components.Gold;
   var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -184,10 +185,10 @@
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      var titleText = 'TECH TREE';
+      var titleText = i18n.t('tech.title');
       if (this._coreData) {
         ctx.fillStyle = this._coreData.color || TITLE_COLOR;
-        titleText = this._coreData.name.toUpperCase();
+        titleText = i18n.tcn(this._coreData.id, this._coreData.name).toUpperCase();
       }
       ctx.fillText(titleText, this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
 
@@ -214,8 +215,8 @@
         ctx.fillStyle = LOCKED_COLOR;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Defeat bosses to', this._x + this._width / 2, this._y + this._height / 2 - 8);
-        ctx.fillText('unlock techs!', this._x + this._width / 2, this._y + this._height / 2 + 8);
+        ctx.fillText(i18n.t('tech.defeatBosses'), this._x + this._width / 2, this._y + this._height / 2 - 8);
+        ctx.fillText(i18n.t('tech.unlockTechs'), this._x + this._width / 2, this._y + this._height / 2 + 8);
       }
     }
 
@@ -331,7 +332,7 @@
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
           ctx.fillStyle = MAX_LEVEL_COLOR;
-          ctx.fillText('MAX', rect.x + rect.width / 2, rect.y + rect.height + 2);
+          ctx.fillText(i18n.t('stats.max'), rect.x + rect.width / 2, rect.y + rect.height + 2);
         }
       } else {
         // Empty slot
@@ -375,7 +376,7 @@
       ctx.font = '8px Arial';
       ctx.fillStyle = TEXT_COLOR;
       ctx.textBaseline = 'bottom';
-      var name = tech.name;
+      var name = i18n.ttn(tech.techId, tech.name);
       if (name.length > 8) {
         name = name.substring(0, 7) + '..';
       }
@@ -482,7 +483,7 @@
 
       return {
         type: 'tech',
-        title: tech.name,
+        title: i18n.ttn(tech.techId, tech.name),
         depth: tech.depth,
         level: tech.level,
         maxLevel: tech.maxLevel,

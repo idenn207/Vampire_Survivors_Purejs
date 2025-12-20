@@ -99,6 +99,233 @@
     }
 
     /**
+     * Get translated weapon name with fallback
+     * @param {string} weaponId - Weapon ID (e.g., 'arcane_dart')
+     * @param {string} [fallback] - Fallback name if translation not found
+     * @returns {string}
+     */
+    tw(weaponId, fallback) {
+      var key = 'weapon.' + weaponId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or weaponId
+      if (translation === key) {
+        return fallback || weaponId;
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated weapon description with fallback
+     * @param {string} weaponId - Weapon ID (e.g., 'arcane_dart')
+     * @param {string} [fallback] - Fallback description if translation not found
+     * @returns {string}
+     */
+    twd(weaponId, fallback) {
+      var key = 'weaponDesc.' + weaponId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or empty string
+      if (translation === key) {
+        return fallback || '';
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated attack type
+     * @param {string} attackType - Attack type (e.g., 'projectile', 'laser')
+     * @returns {string}
+     */
+    tat(attackType) {
+      var key = 'attackType.' + attackType;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, return formatted attack type
+      if (translation === key) {
+        return attackType.replace(/_/g, ' ');
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated targeting mode
+     * @param {string} targetingMode - Targeting mode (e.g., 'nearest', 'random')
+     * @returns {string}
+     */
+    ttm(targetingMode) {
+      var key = 'targetingMode.' + targetingMode;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, return formatted targeting mode
+      if (translation === key) {
+        return targetingMode.replace(/_/g, ' ');
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated core name
+     * @param {string} coreId - Core ID (e.g., 'fire_core')
+     * @param {string} [fallback] - Fallback name if translation not found
+     * @returns {string}
+     */
+    tcn(coreId, fallback) {
+      var key = 'coreName.' + coreId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or coreId
+      if (translation === key) {
+        return fallback || coreId;
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated core description
+     * @param {string} coreId - Core ID (e.g., 'fire_core')
+     * @param {string} [fallback] - Fallback description if translation not found
+     * @returns {string}
+     */
+    tcd(coreId, fallback) {
+      var key = 'coreDesc.' + coreId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or empty string
+      if (translation === key) {
+        return fallback || '';
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated theme name
+     * @param {string} theme - Theme name (e.g., 'fire', 'ice')
+     * @returns {string}
+     */
+    tth(theme) {
+      var key = 'theme.' + theme;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, return capitalized theme
+      if (translation === key) {
+        return theme.charAt(0).toUpperCase() + theme.slice(1);
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated tech name
+     * @param {string} techId - Tech ID (e.g., 'fire_base', 'fire_d1_intensity')
+     * @param {string} [fallback] - Fallback name if translation not found
+     * @returns {string}
+     */
+    ttn(techId, fallback) {
+      var key = 'techName.' + techId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or techId
+      if (translation === key) {
+        return fallback || techId;
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated stat name
+     * @param {string} statId - Stat ID (e.g., 'maxHealth', 'damage')
+     * @param {string} [fallback] - Fallback name if translation not found
+     * @returns {string}
+     */
+    tsn(statId, fallback) {
+      var key = 'statName.' + statId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or statId
+      if (translation === key) {
+        return fallback || statId;
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated stat description
+     * @param {string} statId - Stat ID (e.g., 'maxHealth', 'damage')
+     * @param {string} [fallback] - Fallback description if translation not found
+     * @returns {string}
+     */
+    tsd(statId, fallback) {
+      var key = 'statDesc.' + statId;
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or empty string
+      if (translation === key) {
+        return fallback || '';
+      }
+
+      return translation;
+    }
+
+    /**
      * Set current language
      * @param {string} langCode - Language code (e.g., 'en', 'ko')
      */

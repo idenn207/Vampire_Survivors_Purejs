@@ -14,6 +14,7 @@
   var UpgradeTooltip = UI.UpgradeTooltip;
   var EvolutionPopup = UI.EvolutionPopup;
   var TechUpgradePanel = UI.TechUpgradePanel;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -420,7 +421,7 @@
       ctx.fillStyle = EVOLVE_BUTTON_TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('EVOLVE WEAPON', rect.x + rect.width / 2, rect.y + rect.height / 2);
+      ctx.fillText(i18n.t('levelUp.evolve'), rect.x + rect.width / 2, rect.y + rect.height / 2);
 
       // Pulse effect indicator (small star)
       var pulseAlpha = 0.5 + 0.5 * Math.sin(Date.now() / 300);

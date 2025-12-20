@@ -6,6 +6,11 @@
   'use strict';
 
   // ============================================
+  // Imports
+  // ============================================
+  var i18n = window.VampireSurvivors.Core.i18n;
+
+  // ============================================
   // Constants
   // ============================================
   var FONT_SIZE = 48;
@@ -55,9 +60,9 @@
       if (specialWave && specialWave.announcement) {
         this._currentText = specialWave.announcement;
         this._color = specialWave.announcementColor || DEFAULT_COLOR;
-        this._subText = 'Wave ' + waveNumber;
+        this._subText = i18n.t('wave.waveNumber', { number: waveNumber });
       } else {
-        this._currentText = 'WAVE ' + waveNumber;
+        this._currentText = i18n.t('wave.wave') + ' ' + waveNumber;
         this._color = DEFAULT_COLOR;
         this._subText = '';
       }

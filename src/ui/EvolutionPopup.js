@@ -10,6 +10,7 @@
   // ============================================
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
   var WeaponEvolutionData = window.VampireSurvivors.Data.WeaponEvolutionData;
+  var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
@@ -194,7 +195,7 @@
       ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('WEAPON EVOLUTION', this._x + POPUP_WIDTH / 2, this._y + 35);
+      ctx.fillText(i18n.t('evolution.title'), this._x + POPUP_WIDTH / 2, this._y + 35);
 
       // Tier indicator
       if (this._selectedTier > 0) {
@@ -225,7 +226,7 @@
       ctx.font = '12px Arial';
       ctx.fillStyle = DESC_COLOR;
       ctx.textAlign = 'center';
-      ctx.fillText('Select MAIN weapon first, then MATERIAL. ★ = Core (MAIN only, recipe required)', this._x + POPUP_WIDTH / 2, this._y + POPUP_HEIGHT - 15);
+      ctx.fillText(i18n.t('evolution.instruction'), this._x + POPUP_WIDTH / 2, this._y + POPUP_HEIGHT - 15);
     }
 
     // ----------------------------------------
@@ -501,7 +502,7 @@
         // Core weapon with no recipe - cannot evolve
         this._isKnownRecipe = false;
         this._evolutionResult = {
-          name: 'Recipe Required',
+          name: i18n.t('evolution.recipeRequired'),
           tier: this._selectedTier + 1,
           isRandom: false,
           requiresRecipe: true,
@@ -509,8 +510,9 @@
       } else {
         // Unknown recipe - will be random (only for non-core weapons)
         this._isKnownRecipe = false;
+        var nextTierConfig = WeaponTierData.getTierConfig(this._selectedTier + 1);
         this._evolutionResult = {
-          name: 'Random Tier ' + (this._selectedTier + 1) + ' Weapon',
+          name: i18n.t('evolution.random') + ' ' + (nextTierConfig ? nextTierConfig.name : ''),
           tier: this._selectedTier + 1,
           isRandom: true,
         };
@@ -542,7 +544,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      ctx.fillText('MAIN', rect.x + rect.width / 2, rect.y - 5);
+      ctx.fillText(i18n.t('evolution.main'), rect.x + rect.width / 2, rect.y - 5);
 
       // Content
       if (isFilled) {
@@ -553,7 +555,7 @@
         ctx.fillStyle = DESC_COLOR;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Select', rect.x + rect.width / 2, rect.y + rect.height / 2);
+        ctx.fillText(i18n.t('evolution.select'), rect.x + rect.width / 2, rect.y + rect.height / 2);
       }
     }
 
@@ -582,7 +584,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      ctx.fillText('MATERIAL', rect.x + rect.width / 2, rect.y - 5);
+      ctx.fillText(i18n.t('evolution.material'), rect.x + rect.width / 2, rect.y - 5);
 
       // Content
       if (isFilled) {
@@ -593,7 +595,7 @@
         ctx.fillStyle = DESC_COLOR;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Select', rect.x + rect.width / 2, rect.y + rect.height / 2);
+        ctx.fillText(i18n.t('evolution.select'), rect.x + rect.width / 2, rect.y + rect.height / 2);
       }
     }
 
@@ -615,7 +617,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      var name = weapon.name || weapon.id;
+      var name = i18n.tw(weapon.id, weapon.name || weapon.id);
       if (name.length > 10) {
         name = name.substring(0, 9) + '...';
       }
@@ -675,7 +677,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      ctx.fillText('RESULT', rect.x + rect.width / 2, rect.y - 5);
+      ctx.fillText(i18n.t('evolution.result'), rect.x + rect.width / 2, rect.y - 5);
 
       var centerX = rect.x + rect.width / 2;
       var centerY = rect.y + rect.height / 2;
@@ -698,7 +700,7 @@
           ctx.fillStyle = tierConfig.color;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'top';
-          var name = resultData.name;
+          var name = i18n.tw(resultData.id, resultData.name);
           if (name.length > 12) {
             name = name.substring(0, 11) + '...';
           }
@@ -722,8 +724,7 @@
           ctx.font = '9px Arial';
           ctx.fillStyle = '#E74C3C';
           ctx.textBaseline = 'top';
-          ctx.fillText('Recipe', centerX, centerY + 20);
-          ctx.fillText('Required', centerX, centerY + 32);
+          ctx.fillText(i18n.t('evolution.recipeRequired'), centerX, centerY + 26);
         } else {
           // Unknown recipe - show '?'
           var nextTierConfig = WeaponTierData.getTierConfig(this._selectedTier + 1);
@@ -739,7 +740,7 @@
           ctx.font = '9px Arial';
           ctx.fillStyle = UNKNOWN_RESULT_COLOR;
           ctx.textBaseline = 'top';
-          ctx.fillText('Random', centerX, centerY + 20);
+          ctx.fillText(i18n.t('evolution.random'), centerX, centerY + 20);
           ctx.fillText(nextTierConfig.name, centerX, centerY + 32);
         }
       } else {
@@ -748,8 +749,7 @@
         ctx.fillStyle = DESC_COLOR;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText('Select', centerX, centerY - 5);
-        ctx.fillText('weapons', centerX, centerY + 8);
+        ctx.fillText(i18n.t('evolution.selectWeapons'), centerX, centerY);
       }
     }
 
@@ -759,7 +759,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      ctx.fillText('ELIGIBLE WEAPONS (Lv.Max, Same Tier)', this._x + POPUP_WIDTH / 2, this._y + 245);
+      ctx.fillText(i18n.t('evolution.eligible'), this._x + POPUP_WIDTH / 2, this._y + 245);
 
       for (var i = 0; i < this._weaponGridRects.length; i++) {
         var rect = this._weaponGridRects[i];
@@ -817,7 +817,7 @@
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'top';
-      var name = weapon.name || weapon.id;
+      var name = i18n.tw(weapon.id, weapon.name || weapon.id);
       if (name.length > 8) {
         name = name.substring(0, 7) + '..';
       }
@@ -869,7 +869,7 @@
       ctx.fillStyle = canEvolve ? TEXT_COLOR : DESC_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText('EVOLVE', evolveRect.x + evolveRect.width / 2, evolveRect.y + evolveRect.height / 2);
+      ctx.fillText(i18n.t('evolution.evolve'), evolveRect.x + evolveRect.width / 2, evolveRect.y + evolveRect.height / 2);
 
       // Close button
       var closeRect = this._closeButtonRect;
@@ -884,7 +884,7 @@
 
       ctx.font = 'bold 16px Arial';
       ctx.fillStyle = TEXT_COLOR;
-      ctx.fillText('CLOSE', closeRect.x + closeRect.width / 2, closeRect.y + closeRect.height / 2);
+      ctx.fillText(i18n.t('evolution.close'), closeRect.x + closeRect.width / 2, closeRect.y + closeRect.height / 2);
     }
 
     _isPointInRect(x, y, rect) {
