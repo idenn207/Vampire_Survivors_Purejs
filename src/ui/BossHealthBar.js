@@ -10,23 +10,24 @@
   // ============================================
   var Health = window.VampireSurvivors.Components.Health;
   var BossData = window.VampireSurvivors.Data.BossData;
+  var UIScale = window.VampireSurvivors.Core.UIScale;
 
   // ============================================
-  // Constants
+  // Constants (base values at 800x600)
   // ============================================
-  var BAR_WIDTH = 400;
-  var BAR_HEIGHT = 20;
-  var BAR_Y = 50; // Below EXP bar
-  var BAR_BORDER = 3;
+  var BASE_BAR_WIDTH = 400;
+  var BASE_BAR_HEIGHT = 20;
+  var BASE_BAR_Y = 50; // Below EXP bar
+  var BASE_BAR_BORDER = 3;
 
   var BG_COLOR = '#1A1A2E';
   var BORDER_COLOR = '#0F0F1A';
   var TEXT_COLOR = '#FFFFFF';
   var SHADOW_COLOR = '#000000';
 
-  var NAME_FONT = 'bold 16px Arial';
-  var PHASE_INDICATOR_HEIGHT = 4;
-  var PHASE_INDICATOR_Y = 5; // Below main bar
+  var BASE_NAME_FONT_SIZE = 16;
+  var BASE_PHASE_INDICATOR_HEIGHT = 4;
+  var BASE_PHASE_INDICATOR_Y = 5; // Below main bar
 
   var FADE_SPEED = 3.0;
   var SHOW_DELAY = 0.3; // Delay before showing after boss spawn
@@ -136,21 +137,28 @@
     render(ctx, canvasWidth) {
       if (!this._visible || this._alpha <= 0) return;
 
+      // Scale dimensions
+      var barWidth = UIScale.scale(BASE_BAR_WIDTH);
+      var barHeight = UIScale.scale(BASE_BAR_HEIGHT);
+      var barBorder = UIScale.scale(BASE_BAR_BORDER);
+      var phaseIndicatorHeight = UIScale.scale(BASE_PHASE_INDICATOR_HEIGHT);
+      var phaseIndicatorY = UIScale.scale(BASE_PHASE_INDICATOR_Y);
+
       var centerX = canvasWidth / 2;
-      var barX = centerX - BAR_WIDTH / 2;
-      var barY = BAR_Y;
+      var barX = centerX - barWidth / 2;
+      var barY = UIScale.scale(BASE_BAR_Y);
 
       ctx.save();
       ctx.globalAlpha = this._alpha;
 
       // Draw background
       ctx.fillStyle = BG_COLOR;
-      ctx.fillRect(barX - BAR_BORDER, barY - BAR_BORDER, BAR_WIDTH + BAR_BORDER * 2, BAR_HEIGHT + BAR_BORDER * 2);
+      ctx.fillRect(barX - barBorder, barY - barBorder, barWidth + barBorder * 2, barHeight + barBorder * 2);
 
       // Draw border
       ctx.strokeStyle = BORDER_COLOR;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(barX - BAR_BORDER, barY - BAR_BORDER, BAR_WIDTH + BAR_BORDER * 2, BAR_HEIGHT + BAR_BORDER * 2);
+      ctx.lineWidth = UIScale.scale(2);
+      ctx.strokeRect(barX - barBorder, barY - barBorder, barWidth + barBorder * 2, barHeight + barBorder * 2);
 
       // Calculate health percentage
       var healthPercent = this._displayMaxHealth > 0 ? this._displayHealth / this._displayMaxHealth : 0;
@@ -165,33 +173,36 @@
 
       // Draw health fill
       ctx.fillStyle = fillColor;
-      ctx.fillRect(barX, barY, BAR_WIDTH * healthPercent, BAR_HEIGHT);
+      ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
 
       // Draw phase indicators (small segments)
-      this._renderPhaseIndicators(ctx, barX, barY + BAR_HEIGHT + PHASE_INDICATOR_Y, BAR_WIDTH);
+      this._renderPhaseIndicators(ctx, barX, barY + barHeight + phaseIndicatorY, barWidth, phaseIndicatorHeight);
 
       // Draw boss name
       if (this._boss) {
-        ctx.font = NAME_FONT;
+        ctx.font = UIScale.font(BASE_NAME_FONT_SIZE, 'bold');
         ctx.textAlign = 'center';
         ctx.textBaseline = 'bottom';
 
+        var shadowOffset = UIScale.scale(2);
+        var nameOffset = UIScale.scale(5);
+
         // Shadow
         ctx.fillStyle = SHADOW_COLOR;
-        ctx.fillText(this._boss.name, centerX + 2, barY - 5 + 2);
+        ctx.fillText(this._boss.name, centerX + shadowOffset, barY - nameOffset + shadowOffset);
 
         // Text
         ctx.fillStyle = TEXT_COLOR;
-        ctx.fillText(this._boss.name, centerX, barY - 5);
+        ctx.fillText(this._boss.name, centerX, barY - nameOffset);
       }
 
       // Draw health numbers
       var healthText = Math.floor(this._displayHealth) + ' / ' + Math.floor(this._displayMaxHealth);
-      ctx.font = '12px Arial';
+      ctx.font = UIScale.font(12);
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = TEXT_COLOR;
-      ctx.fillText(healthText, centerX, barY + BAR_HEIGHT / 2);
+      ctx.fillText(healthText, centerX, barY + barHeight / 2);
 
       ctx.restore();
     }
@@ -199,7 +210,7 @@
     // ----------------------------------------
     // Private Methods
     // ----------------------------------------
-    _renderPhaseIndicators(ctx, x, y, width) {
+    _renderPhaseIndicators(ctx, x, y, width, indicatorHeight) {
       if (!this._boss || !this._boss.config || !this._boss.config.phases) return;
 
       var phases = this._boss.config.phases;
@@ -211,12 +222,12 @@
 
         // Background
         ctx.fillStyle = isCurrentPhase ? BossData.getPhaseColor(i) : '#333333';
-        ctx.fillRect(segmentX + 1, y, segmentWidth - 2, PHASE_INDICATOR_HEIGHT);
+        ctx.fillRect(segmentX + 1, y, segmentWidth - 2, indicatorHeight);
 
         // Border between segments
         if (i > 0) {
           ctx.fillStyle = BORDER_COLOR;
-          ctx.fillRect(segmentX - 1, y, 2, PHASE_INDICATOR_HEIGHT);
+          ctx.fillRect(segmentX - 1, y, 2, indicatorHeight);
         }
       }
     }

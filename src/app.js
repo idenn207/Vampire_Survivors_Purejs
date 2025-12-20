@@ -105,6 +105,14 @@
       camera = new Camera(game.width, game.height);
       game.input.setCamera(camera);
 
+      // Update camera viewport when resolution changes
+      events.on('settings:resolutionChanged', function (data) {
+        if (camera && data.width && data.height) {
+          camera.viewportWidth = data.width;
+          camera.viewportHeight = data.height;
+        }
+      });
+
       // Setup systems (priority order: 0 -> 5 -> 10 -> 50 -> 100)
       var backgroundSystem = new BackgroundSystem();
       backgroundSystem.initialize(game, entityManager);

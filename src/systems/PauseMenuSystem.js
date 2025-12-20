@@ -270,6 +270,9 @@
         this._game._width = data.width;
         this._game._height = data.height;
 
+        // Update UIScale for all UI elements
+        window.VampireSurvivors.Core.UIScale.update(data.width, data.height);
+
         // Update screen if visible
         if (this._isActive && this._screen.isVisible) {
           this._screen.show(

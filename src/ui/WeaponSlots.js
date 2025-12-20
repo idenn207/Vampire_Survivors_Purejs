@@ -10,17 +10,18 @@
   // ============================================
   var TechTree = window.VampireSurvivors.Components.TechTree;
   var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
+  var UIScale = window.VampireSurvivors.Core.UIScale;
 
   // ============================================
-  // Constants
+  // Constants (base values at 800x600)
   // ============================================
-  var SLOTS_X = 10;
-  var SLOTS_Y = 150; // Below status panel
+  var BASE_SLOTS_X = 10;
+  var BASE_SLOTS_Y = 150; // Below status panel
 
-  var SLOT_SIZE = 36;
-  var SLOT_GAP = 3;
-  var SLOT_BORDER = 2;
-  var COLUMN_GAP = 6; // Gap between weapon and tech columns
+  var BASE_SLOT_SIZE = 36;
+  var BASE_SLOT_GAP = 3;
+  var BASE_SLOT_BORDER = 2;
+  var BASE_COLUMN_GAP = 6; // Gap between weapon and tech columns
   var WEAPON_COLUMNS = 2;
   var WEAPON_ROWS = 5;
   var TOTAL_WEAPON_SLOTS = WEAPON_COLUMNS * WEAPON_ROWS; // 10 weapon slots
@@ -106,32 +107,39 @@
       var weapons = this._getWeapons();
       var techItems = this._getTechItems();
 
+      // Scale dimensions
+      var slotsX = UIScale.scale(BASE_SLOTS_X);
+      var slotsY = UIScale.scale(BASE_SLOTS_Y);
+      var slotSize = UIScale.scale(BASE_SLOT_SIZE);
+      var slotGap = UIScale.scale(BASE_SLOT_GAP);
+      var columnGap = UIScale.scale(BASE_COLUMN_GAP);
+
       // Render weapon slots (2 columns x 5 rows = 10 slots)
       for (var i = 0; i < TOTAL_WEAPON_SLOTS; i++) {
         var col = i % WEAPON_COLUMNS;
         var row = Math.floor(i / WEAPON_COLUMNS);
-        var x = SLOTS_X + col * (SLOT_SIZE + SLOT_GAP);
-        var y = SLOTS_Y + row * (SLOT_SIZE + SLOT_GAP);
+        var x = slotsX + col * (slotSize + slotGap);
+        var y = slotsY + row * (slotSize + slotGap);
         var weapon = weapons[i] || null;
 
         if (weapon) {
-          this._renderFilledWeaponSlot(ctx, x, y, weapon);
+          this._renderFilledWeaponSlot(ctx, x, y, weapon, slotSize);
         } else {
-          this._renderEmptySlot(ctx, x, y, 'weapon');
+          this._renderEmptySlot(ctx, x, y, 'weapon', slotSize);
         }
       }
 
       // Render tech slots (1 column x 5 rows = 5 slots, to the right of weapons)
-      var techStartX = SLOTS_X + WEAPON_COLUMNS * (SLOT_SIZE + SLOT_GAP) + COLUMN_GAP;
+      var techStartX = slotsX + WEAPON_COLUMNS * (slotSize + slotGap) + columnGap;
       for (var j = 0; j < TECH_SLOTS; j++) {
         var techX = techStartX;
-        var techY = SLOTS_Y + j * (SLOT_SIZE + SLOT_GAP);
+        var techY = slotsY + j * (slotSize + slotGap);
         var tech = techItems[j] || null;
 
         if (tech) {
-          this._renderFilledTechSlot(ctx, techX, techY, tech);
+          this._renderFilledTechSlot(ctx, techX, techY, tech, slotSize);
         } else {
-          this._renderEmptySlot(ctx, techX, techY, 'tech');
+          this._renderEmptySlot(ctx, techX, techY, 'tech', slotSize);
         }
       }
     }
@@ -189,78 +197,81 @@
       return techItems;
     }
 
-    _renderEmptySlot(ctx, x, y, type) {
+    _renderEmptySlot(ctx, x, y, type, slotSize) {
       var bgColor = type === 'weapon' ? WEAPON_EMPTY_BG : TECH_EMPTY_BG;
       var borderColor = type === 'weapon' ? WEAPON_EMPTY_BORDER : TECH_EMPTY_BORDER;
       var xColor = type === 'weapon' ? WEAPON_EMPTY_X_COLOR : TECH_EMPTY_X_COLOR;
+      var slotBorder = UIScale.scale(BASE_SLOT_BORDER);
 
       // Border
       ctx.fillStyle = borderColor;
-      ctx.fillRect(x, y, SLOT_SIZE, SLOT_SIZE);
+      ctx.fillRect(x, y, slotSize, slotSize);
 
       // Background
       ctx.fillStyle = bgColor;
       ctx.fillRect(
-        x + SLOT_BORDER,
-        y + SLOT_BORDER,
-        SLOT_SIZE - SLOT_BORDER * 2,
-        SLOT_SIZE - SLOT_BORDER * 2
+        x + slotBorder,
+        y + slotBorder,
+        slotSize - slotBorder * 2,
+        slotSize - slotBorder * 2
       );
 
       // X pattern
       ctx.strokeStyle = xColor;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = UIScale.scale(2);
       ctx.lineCap = 'round';
 
-      var padding = 10;
+      var padding = UIScale.scale(10);
       ctx.beginPath();
       ctx.moveTo(x + padding, y + padding);
-      ctx.lineTo(x + SLOT_SIZE - padding, y + SLOT_SIZE - padding);
+      ctx.lineTo(x + slotSize - padding, y + slotSize - padding);
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.moveTo(x + SLOT_SIZE - padding, y + padding);
-      ctx.lineTo(x + padding, y + SLOT_SIZE - padding);
+      ctx.moveTo(x + slotSize - padding, y + padding);
+      ctx.lineTo(x + padding, y + slotSize - padding);
       ctx.stroke();
     }
 
-    _renderFilledWeaponSlot(ctx, x, y, weapon) {
+    _renderFilledWeaponSlot(ctx, x, y, weapon, slotSize) {
       var weaponType = this._getWeaponType(weapon);
       var borderColor = WEAPON_COLORS[weaponType] || '#9B59B6';
+      var slotBorder = UIScale.scale(BASE_SLOT_BORDER);
 
       ctx.fillStyle = borderColor;
-      ctx.fillRect(x, y, SLOT_SIZE, SLOT_SIZE);
+      ctx.fillRect(x, y, slotSize, slotSize);
 
       ctx.fillStyle = WEAPON_FILLED_BG;
       ctx.fillRect(
-        x + SLOT_BORDER,
-        y + SLOT_BORDER,
-        SLOT_SIZE - SLOT_BORDER * 2,
-        SLOT_SIZE - SLOT_BORDER * 2
+        x + slotBorder,
+        y + slotBorder,
+        slotSize - slotBorder * 2,
+        slotSize - slotBorder * 2
       );
 
-      this._renderWeaponIcon(ctx, x, y, weapon, weaponType);
-      this._renderLevel(ctx, x, y, weapon.level || 1);
+      this._renderWeaponIcon(ctx, x, y, weapon, weaponType, slotSize);
+      this._renderLevel(ctx, x, y, weapon.level || 1, slotSize);
     }
 
-    _renderFilledTechSlot(ctx, x, y, tech) {
+    _renderFilledTechSlot(ctx, x, y, tech, slotSize) {
       // Use depth color for border
       var depthColor = DEPTH_COLORS[tech.depth] || DEPTH_COLORS[0];
       var borderColor = tech.coreColor || depthColor;
+      var slotBorder = UIScale.scale(BASE_SLOT_BORDER);
 
       ctx.fillStyle = borderColor;
-      ctx.fillRect(x, y, SLOT_SIZE, SLOT_SIZE);
+      ctx.fillRect(x, y, slotSize, slotSize);
 
       ctx.fillStyle = TECH_FILLED_BG;
       ctx.fillRect(
-        x + SLOT_BORDER,
-        y + SLOT_BORDER,
-        SLOT_SIZE - SLOT_BORDER * 2,
-        SLOT_SIZE - SLOT_BORDER * 2
+        x + slotBorder,
+        y + slotBorder,
+        slotSize - slotBorder * 2,
+        slotSize - slotBorder * 2
       );
 
-      this._renderTechIcon(ctx, x, y, tech);
-      this._renderLevel(ctx, x, y, tech.level || 1);
+      this._renderTechIcon(ctx, x, y, tech, slotSize);
+      this._renderLevel(ctx, x, y, tech.level || 1, slotSize);
 
       // Render depth indicator (small colored dot in top-left)
       this._renderDepthIndicator(ctx, x, y, tech.depth);
@@ -268,9 +279,9 @@
 
     _renderDepthIndicator(ctx, x, y, depth) {
       var depthColor = DEPTH_COLORS[depth] || DEPTH_COLORS[0];
-      var dotX = x + 6;
-      var dotY = y + 6;
-      var dotRadius = 4;
+      var dotX = x + UIScale.scale(6);
+      var dotY = y + UIScale.scale(6);
+      var dotRadius = UIScale.scale(4);
 
       ctx.fillStyle = depthColor;
       ctx.beginPath();
@@ -293,18 +304,18 @@
       return 'projectile';
     }
 
-    _renderWeaponIcon(ctx, x, y, weapon, weaponType) {
+    _renderWeaponIcon(ctx, x, y, weapon, weaponType, slotSize) {
       var iconColor = WEAPON_COLORS[weaponType] || '#FFFFFF';
-      var centerX = x + SLOT_SIZE / 2;
-      var centerY = y + SLOT_SIZE / 2;
-      var iconSize = 20;
+      var centerX = x + slotSize / 2;
+      var centerY = y + slotSize / 2;
+      var iconSize = UIScale.scale(20);
 
       // Try to render image if available
       var assetLoader = window.VampireSurvivors.Core.assetLoader;
       var imageId = weapon && weapon.data ? weapon.data.imageId : null;
       if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
         var img = assetLoader.getImage(imageId);
-        var imgSize = 24;
+        var imgSize = UIScale.scale(24);
         ctx.drawImage(img, centerX - imgSize / 2, centerY - imgSize / 2, imgSize, imgSize);
         return;
       }
@@ -496,9 +507,9 @@
       }
     }
 
-    _renderTechIcon(ctx, x, y, tech) {
-      var centerX = x + SLOT_SIZE / 2;
-      var centerY = y + SLOT_SIZE / 2;
+    _renderTechIcon(ctx, x, y, tech, slotSize) {
+      var centerX = x + slotSize / 2;
+      var centerY = y + slotSize / 2;
       var depthColor = DEPTH_COLORS[tech.depth] || '#FFFFFF';
 
       // Try to render image if available
@@ -506,7 +517,7 @@
       var imageId = tech.imageId;
       if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
         var img = assetLoader.getImage(imageId);
-        var imgSize = 24;
+        var imgSize = UIScale.scale(24);
         ctx.drawImage(img, centerX - imgSize / 2, centerY - imgSize / 2, imgSize, imgSize);
         return;
       }
@@ -516,7 +527,7 @@
       var iconChar = TECH_ICONS[coreIcon] || '✦';
 
       // Draw icon with depth color
-      ctx.font = '16px Arial';
+      ctx.font = UIScale.font(16);
       ctx.fillStyle = depthColor;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
@@ -546,17 +557,19 @@
       ctx.closePath();
     }
 
-    _renderLevel(ctx, x, y, level) {
-      ctx.font = 'bold 10px Arial';
+    _renderLevel(ctx, x, y, level, slotSize) {
+      ctx.font = UIScale.font(10, 'bold');
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      var lvlX = x + SLOT_SIZE - 8;
-      var lvlY = y + SLOT_SIZE - 8;
+      var offset = UIScale.scale(8);
+      var lvlX = x + slotSize - offset;
+      var lvlY = y + slotSize - offset;
+      var radius = UIScale.scale(7);
 
       ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
       ctx.beginPath();
-      ctx.arc(lvlX, lvlY, 7, 0, Math.PI * 2);
+      ctx.arc(lvlX, lvlY, radius, 0, Math.PI * 2);
       ctx.fill();
 
       ctx.fillStyle = '#FFFFFF';

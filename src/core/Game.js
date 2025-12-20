@@ -16,10 +16,12 @@
   // ============================================
   // Constants
   // ============================================
-  // var GAME_WIDTH = 1280;
-  var GAME_WIDTH = 800;
-  // var GAME_HEIGHT = 720;
-  var GAME_HEIGHT = 600;
+  var DEFAULT_WIDTH = 800;
+  var DEFAULT_HEIGHT = 600;
+
+  // For backwards compatibility, keep these as aliases
+  var GAME_WIDTH = DEFAULT_WIDTH;
+  var GAME_HEIGHT = DEFAULT_HEIGHT;
 
   var GameState = Object.freeze({
     INITIALIZING: 'initializing',
@@ -45,6 +47,8 @@
     _systems = [];
     _isRunning = false;
     _elapsedTime = 0; // Total game time in seconds
+    _width = DEFAULT_WIDTH;
+    _height = DEFAULT_HEIGHT;
 
     _boundLoop = null;
 
@@ -66,9 +70,15 @@
         throw new Error('Canvas not found: ' + canvasId);
       }
 
-      this._canvas.width = GAME_WIDTH;
-      this._canvas.height = GAME_HEIGHT;
+      // Load saved resolution from localStorage
+      this._loadSavedResolution();
+
+      this._canvas.width = this._width;
+      this._canvas.height = this._height;
       this._ctx = this._canvas.getContext('2d');
+
+      // Initialize UIScale with current resolution
+      Core.UIScale.update(this._width, this._height);
 
       this._input.initialize(this._canvas);
 
@@ -78,7 +88,26 @@
 
       await events.emit('game:initialized', { game: this });
 
-      console.log('[Game] Initialized');
+      console.log('[Game] Initialized at ' + this._width + 'x' + this._height);
+    }
+
+    /**
+     * Load saved resolution from localStorage
+     */
+    _loadSavedResolution() {
+      try {
+        var saved = localStorage.getItem('vampireSurvivors_resolution');
+        if (saved) {
+          var resolution = JSON.parse(saved);
+          if (resolution.width && resolution.height) {
+            this._width = resolution.width;
+            this._height = resolution.height;
+          }
+        }
+      } catch (e) {
+        // Use defaults on error
+        console.warn('[Game] Failed to load saved resolution:', e);
+      }
     }
 
     async start() {
@@ -226,11 +255,11 @@
     }
 
     get width() {
-      return GAME_WIDTH;
+      return this._width;
     }
 
     get height() {
-      return GAME_HEIGHT;
+      return this._height;
     }
 
     get isRunning() {
@@ -258,7 +287,7 @@
         entries: [
           { key: 'State', value: this._state },
           { key: 'Systems', value: this._systems.length },
-          { key: 'Size', value: GAME_WIDTH + 'x' + GAME_HEIGHT },
+          { key: 'Size', value: this._width + 'x' + this._height },
         ],
       };
     }

@@ -16,23 +16,23 @@
   var WaveAnnouncement = UI.WaveAnnouncement;
   var BossHealthBar = UI.BossHealthBar;
   var events = window.VampireSurvivors.Core.events;
+  var UIScale = window.VampireSurvivors.Core.UIScale;
 
   // ============================================
-  // Constants
+  // Constants (base values at 800x600)
   // ============================================
   // EXP Bar
-  var EXP_BAR_HEIGHT = 22;
-  var EXP_BAR_Y = 0;
+  var BASE_EXP_BAR_HEIGHT = 22;
+  var BASE_EXP_BAR_Y = 0;
   var EXP_BAR_BG = '#2C3E50';
   var EXP_BAR_FILL = '#9B59B6';
   var EXP_BAR_BORDER = '#1A252F';
   var EXP_TEXT_COLOR = '#FFFFFF';
 
   // Top-right info bar (timer, wave, kills on same line)
-  var INFO_BAR_Y = 30;
-  var INFO_BAR_X_OFFSET = 10;
-  var INFO_BAR_FONT = 'bold 18px Arial';
-  var INFO_BAR_SPACING = 20; // Space between items
+  var BASE_INFO_BAR_Y = 30;
+  var BASE_INFO_BAR_X_OFFSET = 10;
+  var BASE_INFO_BAR_FONT_SIZE = 18;
 
   // ============================================
   // Class Definition
@@ -188,43 +188,49 @@
       var level = exp.level;
       var ratio = required > 0 ? current / required : 0;
 
+      // Scale dimensions
+      var expBarHeight = UIScale.scale(BASE_EXP_BAR_HEIGHT);
+      var expBarY = UIScale.scale(BASE_EXP_BAR_Y);
+      var borderHeight = UIScale.scale(2);
+      var textPadding = UIScale.scale(10);
+
       // Background
       ctx.fillStyle = EXP_BAR_BG;
-      ctx.fillRect(0, EXP_BAR_Y, canvasWidth, EXP_BAR_HEIGHT);
+      ctx.fillRect(0, expBarY, canvasWidth, expBarHeight);
 
       // Border bottom
       ctx.fillStyle = EXP_BAR_BORDER;
-      ctx.fillRect(0, EXP_BAR_Y + EXP_BAR_HEIGHT - 2, canvasWidth, 2);
+      ctx.fillRect(0, expBarY + expBarHeight - borderHeight, canvasWidth, borderHeight);
 
       // Fill
       ctx.fillStyle = EXP_BAR_FILL;
-      ctx.fillRect(0, EXP_BAR_Y, canvasWidth * ratio, EXP_BAR_HEIGHT - 2);
+      ctx.fillRect(0, expBarY, canvasWidth * ratio, expBarHeight - borderHeight);
 
       // Level text on left
-      ctx.font = 'bold 14px Arial';
+      ctx.font = UIScale.font(14, 'bold');
       ctx.fillStyle = EXP_TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText('LV. ' + level, 10, EXP_BAR_Y + EXP_BAR_HEIGHT / 2);
+      ctx.fillText('LV. ' + level, textPadding, expBarY + expBarHeight / 2);
 
       // EXP label in center
       ctx.textAlign = 'center';
-      ctx.fillText('EXP', canvasWidth / 2, EXP_BAR_Y + EXP_BAR_HEIGHT / 2);
+      ctx.fillText('EXP', canvasWidth / 2, expBarY + expBarHeight / 2);
 
       // XP numbers on right (optional, can be hidden)
       ctx.textAlign = 'right';
-      ctx.font = '12px Arial';
-      ctx.fillText(Math.floor(current) + ' / ' + Math.floor(required), canvasWidth - 10, EXP_BAR_Y + EXP_BAR_HEIGHT / 2);
+      ctx.font = UIScale.font(12);
+      ctx.fillText(Math.floor(current) + ' / ' + Math.floor(required), canvasWidth - textPadding, expBarY + expBarHeight / 2);
     }
 
     _renderInfoBar(ctx, canvasWidth) {
-      var x = canvasWidth - INFO_BAR_X_OFFSET;
-      var y = INFO_BAR_Y;
+      var x = canvasWidth - UIScale.scale(BASE_INFO_BAR_X_OFFSET);
+      var y = UIScale.scale(BASE_INFO_BAR_Y);
 
-      ctx.font = INFO_BAR_FONT;
+      ctx.font = UIScale.font(BASE_INFO_BAR_FONT_SIZE, 'bold');
       ctx.textAlign = 'right';
       ctx.textBaseline = 'top';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = UIScale.scale(3);
       ctx.strokeStyle = '#000000';
 
       // Build info string: Timer | Wave X | Kills: X
