@@ -143,6 +143,11 @@
         e.preventDefault();
       }
 
+      // Prevent browser default for Escape key
+      if (e.code === 'Escape') {
+        e.preventDefault();
+      }
+
       if (!this._keys.get(e.code)) {
         this._keysPressed.add(e.code);
       }

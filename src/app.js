@@ -50,6 +50,9 @@
   var MineSystem = Systems.MineSystem;
   var SummonSystem = Systems.SummonSystem;
   var TabScreenSystem = Systems.TabScreenSystem;
+  var PauseMenuSystem = Systems.PauseMenuSystem;
+
+  var i18n = Core.i18n;
 
   var projectilePool = Pool.projectilePool;
   var areaEffectPool = Pool.areaEffectPool;
@@ -78,6 +81,10 @@
       // Load assets (images)
       console.log('[App] Loading assets...');
       await assetLoader.loadAll();
+
+      // Load translations
+      console.log('[App] Loading translations...');
+      await i18n.load();
 
       // Setup entity manager
       entityManager = new EntityManager();
@@ -210,6 +217,16 @@
       tabScreenSystem.setGameOverSystem(gameOverSystem);
       game.addSystem(tabScreenSystem);
 
+      // Create pause menu system (priority 117)
+      var pauseMenuSystem = new PauseMenuSystem();
+      pauseMenuSystem.initialize(game, entityManager);
+      pauseMenuSystem.setLevelUpSystem(levelUpSystem);
+      pauseMenuSystem.setGameOverSystem(gameOverSystem);
+      pauseMenuSystem.setTabScreenSystem(tabScreenSystem);
+      pauseMenuSystem.setTechTreeSystem(techTreeSystem);
+      pauseMenuSystem.setCoreSelectionSystem(coreSelectionSystem);
+      game.addSystem(pauseMenuSystem);
+
       // Helper function to setup player after core selection
       function setupPlayer(coreId) {
         // Create player at center
@@ -243,6 +260,7 @@
         levelUpSystem.setPlayer(player);
         techTreeSystem.setPlayer(player);
         tabScreenSystem.setPlayer(player);
+        pauseMenuSystem.setPlayer(player);
         gameOverSystem.setPlayer(player);
         gameOverSystem.setHUDSystem(hudSystem);
 
@@ -303,6 +321,7 @@
       game.debugManager.register(coreSelectionSystem);
       game.debugManager.register(techTreeSystem);
       game.debugManager.register(tabScreenSystem);
+      game.debugManager.register(pauseMenuSystem);
       game.debugManager.register(projectilePool);
       game.debugManager.register(areaEffectPool);
       game.debugManager.register(pickupPool);

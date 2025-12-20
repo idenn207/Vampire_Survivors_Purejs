@@ -1,0 +1,24 @@
+{
+  "menu": {
+    "paused": "PAUSED",
+    "continue": "Continue",
+    "settings": "Settings",
+    "evolutionList": "Evolution List",
+    "techTree": "Tech Tree"
+  },
+  "settings": {
+    "title": "SETTINGS",
+    "resolution": "Change Resolution",
+    "language": "Change Language",
+    "back": "Back"
+  },
+  "resolution": {
+    "title": "RESOLUTION",
+    "current": "Current: {resolution}"
+  },
+  "language": {
+    "title": "LANGUAGE",
+    "en": "English",
+    "ko": "Korean"
+  }
+}
