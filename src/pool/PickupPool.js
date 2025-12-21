@@ -15,7 +15,7 @@
   // Constants
   // ============================================
   var INITIAL_SIZE = 100;
-  var MAX_SIZE = 500;
+  var MAX_SIZE = 2000;
 
   // ============================================
   // Class Definition

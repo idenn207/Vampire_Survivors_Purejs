@@ -9,7 +9,7 @@
   // Constants
   // ============================================
   var DEFAULT_INITIAL_SIZE = 50;
-  var DEFAULT_MAX_SIZE = 200;
+  var DEFAULT_MAX_SIZE = 500;
 
   // ============================================
   // Class Definition
@@ -151,4 +151,4 @@
   // Export to Namespace
   // ============================================
   Pool.ObjectPool = ObjectPool;
-})(window.VampireSurvivors.Pool = window.VampireSurvivors.Pool || {});
+})((window.VampireSurvivors.Pool = window.VampireSurvivors.Pool || {}));

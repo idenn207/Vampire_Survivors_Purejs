@@ -15,7 +15,7 @@
   // Constants
   // ============================================
   var INITIAL_SIZE = 10;
-  var MAX_SIZE = 30;
+  var MAX_SIZE = 50;
 
   // ============================================
   // Class Definition
@@ -79,21 +79,7 @@
       }
 
       // Reset summon with new values
-      summon.reset(
-        x,
-        y,
-        damage,
-        health,
-        attackCooldown,
-        attackRange,
-        chaseSpeed,
-        duration,
-        color,
-        sourceWeaponId,
-        owner,
-        imageId,
-        size
-      );
+      summon.reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size);
 
       // Add to entity manager if available
       if (this._entityManager) {

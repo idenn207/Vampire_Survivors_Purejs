@@ -480,13 +480,13 @@
       ctx.font = '10px Arial';
 
       if (stat.isMaxLevel) {
-        // Max level - show total in green with MAX indicator
+        // Max level - show total in green
         ctx.fillStyle = '#3498DB'; // Blue for base
         ctx.fillText(basePercent + '%', x + width - 80, centerY);
         ctx.fillStyle = '#9B59B6'; // Purple for bonus
         ctx.fillText('+' + bonusPercent + '%', x + width - 45, centerY);
         ctx.fillStyle = '#2ECC71'; // Green for max
-        ctx.fillText('=' + totalPercent + '% MAX', x + width - 5, centerY);
+        ctx.fillText('=' + totalPercent + '%', x + width - 5, centerY);
       } else if (bonusPercent === 0) {
         // No bonus - show base only
         ctx.fillStyle = '#3498DB'; // Blue for base
