@@ -14,28 +14,30 @@
   // ============================================
   // Constants
   // ============================================
-  var TITLE_HEIGHT = 35;
+  var TITLE_HEIGHT = 0;
   var SLOT_SIZE = 50;
-  var SLOT_GAP = 8;
+  var SLOT_GAP = 6;
   var SLOT_BORDER = 2;
   var SLOTS_PER_ROW = 5;
   var TOTAL_SLOTS = 10;
-  var COST_HEIGHT = 16;
+  var COST_HEIGHT = 12;
 
-  // Colors
-  var BG_COLOR = '#2C3E50';
-  var BORDER_COLOR = '#34495E';
-  var TITLE_COLOR = '#FFFFFF';
-  var SLOT_EMPTY_BG = '#1A252F';
-  var SLOT_EMPTY_BORDER = '#2C3E50';
-  var SLOT_FILLED_BG = '#34495E';
-  var SLOT_FILLED_BORDER = '#4A6278';
-  var SLOT_HOVER_BORDER = '#3498DB';
-  var SLOT_MAX_BORDER = '#2ECC71';
-  var TEXT_COLOR = '#ECF0F1';
-  var COST_COLOR = '#F1C40F';
-  var CANNOT_AFFORD_COLOR = '#E74C3C';
-  var MAX_LEVEL_COLOR = '#2ECC71';
+  // Blue theme colors
+  var BG_COLOR = '#2D3545';
+  var BG_COLOR_TOP = '#3D4560';
+  var BG_COLOR_BOTTOM = '#2D3545';
+  var BORDER_COLOR = '#4A5580';
+  var TITLE_COLOR = '#F5F0E1';
+  var SLOT_EMPTY_BG = '#1F2330';
+  var SLOT_EMPTY_BORDER = '#3A4555';
+  var SLOT_FILLED_BG = '#3D4560';
+  var SLOT_FILLED_BORDER = '#5A6D90';
+  var SLOT_HOVER_BORDER = '#7C90C0';
+  var SLOT_MAX_BORDER = '#5EB8B8';
+  var TEXT_COLOR = '#E8E2D0';
+  var COST_COLOR = '#F0C040';
+  var CANNOT_AFFORD_COLOR = '#C85A5A';
+  var MAX_LEVEL_COLOR = '#5EB8B8';
 
   // Attack type colors
   var ATTACK_TYPE_COLORS = {
@@ -48,6 +50,15 @@
 
   // Base weapon upgrade cost
   var BASE_WEAPON_UPGRADE_COST = 100;
+
+  // Tier-based cost multipliers
+  var TIER_COST_MULTIPLIERS = {
+    1: 1,   // Common
+    2: 2,   // Uncommon
+    3: 4,   // Rare
+    4: 8,   // Epic
+    5: 16   // Legendary
+  };
 
   // ============================================
   // Class Definition
@@ -63,6 +74,7 @@
     _height = 0;
     _hoveredSlot = -1;
     _slotRects = [];
+    _isEmbedded = false;
 
     // ----------------------------------------
     // Constructor
@@ -95,6 +107,14 @@
       this._width = width;
       this._height = height;
       this._calculateSlotRects();
+    }
+
+    /**
+     * Set embedded mode (skip background/border rendering)
+     * @param {boolean} embedded
+     */
+    setEmbedded(embedded) {
+      this._isEmbedded = embedded;
     }
 
     /**
@@ -139,28 +159,20 @@
      * @param {CanvasRenderingContext2D} ctx
      */
     render(ctx) {
-      // Background
-      ctx.fillStyle = BG_COLOR;
-      ctx.fillRect(this._x, this._y, this._width, this._height);
+      // Skip background/border when embedded
+      if (!this._isEmbedded) {
+        // Background with gradient
+        var gradient = ctx.createLinearGradient(this._x, this._y, this._x, this._y + this._height);
+        gradient.addColorStop(0, BG_COLOR_TOP);
+        gradient.addColorStop(1, BG_COLOR_BOTTOM);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(this._x, this._y, this._width, this._height);
 
-      // Border
-      ctx.strokeStyle = BORDER_COLOR;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(this._x, this._y, this._width, this._height);
-
-      // Title
-      ctx.font = 'bold 14px Arial';
-      ctx.fillStyle = TITLE_COLOR;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(i18n.t('weapons.title'), this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
-
-      // Separator line
-      ctx.strokeStyle = BORDER_COLOR;
-      ctx.beginPath();
-      ctx.moveTo(this._x + 10, this._y + TITLE_HEIGHT);
-      ctx.lineTo(this._x + this._width - 10, this._y + TITLE_HEIGHT);
-      ctx.stroke();
+        // Border
+        ctx.strokeStyle = BORDER_COLOR;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(this._x, this._y, this._width, this._height);
+      }
 
       // Get weapons
       var weapons = this._getWeapons();
@@ -181,7 +193,7 @@
 
       var totalWidthPerRow = SLOTS_PER_ROW * SLOT_SIZE + (SLOTS_PER_ROW - 1) * SLOT_GAP;
       var startX = this._x + (this._width - totalWidthPerRow) / 2;
-      var startY = this._y + TITLE_HEIGHT + 15;
+      var startY = this._y + 10;
 
       for (var i = 0; i < TOTAL_SLOTS; i++) {
         var col = i % SLOTS_PER_ROW;
@@ -205,7 +217,8 @@
 
     _getUpgradeCost(weapon) {
       if (!weapon) return 0;
-      return BASE_WEAPON_UPGRADE_COST * weapon.level;
+      var tierMultiplier = TIER_COST_MULTIPLIERS[weapon.tier] || 1;
+      return BASE_WEAPON_UPGRADE_COST * weapon.level * tierMultiplier;
     }
 
     _isWeaponMaxLevel(weapon) {
@@ -227,11 +240,14 @@
       ctx.fillStyle = isEmpty ? SLOT_EMPTY_BG : SLOT_FILLED_BG;
       ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-      // Slot border
+      // Slot border - use tier-based color for filled slots
       if (isMaxLevel) {
         ctx.strokeStyle = SLOT_MAX_BORDER;
       } else if (isHovered && weapon) {
         ctx.strokeStyle = SLOT_HOVER_BORDER;
+      } else if (weapon && weapon.tier) {
+        // Use tier-based border color for filled slots
+        ctx.strokeStyle = WeaponTierData.getTierBorderColor(weapon.tier);
       } else {
         ctx.strokeStyle = isEmpty ? SLOT_EMPTY_BORDER : SLOT_FILLED_BORDER;
       }

@@ -38,6 +38,9 @@
     _techTreeSystem = null;
     _coreSelectionSystem = null;
 
+    // Flag to skip ESC key on the frame we were opened from another screen
+    _skipNextEscKey = false;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -161,6 +164,13 @@
 
       // Detect key press (not held)
       if (isEscPressed && !this._escKeyWasPressed) {
+        // Skip processing if we were just opened from another screen
+        if (this._skipNextEscKey) {
+          this._skipNextEscKey = false;
+          this._escKeyWasPressed = isEscPressed;
+          return;
+        }
+
         if (this._isActive) {
           // Handle ESC navigation within the menu
           var result = this._screen.handleEscPress();
@@ -215,9 +225,15 @@
 
     /**
      * Open the pause menu
+     * @param {boolean} skipEscKey - If true, skip ESC key processing on this frame
      */
-    _openScreen() {
+    _openScreen(skipEscKey) {
       if (!this._player) return;
+
+      // Set flag to skip ESC key on same frame if opened from another screen
+      if (skipEscKey) {
+        this._skipNextEscKey = true;
+      }
 
       this._game.pause();
       this._isActive = true;
@@ -237,7 +253,13 @@
     _closeScreen() {
       this._screen.hide();
       this._isActive = false;
-      this._game.resume();
+
+      // Check if level-up screen was suspended - if so, resume it
+      if (this._levelUpSystem && this._levelUpSystem.isSuspended) {
+        this._levelUpSystem.resumeFromSuspend();
+      } else {
+        this._game.resume();
+      }
 
       events.emit('pausemenu:closed', {});
     }

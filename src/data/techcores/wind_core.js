@@ -18,7 +18,7 @@
     color: '#87CEEB',
     icon: 'wind',
     imageId: 'tech_wind_core',
-    startingWeapon: 'wind_cutter',
+    startingWeapon: 'wind_cutter_core',
 
     tree: {
       base: {

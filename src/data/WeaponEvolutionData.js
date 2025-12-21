@@ -234,6 +234,14 @@
       isKnown: true,
     },
 
+    // Reverse recipes for above
+    'homing_missile+arcane_dart': { result: 'arcane_cannon', resultTier: 2, isKnown: true },
+    'prismatic_ray+light_ray': { result: 'death_ray', resultTier: 2, isKnown: true },
+    'blade_vortex+rusty_blade': { result: 'blade_storm', resultTier: 2, isKnown: true },
+    'toxic_spores+poison_puddle': { result: 'toxic_inferno', resultTier: 2, isKnown: true },
+    'arc_lightning+chakram': { result: 'storm_blades', resultTier: 2, isKnown: true },
+    'homing_missile+scatter_shot': { result: 'spread_seeker', resultTier: 2, isKnown: true },
+
     // ============================================
     // Regular Weapon Evolution Recipes (18 recipes)
     // ============================================
@@ -255,6 +263,28 @@
     'frost_circle+fire_motes': { result: 'elemental_clash', resultTier: 2, isKnown: true },
     'ember_field+fire_sprite': { result: 'inferno_swarm', resultTier: 2, isKnown: true },
     'scatter_shot+arcane_dart': { result: 'arcane_scatter', resultTier: 2, isKnown: true },
+
+    // ============================================
+    // Reverse Regular Weapon Evolution Recipes (18 recipes)
+    // ============================================
+    'cleaver+rusty_blade': { result: 'blood_cleaver', resultTier: 2, isKnown: true },
+    'ember_field+ember_bolt': { result: 'blazing_bolt', resultTier: 2, isKnown: true },
+    'ice_bomb+ice_shard': { result: 'frozen_burst', resultTier: 2, isKnown: true },
+    'spirit_wisps+spectral_arrow': { result: 'phantom_volley', resultTier: 2, isKnown: true },
+    'wind_cutter+scatter_shot': { result: 'storm_scatter', resultTier: 2, isKnown: true },
+    'poison_puddle+venom_fang': { result: 'venomous_surge', resultTier: 2, isKnown: true },
+    'claw_strike+monks_fist': { result: 'primal_strike', resultTier: 2, isKnown: true },
+    'rusty_blade+battle_axe': { result: 'berserker_blade', resultTier: 2, isKnown: true },
+    'spark_chain+whip_lash': { result: 'lightning_lash', resultTier: 2, isKnown: true },
+    'spectral_arrow+arcane_dart': { result: 'mystic_arrow', resultTier: 2, isKnown: true },
+    'shadow_pool+shadow_beam': { result: 'umbral_wave', resultTier: 2, isKnown: true },
+    'light_ray+holy_ground': { result: 'radiant_ground', resultTier: 2, isKnown: true },
+    'flash_bomb+spike_trap': { result: 'explosive_trap', resultTier: 2, isKnown: true },
+    'stone_throw+orbiting_stones': { result: 'rock_storm', resultTier: 2, isKnown: true },
+    'spirit_wisps+skeleton_minion': { result: 'undead_legion', resultTier: 2, isKnown: true },
+    'fire_motes+frost_circle': { result: 'elemental_clash', resultTier: 2, isKnown: true },
+    'fire_sprite+ember_field': { result: 'inferno_swarm', resultTier: 2, isKnown: true },
+    'arcane_dart+scatter_shot': { result: 'arcane_scatter', resultTier: 2, isKnown: true },
 
     // ============================================
     // Material Uncommon Weapon Recipes (30 recipes)
@@ -290,6 +320,41 @@
     'light_ray+shadow_beam': { result: 'piercing_gaze', resultTier: 2, isKnown: true },
     'shadow_pool+skeleton_minion': { result: 'shadow_clone', resultTier: 2, isKnown: true },
     'ice_bomb+fire_sprite': { result: 'frost_elemental', resultTier: 2, isKnown: true },
+
+    // ============================================
+    // Reverse Material Uncommon Recipes (30 recipes)
+    // Same results but with swapped ingredient order
+    // ============================================
+    'light_ray+ice_shard': { result: 'bifrost_bolt', resultTier: 2, isKnown: true },
+    'wind_cutter+ember_bolt': { result: 'homing_missile', resultTier: 2, isKnown: true },
+    'scatter_shot+stone_throw': { result: 'ricochet_shot', resultTier: 2, isKnown: true },
+    'wind_cutter+spectral_arrow': { result: 'split_arrow', resultTier: 2, isKnown: true },
+    'fire_motes+spark_chain': { result: 'plasma_orb', resultTier: 2, isKnown: true },
+    'orbiting_stones+rusty_blade': { result: 'chakram', resultTier: 2, isKnown: true },
+    'arcane_dart+shadow_beam': { result: 'void_bullet', resultTier: 2, isKnown: true },
+    'stone_throw+ice_shard': { result: 'crystal_lance', resultTier: 2, isKnown: true },
+    'rusty_blade+shadow_pool': { result: 'phantom_blade', resultTier: 2, isKnown: true },
+    'cleaver+ember_field': { result: 'flame_scythe', resultTier: 2, isKnown: true },
+    'flash_bomb+battle_axe': { result: 'thunder_hammer', resultTier: 2, isKnown: true },
+    'venom_fang+claw_strike': { result: 'blood_razor', resultTier: 2, isKnown: true },
+    'shadow_beam+spectral_arrow': { result: 'crescent_moon', resultTier: 2, isKnown: true },
+    'spirit_wisps+poison_puddle': { result: 'toxic_spores', resultTier: 2, isKnown: true },
+    'shadow_pool+orbiting_stones': { result: 'gravity_well', resultTier: 2, isKnown: true },
+    'orbiting_stones+holy_ground': { result: 'hallowed_ring', resultTier: 2, isKnown: true },
+    'ember_field+stone_throw': { result: 'meteor_crater', resultTier: 2, isKnown: true },
+    'ice_bomb+frost_circle': { result: 'blizzard_zone', resultTier: 2, isKnown: true },
+    'orbiting_stones+spirit_wisps': { result: 'soul_orbit', resultTier: 2, isKnown: true },
+    'arcane_dart+spark_chain': { result: 'arc_lightning', resultTier: 2, isKnown: true },
+    'wind_cutter+rusty_blade': { result: 'blade_vortex', resultTier: 2, isKnown: true },
+    'spark_chain+venom_fang': { result: 'toxic_chain', resultTier: 2, isKnown: true },
+    'fire_motes+fire_sprite': { result: 'flame_dancers', resultTier: 2, isKnown: true },
+    'ice_bomb+spike_trap': { result: 'cluster_mine', resultTier: 2, isKnown: true },
+    'orbiting_stones+spike_trap': { result: 'magnetic_mine', resultTier: 2, isKnown: true },
+    'spark_chain+spike_trap': { result: 'chain_reaction_mine', resultTier: 2, isKnown: true },
+    'frost_circle+light_ray': { result: 'prismatic_ray', resultTier: 2, isKnown: true },
+    'shadow_beam+light_ray': { result: 'piercing_gaze', resultTier: 2, isKnown: true },
+    'skeleton_minion+shadow_pool': { result: 'shadow_clone', resultTier: 2, isKnown: true },
+    'fire_sprite+ice_bomb': { result: 'frost_elemental', resultTier: 2, isKnown: true },
 
     // ============================================
     // Core Weapon Evolution Recipes (60 recipes)
@@ -598,6 +663,12 @@
     if (EvolvedWeaponData && EvolvedWeaponData[evolvedId]) {
       return EvolvedWeaponData[evolvedId];
     }
+    // Fallback to WeaponData for material uncommon weapons
+    // These are Tier 2 weapons that register to WeaponRegistry instead of EvolvedWeaponRegistry
+    var WeaponData = window.VampireSurvivors.Data.WeaponData;
+    if (WeaponData && WeaponData[evolvedId]) {
+      return WeaponData[evolvedId];
+    }
     return null;
   }
 
@@ -746,6 +817,19 @@
   }
 
   /**
+   * Check if a weapon is part of a core evolution chain (base or evolved)
+   * @param {string} weaponId
+   * @returns {boolean}
+   */
+  function isPartOfCoreEvolutionChain(weaponId) {
+    // Check base core weapons
+    if (isCoreWeapon(weaponId)) return true;
+
+    // Check evolved core weapons via metadata
+    return isCoreEvolvedWeapon(weaponId);
+  }
+
+  /**
    * Get the core ID for an evolved weapon
    * @param {string} weaponId
    * @returns {string|null}
@@ -823,6 +907,7 @@
     // Centralized metadata helpers
     getEvolutionChainMetadata: getEvolutionChainMetadata,
     isCoreEvolvedWeapon: isCoreEvolvedWeapon,
+    isPartOfCoreEvolutionChain: isPartOfCoreEvolutionChain,
     getWeaponCoreId: getWeaponCoreId,
     getBaseWeaponId: getBaseWeaponId,
     getEvolutionChainName: getEvolutionChainName,

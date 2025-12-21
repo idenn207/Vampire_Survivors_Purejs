@@ -739,5 +739,44 @@
     "thor_judgment": "플레이어 주변 적이 주기적으로 번개 피해",
     "void_god": "적에게 피해를 주고 약화시키는 영구 공허 오라",
     "world_tree": "적에게 독을 주고 플레이어를 치유하는 영구 오라"
+  },
+  "character": {
+    "select": "캐릭터를 선택하세요",
+    "selectHint": "플레이할 캐릭터를 선택하세요",
+    "stats": "기본 능력치",
+    "passive": "패시브",
+    "attack": "공격력",
+    "speed": "이동속도",
+    "hp": "체력",
+    "critChance": "치명타율",
+    "luck": "행운"
+  },
+  "characters": {
+    "knight": {
+      "name": "기사",
+      "description": "방어력이 뛰어난 균형 잡힌 전사"
+    },
+    "rogue": {
+      "name": "도적",
+      "description": "빠르고 치명타에 강한 암살자"
+    },
+    "mage": {
+      "name": "마법사",
+      "description": "강력하지만 체력이 약한 주문 시전자"
+    }
+  },
+  "passives": {
+    "stalwart": {
+      "name": "강인함",
+      "description": "받는 피해가 15% 감소합니다"
+    },
+    "backstab": {
+      "name": "급소 공격",
+      "description": "치명타 피해가 50% 증가합니다"
+    },
+    "arcane_mastery": {
+      "name": "비전 숙련",
+      "description": "무기 재사용 대기시간이 10% 감소합니다"
+    }
   }
 }

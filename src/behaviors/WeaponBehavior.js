@@ -11,6 +11,7 @@
   var Transform = window.VampireSurvivors.Components.Transform;
   var Health = window.VampireSurvivors.Components.Health;
   var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
+  var PlayerData = window.VampireSurvivors.Components.PlayerData;
   var Vector2 = window.VampireSurvivors.Utils.Vector2;
   var GlobalStatsHelper = window.VampireSurvivors.Utils.GlobalStatsHelper;
 
@@ -63,6 +64,15 @@
     _getPlayerStats() {
       if (!this._player) return null;
       return this._player.getComponent(PlayerStats);
+    }
+
+    /**
+     * Get player data component
+     * @returns {PlayerData|null}
+     */
+    _getPlayerData() {
+      if (!this._player) return null;
+      return this._player.getComponent(PlayerData);
     }
 
     /**
@@ -340,6 +350,7 @@
     // ----------------------------------------
     /**
      * Calculate damage (with player stats applied)
+     * Formula: (Player Base Attack + Weapon Damage) × Damage Multiplier
      * @param {Weapon} weapon
      * @param {number} [critChance] - Override critical hit chance (0-1)
      * @param {number} [critMultiplier] - Override critical damage multiplier
@@ -347,19 +358,31 @@
      */
     calculateDamage(weapon, critChance, critMultiplier) {
       var playerStats = this._getPlayerStats();
-      var baseDamage = weapon.damage;
+      var playerData = this._getPlayerData();
+      var weaponDamage = weapon.damage;
 
-      // Apply player damage multiplier
-      var effectiveDamage = GlobalStatsHelper.getEffectiveDamage(baseDamage, playerStats);
+      // Get player base attack from character selection (default 10 if no character)
+      var playerBaseAttack = playerData ? playerData.baseAttack : 10;
+
+      // New formula: (Player Base Attack + Weapon Damage) × Damage Multiplier
+      var damageMultiplier = playerStats ? playerStats.getMultiplier('damage') : 1;
+      var effectiveDamage = (playerBaseAttack + weaponDamage) * damageMultiplier;
 
       // Get crit stats from weapon if not provided as parameters
       // Default base crit chance is 5% for weapons without explicit critChance
       var baseCritChance = critChance !== undefined ? critChance : weapon.getStat('critChance', 0.05);
       var baseCritMultiplier = critMultiplier !== undefined ? critMultiplier : weapon.getStat('critMultiplier', 2);
 
-      // Apply player crit chance and multiplier bonuses
+      // Add player character's base crit chance
+      var playerBaseCrit = playerData ? playerData.baseCritChance : 0;
+      baseCritChance += playerBaseCrit;
+
+      // Add player character's passive crit damage bonus (Rogue)
+      var passiveCritBonus = playerData ? playerData.getCritDamageBonus() : 0;
+
+      // Apply player crit chance and multiplier bonuses from stat upgrades
       var effectiveCritChance = GlobalStatsHelper.getEffectiveCritChance(baseCritChance, playerStats);
-      var effectiveCritMultiplier = GlobalStatsHelper.getEffectiveCritMultiplier(baseCritMultiplier, playerStats);
+      var effectiveCritMultiplier = GlobalStatsHelper.getEffectiveCritMultiplier(baseCritMultiplier, playerStats) + passiveCritBonus;
 
       var isCrit = false;
       if (effectiveCritChance > 0 && Math.random() < effectiveCritChance) {

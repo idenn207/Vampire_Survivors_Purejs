@@ -19,17 +19,26 @@
   // ============================================
   // Constants
   // ============================================
-  var OVERLAY_COLOR = 'rgba(0, 0, 0, 0.75)';
+  var OVERLAY_COLOR = 'rgba(25, 30, 45, 0.75)';
   var SCREEN_PADDING = 40;
   var LEFT_PANEL_RATIO = 0.35; // Left panel takes 35% of width
-  var TOP_RIGHT_RATIO = 0.55; // Top-right takes 55% of right section height
+
+  // Blue theme colors
+  var COMBINED_BG_TOP = '#3D4560';
+  var COMBINED_BG_BOTTOM = '#2D3545';
+  var COMBINED_BORDER = '#4A5580';
+  var DIVIDER_COLOR = '#4A5580';
+
+  // Gold display colors
+  var GOLD_COLOR = '#F0C040';
+  var GOLD_BORDER_COLOR = '#C9A227';
 
   // Evolution button
   var EVOLVE_BUTTON_WIDTH = 160;
   var EVOLVE_BUTTON_HEIGHT = 36;
-  var EVOLVE_BUTTON_COLOR = '#9B59B6';
-  var EVOLVE_BUTTON_HOVER_COLOR = '#8E44AD';
-  var EVOLVE_BUTTON_TEXT_COLOR = '#FFFFFF';
+  var EVOLVE_BUTTON_COLOR = '#8B6B9B';
+  var EVOLVE_BUTTON_HOVER_COLOR = '#9B7BAB';
+  var EVOLVE_BUTTON_TEXT_COLOR = '#F5F0E1';
 
   // ============================================
   // Class Definition
@@ -62,6 +71,10 @@
     // Evolution button
     _evolveButtonRect = null;
     _isEvolveButtonHovered = false;
+
+    // Combined upgrade area bounds
+    _combinedAreaRect = null;
+    _dividerY = 0;
 
     // Mouse state
     _mouseX = 0;
@@ -202,13 +215,21 @@
       ctx.fillStyle = OVERLAY_COLOR;
       ctx.fillRect(0, 0, this._canvasWidth, this._canvasHeight);
 
+      // Gold display at top-right
+      this._renderGoldDisplay(ctx);
+
       // Render panels
       this._statPanel.render(ctx);
+      this._weaponCardPanel.render(ctx);
+
+      // Render combined upgrade area background
+      this._renderCombinedUpgradeArea(ctx);
+
+      // Render weapon grid and tech panels (inside combined area)
+      this._weaponGridPanel.render(ctx);
       if (this._techUpgradePanel) {
         this._techUpgradePanel.render(ctx);
       }
-      this._weaponCardPanel.render(ctx);
-      this._weaponGridPanel.render(ctx);
 
       // Render evolution button if eligible
       if (this._evolutionEligibility && this._evolutionEligibility.canEvolve) {
@@ -244,44 +265,45 @@
       var rightWidth = totalWidth - leftWidth - 10; // 10px gap
 
       // Left panel: Stats only (full height)
-      this._statPanel.setBounds(
-        SCREEN_PADDING,
-        SCREEN_PADDING,
-        leftWidth,
-        totalHeight
-      );
+      this._statPanel.setBounds(SCREEN_PADDING, SCREEN_PADDING, leftWidth, totalHeight);
 
-      // Right panel split into 3 sections: cards (40%), weapons (30%), tech (30%)
-      var weaponCardHeight = Math.floor(totalHeight * 0.40);
-      var weaponGridHeight = Math.floor(totalHeight * 0.30);
-      var techPanelHeight = totalHeight - weaponCardHeight - weaponGridHeight - 20; // 10px gaps
+      // Right panel split: cards (55%), combined upgrades (45%)
+      var weaponCardHeight = Math.floor(totalHeight * 0.55);
+      var combinedHeight = totalHeight - weaponCardHeight - 10;
 
       var rightX = SCREEN_PADDING + leftWidth + 10;
+      var combinedY = SCREEN_PADDING + weaponCardHeight + 10;
 
-      // Top-right panel (weapon selection)
-      this._weaponCardPanel.setBounds(
-        rightX,
-        SCREEN_PADDING,
-        rightWidth,
-        weaponCardHeight
-      );
+      // Top-right panel (weapon selection) - taller now
+      this._weaponCardPanel.setBounds(rightX, SCREEN_PADDING, rightWidth, weaponCardHeight);
 
-      // Middle-right panel (weapon grid)
-      this._weaponGridPanel.setBounds(
-        rightX,
-        SCREEN_PADDING + weaponCardHeight + 10,
-        rightWidth,
-        weaponGridHeight
-      );
+      // Combined upgrade area bounds
+      this._combinedAreaRect = {
+        x: rightX,
+        y: combinedY,
+        width: rightWidth,
+        height: combinedHeight,
+      };
 
-      // Bottom-right panel (tech upgrades - below weapons)
+      // Split combined area: weapons (65%), tech (35%)
+      var weaponGridHeight = Math.floor(combinedHeight * 0.65);
+      var techPanelHeight = combinedHeight - weaponGridHeight;
+
+      // Weapon grid inside combined area (no background)
+      this._weaponGridPanel.setBounds(rightX, combinedY, rightWidth, weaponGridHeight);
+      if (this._weaponGridPanel.setEmbedded) {
+        this._weaponGridPanel.setEmbedded(true);
+      }
+
+      // Divider Y position
+      this._dividerY = combinedY + weaponGridHeight;
+
+      // Tech upgrades inside combined area (no background)
       if (this._techUpgradePanel) {
-        this._techUpgradePanel.setBounds(
-          rightX,
-          SCREEN_PADDING + weaponCardHeight + 10 + weaponGridHeight + 10,
-          rightWidth,
-          techPanelHeight
-        );
+        this._techUpgradePanel.setBounds(rightX, this._dividerY, rightWidth, techPanelHeight);
+        if (this._techUpgradePanel.setEmbedded) {
+          this._techUpgradePanel.setEmbedded(true);
+        }
       }
 
       // Evolution button (top-right corner, above weapon card panel)
@@ -291,6 +313,31 @@
         width: EVOLVE_BUTTON_WIDTH,
         height: EVOLVE_BUTTON_HEIGHT,
       };
+    }
+
+    _renderCombinedUpgradeArea(ctx) {
+      var rect = this._combinedAreaRect;
+      if (!rect) return;
+
+      // Background gradient
+      var gradient = ctx.createLinearGradient(rect.x, rect.y, rect.x, rect.y + rect.height);
+      gradient.addColorStop(0, COMBINED_BG_TOP);
+      gradient.addColorStop(1, COMBINED_BG_BOTTOM);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+
+      // Border
+      ctx.strokeStyle = COMBINED_BORDER;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+      // Divider line between weapon grid and tech panel
+      ctx.strokeStyle = DIVIDER_COLOR;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(rect.x + 15, this._dividerY);
+      ctx.lineTo(rect.x + rect.width - 15, this._dividerY);
+      ctx.stroke();
     }
 
     _handleHover() {
@@ -343,12 +390,7 @@
       if (this._evolutionEligibility && this._evolutionEligibility.canEvolve && this._evolveButtonRect) {
         if (this._isPointInRect(this._mouseX, this._mouseY, this._evolveButtonRect)) {
           // Open evolution popup
-          this._evolutionPopup.show(
-            this._player,
-            this._canvasWidth,
-            this._canvasHeight,
-            { eligibleTiers: this._evolutionEligibility.eligibleTiers }
-          );
+          this._evolutionPopup.show(this._player, this._canvasWidth, this._canvasHeight, { eligibleTiers: this._evolutionEligibility.eligibleTiers });
           return null;
         }
       }
@@ -380,8 +422,7 @@
       if (weaponCardResult) {
         // Determine if this selection should close the screen
         // evolution_main and evolution_cancel don't close - they change state
-        var shouldClose =
-          weaponCardResult.type !== 'evolution_main' && weaponCardResult.type !== 'evolution_cancel';
+        var shouldClose = weaponCardResult.type !== 'evolution_main' && weaponCardResult.type !== 'evolution_cancel';
 
         return {
           type: 'weapon_selection',
@@ -401,6 +442,30 @@
       }
 
       return null;
+    }
+
+    _renderGoldDisplay(ctx) {
+      if (!this._player || !this._player.gold) return;
+
+      var goldAmount = this._player.gold.amount || 0;
+      var goldX = SCREEN_PADDING + 10;
+      var goldY = 15;
+
+      // Gold coin icon (small circle)
+      ctx.fillStyle = GOLD_COLOR;
+      ctx.beginPath();
+      ctx.arc(goldX + 8, goldY + 8, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = GOLD_BORDER_COLOR;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Gold amount
+      ctx.font = 'bold 16px Arial';
+      ctx.fillStyle = GOLD_COLOR;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'top';
+      ctx.fillText(goldAmount.toLocaleString(), goldX + 22, goldY);
     }
 
     _renderEvolutionButton(ctx) {

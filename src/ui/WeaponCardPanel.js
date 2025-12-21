@@ -16,28 +16,32 @@
   // ============================================
   var TITLE_HEIGHT = 40;
   var CARD_WIDTH = 140;
-  var CARD_HEIGHT = 180;
+  var CARD_HEIGHT = 210;
   var CARD_GAP = 15;
   var CARD_PADDING = 10;
-  var ICON_SIZE = 50;
+  var ICON_SIZE = 45;
 
-  // Colors
-  var BG_COLOR = '#2C3E50';
-  var BORDER_COLOR = '#34495E';
-  var TITLE_COLOR = '#FFFFFF';
-  var CARD_BG = '#34495E';
-  var CARD_BORDER = '#4A6278';
-  var CARD_HOVER_BG = '#3D566E';
-  var CARD_SELECTED_BORDER = '#2ECC71';
-  var TEXT_COLOR = '#ECF0F1';
-  var DESC_COLOR = '#BDC3C7';
-  var NEW_BADGE_COLOR = '#2ECC71';
-  var UPGRADE_BADGE_COLOR = '#3498DB';
-  var EVOLUTION_BADGE_COLOR = '#9B59B6';
-  var EVOLUTION_MAIN_BADGE_COLOR = '#E67E22';
-  var EVOLUTION_MATERIAL_BADGE_COLOR = '#9B59B6';
-  var CANCEL_BADGE_COLOR = '#95A5A6';
-  var STAT_BADGE_COLOR = '#F39C12';
+  // Blue theme colors
+  var BG_COLOR = '#2D3545';
+  var BORDER_COLOR = '#4A5580';
+  var TITLE_COLOR = '#F5F0E1';
+  var CARD_BG = '#4A5570';
+  var CARD_BG_TOP = '#5D6B8D';
+  var CARD_BG_BOTTOM = '#3D4560';
+  var CARD_BORDER = '#6B7BA0';
+  var CARD_HOVER_BG = '#5D6B8D';
+  var CARD_HOVER_BG_TOP = '#6D7FB5';
+  var CARD_HOVER_BG_BOTTOM = '#4A5570';
+  var CARD_SELECTED_BORDER = '#D4A84B';
+  var TEXT_COLOR = '#F5F0E1';
+  var DESC_COLOR = '#A8B4C8';
+  var NEW_BADGE_COLOR = '#5EB8B8';
+  var UPGRADE_BADGE_COLOR = '#5090C0';
+  var EVOLUTION_BADGE_COLOR = '#8B6B9B';
+  var EVOLUTION_MAIN_BADGE_COLOR = '#D4A84B';
+  var EVOLUTION_MATERIAL_BADGE_COLOR = '#8B6B9B';
+  var CANCEL_BADGE_COLOR = '#8B9BAB';
+  var STAT_BADGE_COLOR = '#D4A84B';
 
   // Attack type colors
   var ATTACK_TYPE_COLORS = {
@@ -62,6 +66,9 @@
     _height = 0;
     _hoveredIndex = -1;
     _cardRects = [];
+    _cardScale = 1;
+    _actualCardWidth = CARD_WIDTH;
+    _actualCardHeight = CARD_HEIGHT;
 
     // Evolution state
     _evolutionState = 'normal';
@@ -198,19 +205,6 @@
       for (var i = 0; i < this._options.length; i++) {
         this._renderCard(ctx, i, this._options[i]);
       }
-
-      // Hint text at bottom
-      ctx.font = '12px Arial';
-      ctx.fillStyle = DESC_COLOR;
-      ctx.textAlign = 'center';
-      var hintText = this._evolutionState === 'selecting_material'
-        ? i18n.t('levelUp.selectMaterialHint')
-        : i18n.t('levelUp.selectHint');
-      ctx.fillText(
-        hintText,
-        this._x + this._width / 2,
-        this._y + this._height - 15
-      );
     }
 
     // ----------------------------------------
@@ -222,17 +216,34 @@
       var numCards = this._options.length;
       if (numCards === 0) return;
 
-      // Calculate total width of all cards
-      var totalWidth = numCards * CARD_WIDTH + (numCards - 1) * CARD_GAP;
-      var startX = this._x + (this._width - totalWidth) / 2;
+      // Calculate available width with padding
+      var availableWidth = this._width - 20;
+
+      // Calculate ideal total width
+      var idealTotalWidth = numCards * CARD_WIDTH + (numCards - 1) * CARD_GAP;
+
+      // Scale down if needed to prevent overflow
+      var scale = idealTotalWidth > availableWidth ? availableWidth / idealTotalWidth : 1;
+      var actualCardWidth = Math.floor(CARD_WIDTH * scale);
+      var actualCardHeight = Math.floor(CARD_HEIGHT * scale);
+      var actualGap = Math.floor(CARD_GAP * scale);
+
+      // Store scale for rendering adjustments
+      this._cardScale = scale;
+      this._actualCardWidth = actualCardWidth;
+      this._actualCardHeight = actualCardHeight;
+
+      // Calculate actual total width and center
+      var actualTotalWidth = numCards * actualCardWidth + (numCards - 1) * actualGap;
+      var startX = this._x + (this._width - actualTotalWidth) / 2;
       var startY = this._y + TITLE_HEIGHT + 20;
 
       for (var i = 0; i < numCards; i++) {
         this._cardRects.push({
-          x: startX + i * (CARD_WIDTH + CARD_GAP),
+          x: startX + i * (actualCardWidth + actualGap),
           y: startY,
-          width: CARD_WIDTH,
-          height: CARD_HEIGHT,
+          width: actualCardWidth,
+          height: actualCardHeight,
         });
       }
     }
@@ -243,14 +254,40 @@
 
       var isHovered = index === this._hoveredIndex;
 
-      // Card background
-      ctx.fillStyle = isHovered ? CARD_HOVER_BG : CARD_BG;
+      // Add shadow for depth
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+      ctx.shadowBlur = isHovered ? 12 : 8;
+      ctx.shadowOffsetX = 2;
+      ctx.shadowOffsetY = 4;
+
+      // Card background with gradient
+      var gradient = ctx.createLinearGradient(rect.x, rect.y, rect.x, rect.y + rect.height);
+      if (isHovered) {
+        gradient.addColorStop(0, CARD_HOVER_BG_TOP);
+        gradient.addColorStop(1, CARD_HOVER_BG_BOTTOM);
+      } else {
+        gradient.addColorStop(0, CARD_BG_TOP);
+        gradient.addColorStop(1, CARD_BG_BOTTOM);
+      }
+      ctx.fillStyle = gradient;
       ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-      // Card border
+      // Reset shadow for border
+      ctx.shadowBlur = 0;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+
+      // Card border with glow effect when hovered
+      if (isHovered) {
+        ctx.shadowColor = CARD_SELECTED_BORDER;
+        ctx.shadowBlur = 10;
+      }
       ctx.strokeStyle = isHovered ? CARD_SELECTED_BORDER : CARD_BORDER;
       ctx.lineWidth = isHovered ? 3 : 2;
       ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+      // Reset shadow
+      ctx.shadowBlur = 0;
 
       // Badge (NEW, UPGRADE, EVOLUTION types, STAT)
       var badgeText = '';
@@ -296,7 +333,7 @@
       }
 
       // Icon
-      var iconY = rect.y + 35;
+      var iconY = rect.y + 45;
       this._renderIcon(ctx, rect.x + rect.width / 2, iconY + ICON_SIZE / 2, option);
 
       // Name
@@ -497,7 +534,7 @@
             var angle = (Math.PI / 2) * i;
             ctx.beginPath();
             ctx.moveTo(centerX, centerY);
-            ctx.lineTo(centerX + Math.cos(angle) * size / 2, centerY + Math.sin(angle) * size / 2);
+            ctx.lineTo(centerX + (Math.cos(angle) * size) / 2, centerY + (Math.sin(angle) * size) / 2);
             ctx.stroke();
           }
           // Center
@@ -581,9 +618,9 @@
       var tierColor = tierConfig.color;
       var tierIcon = tierConfig.icon;
 
-      // Tier badge at bottom-left of card
+      // Tier badge at top-left of card
       var badgeX = rect.x + 8;
-      var badgeY = rect.y + rect.height - 22;
+      var badgeY = rect.y + 8;
       var badgeWidth = 28;
       var badgeHeight = 16;
 
@@ -639,7 +676,19 @@
         return i18n.t('levelUp.evolvesInto') + ' ' + i18n.tw(option.evolutionResult.id, option.evolutionResult.name);
       }
       if (option.type === 'new' && option.weaponData) {
-        return i18n.tat(option.weaponData.attackType) + ' - ' + (option.weaponData.isAuto ? i18n.t('levelUp.auto') : i18n.t('levelUp.manual'));
+        var data = option.weaponData;
+        var parts = [];
+
+        // Attack type and mode
+        parts.push(i18n.tat(data.attackType) + ' - ' + (data.isAuto ? i18n.t('levelUp.auto') : i18n.t('levelUp.manual')));
+
+        // Add stats if available
+        var statParts = [];
+        if (data.damage) statParts.push(i18n.t('tooltip.damage') + ' ' + data.damage);
+        if (data.cooldown) statParts.push(i18n.t('tooltip.cooldown') + ' ' + data.cooldown.toFixed(1) + 's');
+        if (statParts.length > 0) parts.push(statParts.join(' | '));
+
+        return parts.join(' - ');
       }
       if (option.type === 'upgrade' && option.weaponData) {
         var upgrades = option.weaponData.upgrades;
@@ -667,13 +716,18 @@
       if (!option) return null;
 
       if (option.type === 'new') {
+        var data = option.weaponData;
+        var dps = data.damage && data.cooldown ? data.damage / data.cooldown : 0;
         return {
           type: 'newWeapon',
-          name: i18n.tw(option.weaponData.id, option.weaponData.name),
-          attackType: option.weaponData.attackType,
-          description: i18n.twd(option.weaponData.id, option.weaponData.description),
+          name: i18n.tw(data.id, data.name),
+          attackType: data.attackType,
+          description: i18n.twd(data.id, data.description),
           isNew: true,
           level: 1,
+          damage: data.damage || 0,
+          cooldown: data.cooldown || 1.0,
+          dps: dps,
         };
       }
 

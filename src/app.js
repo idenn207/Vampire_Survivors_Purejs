@@ -44,6 +44,7 @@
   var HUDSystem = Systems.HUDSystem;
   var LevelUpSystem = Systems.LevelUpSystem;
   var GameOverSystem = Systems.GameOverSystem;
+  var CharacterSelectionSystem = Systems.CharacterSelectionSystem;
   var CoreSelectionSystem = Systems.CoreSelectionSystem;
   var TechTreeSystem = Systems.TechTreeSystem;
   var StatusEffectSystem = Systems.StatusEffectSystem;
@@ -208,6 +209,11 @@
       gameOverSystem.initialize(game, entityManager);
       game.addSystem(gameOverSystem);
 
+      // Create character selection system (priority 0 - before core selection)
+      var characterSelectionSystem = new CharacterSelectionSystem();
+      characterSelectionSystem.initialize(game, entityManager);
+      game.addSystem(characterSelectionSystem);
+
       // Create core selection system (priority 1 - very early)
       var coreSelectionSystem = new CoreSelectionSystem();
       coreSelectionSystem.initialize(game, entityManager);
@@ -235,6 +241,22 @@
       pauseMenuSystem.setCoreSelectionSystem(coreSelectionSystem);
       game.addSystem(pauseMenuSystem);
 
+      // Wire LevelUpSystem with screen systems for Tab/ESC transitions
+      levelUpSystem.setTabScreenSystem(tabScreenSystem);
+      levelUpSystem.setPauseMenuSystem(pauseMenuSystem);
+
+      // Store selected character ID for player setup
+      var selectedCharacterId = null;
+
+      // Callback when character is selected
+      function onCharacterSelected(characterId) {
+        selectedCharacterId = characterId;
+        console.log('[App] Character selected: ' + characterId);
+
+        // Now start core selection
+        coreSelectionSystem.startSelection(setupPlayer);
+      }
+
       // Helper function to setup player after core selection
       function setupPlayer(coreId) {
         // Create player at center
@@ -242,6 +264,25 @@
         var transform = player.getComponent(Transform);
         transform.x = game.width / 2 - transform.width / 2;
         transform.y = game.height / 2 - transform.height / 2;
+
+        // Add PlayerData component with selected character
+        var PlayerData = Components.PlayerData;
+        var Health = Components.Health;
+        var playerDataComp = new PlayerData();
+        playerDataComp.setCharacter(selectedCharacterId);
+        player.addComponent(playerDataComp);
+
+        // Apply character base stats to Health component
+        var health = player.getComponent(Health);
+        if (health && playerDataComp.baseMaxHealth !== 100) {
+          health.setMaxHealth(playerDataComp.baseMaxHealth);
+          health.heal(playerDataComp.baseMaxHealth);
+        }
+
+        // Apply character speed to player
+        player.speed = playerDataComp.baseSpeed;
+
+        console.log('[App] Player setup with character: ' + selectedCharacterId + ', stats: attack=' + playerDataComp.baseAttack + ', speed=' + playerDataComp.baseSpeed + ', hp=' + playerDataComp.baseMaxHealth);
 
         // Setup player with selected core (adds TechTree component and starting weapon)
         coreSelectionSystem.setupPlayerWithCore(player, coreId);
@@ -310,6 +351,56 @@
         // Future: visual feedback, sounds
       });
 
+      // Listen for weapon on-kill effects (frenzy stacking, etc.)
+      events.on('weapon:on_kill', function (data) {
+        game.debugManager.info('On-kill effect: ' + (data.weaponId || 'unknown'));
+      });
+
+      // Listen for explosion effects
+      events.on('effect:explosion', function (data) {
+        // Future: trigger visual explosion particle effect
+      });
+
+      // Listen for status effect events
+      events.on('status:effect_applied', function (data) {
+        if (data.entity && data.entity.hasTag && data.entity.hasTag('player')) {
+          game.debugManager.info('Status applied: ' + data.type);
+        }
+      });
+
+      events.on('status:effect_removed', function (data) {
+        if (data.entity && data.entity.hasTag && data.entity.hasTag('player')) {
+          game.debugManager.info('Status removed: ' + data.type);
+        }
+      });
+
+      events.on('status:effects_cleared', function (data) {
+        if (data.entity && data.entity.hasTag && data.entity.hasTag('player')) {
+          game.debugManager.info('All status effects cleared');
+        }
+      });
+
+      events.on('status:dot_damage', function (data) {
+        // DoT damage is already handled by entity:damaged
+      });
+
+      // Enemy behavior events (for future audio/visual effects)
+      events.on('enemy:exploded', function (data) {
+        // Future: trigger explosion particle effect
+      });
+
+      events.on('enemy:landed', function (data) {
+        // Future: trigger ground impact effect
+      });
+
+      events.on('enemy:fired', function (data) {
+        // Future: trigger muzzle flash effect
+      });
+
+      events.on('projectile:ricochet', function (data) {
+        // Future: trigger ricochet spark effect
+      });
+
       // Register debug info
       game.debugManager.register(entityManager);
       game.debugManager.register(camera);
@@ -353,8 +444,8 @@
 
       await game.start();
 
-      // Start core selection flow (game pauses until selection is made)
-      coreSelectionSystem.startSelection(setupPlayer);
+      // Start character selection flow (then core selection, then game starts)
+      characterSelectionSystem.startSelection(onCharacterSelected);
 
       console.log('[App] Game running with ECS');
     } catch (error) {

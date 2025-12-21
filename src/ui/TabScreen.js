@@ -17,6 +17,7 @@
   var TechTreePanel = UI.TechTreePanel;
   var WeaponEvolutionData = window.VampireSurvivors.Data.WeaponEvolutionData;
   var StatUpgradeData = window.VampireSurvivors.Data.StatUpgradeData;
+  var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
   var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
@@ -45,8 +46,8 @@
   var STAT_ICON_SIZE = 16;
 
   // Weapon section
-  var WEAPON_ROW_HEIGHT = 50;
-  var WEAPON_ICON_SIZE = 36;
+  var WEAPON_ROW_HEIGHT = 40;
+  var WEAPON_ICON_SIZE = 32;
 
   // Tech section
   var TECH_ROW_HEIGHT = 45;
@@ -449,37 +450,56 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(i18n.tsn(stat.id, stat.name), x + 20, centerY);
 
-      // Stat value in format: base (+increase%) = final
-      ctx.textAlign = 'right';
-      var config = StatUpgradeData.getStatConfig(stat.id);
-      var baseValue = 100; // Base is 100%
-      var bonusPercent = stat.bonusPercent;
-      var finalValue = baseValue + bonusPercent;
-
-      // Format based on stat type
-      var valueText;
-      if (bonusPercent === 0) {
-        // No bonus - just show base
-        valueText = baseValue + '%';
-        ctx.fillStyle = DESC_COLOR;
-      } else {
-        // Show: base (+bonus%) = final
-        valueText = baseValue + '% ';
-        ctx.fillStyle = DESC_COLOR;
-        ctx.fillText(valueText, x + width - 70, centerY);
-
-        // Bonus part in green
-        var bonusText = '(+' + bonusPercent + '%)';
-        ctx.fillStyle = '#2ECC71';
-        ctx.fillText(bonusText, x + width - 30, centerY);
-
-        // Final value
-        valueText = finalValue + '%';
-        ctx.fillStyle = iconColor;
-        ctx.fillText(valueText, x + width - 5, centerY);
-        return;
+      // Stat value display: base (blue) + bonus (purple) = total (orange)
+      // Get character base multiplier from PlayerData
+      var basePercent = 100;
+      var PlayerData = window.VampireSurvivors.Components.PlayerData;
+      if (this._player && PlayerData) {
+        var playerData = this._player.getComponent(PlayerData);
+        if (playerData && playerData.characterData) {
+          var baseStats = playerData.characterData.baseStats;
+          // Map stat id to character base stat
+          var statMap = {
+            damage: 'attack',
+            speed: 'speed',
+            maxHealth: 'maxHealth',
+            critChance: 'critChance',
+            luck: 'luck',
+          };
+          var charStat = statMap[stat.id];
+          if (charStat && baseStats[charStat] !== undefined) {
+            basePercent = Math.round(baseStats[charStat] * 100);
+          }
+        }
       }
-      ctx.fillText(valueText, x + width - 5, centerY);
+
+      var bonusPercent = stat.bonusPercent;
+      var totalPercent = basePercent + bonusPercent;
+
+      ctx.textAlign = 'right';
+      ctx.font = '10px Arial';
+
+      if (stat.isMaxLevel) {
+        // Max level - show total in green with MAX indicator
+        ctx.fillStyle = '#3498DB'; // Blue for base
+        ctx.fillText(basePercent + '%', x + width - 80, centerY);
+        ctx.fillStyle = '#9B59B6'; // Purple for bonus
+        ctx.fillText('+' + bonusPercent + '%', x + width - 45, centerY);
+        ctx.fillStyle = '#2ECC71'; // Green for max
+        ctx.fillText('=' + totalPercent + '% MAX', x + width - 5, centerY);
+      } else if (bonusPercent === 0) {
+        // No bonus - show base only
+        ctx.fillStyle = '#3498DB'; // Blue for base
+        ctx.fillText(basePercent + '%', x + width - 5, centerY);
+      } else {
+        // Show base + bonus = total
+        ctx.fillStyle = '#3498DB'; // Blue for base
+        ctx.fillText(basePercent + '%', x + width - 80, centerY);
+        ctx.fillStyle = '#9B59B6'; // Purple for bonus
+        ctx.fillText('+' + bonusPercent + '%', x + width - 45, centerY);
+        ctx.fillStyle = '#F39C12'; // Orange for total
+        ctx.fillText('=' + totalPercent + '%', x + width - 5, centerY);
+      }
     }
 
     _renderWeaponsSection(ctx) {
@@ -534,6 +554,13 @@
 
       ctx.fillStyle = '#2C3E50';
       ctx.fillRect(iconX, iconY, WEAPON_ICON_SIZE, WEAPON_ICON_SIZE);
+
+      // Tier-based border around icon
+      var tier = weaponData.tier || weapon.tier || 1;
+      var tierBorderColor = WeaponTierData ? WeaponTierData.getTierBorderColor(tier) : '#AAAAAA';
+      ctx.strokeStyle = tierBorderColor;
+      ctx.lineWidth = 2;
+      ctx.strokeRect(iconX, iconY, WEAPON_ICON_SIZE, WEAPON_ICON_SIZE);
 
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -793,6 +820,72 @@
       if (projectileCount > 1) traits.push('Multi-shot: ' + projectileCount);
       if (areaRadius > 0) traits.push('Area: ' + areaRadius);
 
+      // Build unique properties list with descriptions
+      var PropertyDescriptions = window.VampireSurvivors.Data.PropertyDescriptions;
+      var uniqueProperties = [];
+      if (PropertyDescriptions) {
+        if (piercing > 0) {
+          uniqueProperties.push({ name: 'Piercing', description: PropertyDescriptions.get('pierce') });
+        }
+        if (projectileCount > 1) {
+          uniqueProperties.push({ name: 'Multi-shot', description: PropertyDescriptions.get('projectileCount') });
+        }
+        if (areaRadius > 0) {
+          uniqueProperties.push({ name: 'Area Effect', description: PropertyDescriptions.get('areaRadius') });
+        }
+        if (weaponData.homing) {
+          uniqueProperties.push({ name: 'Homing', description: PropertyDescriptions.get('homing') });
+        }
+        if (weaponData.chain) {
+          uniqueProperties.push({ name: 'Chain', description: PropertyDescriptions.get('chain') });
+        }
+        if (weaponData.knockback) {
+          uniqueProperties.push({ name: 'Knockback', description: PropertyDescriptions.get('knockback') });
+        }
+        // Additional properties
+        if (weaponData.lifesteal) {
+          uniqueProperties.push({ name: 'Lifesteal', description: PropertyDescriptions.get('lifesteal') });
+        }
+        if (weaponData.healing) {
+          uniqueProperties.push({ name: 'Healing', description: PropertyDescriptions.get('healing') });
+        }
+        if (weaponData.burn) {
+          uniqueProperties.push({ name: 'Burn', description: PropertyDescriptions.get('burn') });
+        }
+        if (weaponData.freeze) {
+          uniqueProperties.push({ name: 'Freeze', description: PropertyDescriptions.get('freeze') });
+        }
+        if (weaponData.slow) {
+          uniqueProperties.push({ name: 'Slow', description: PropertyDescriptions.get('slow') });
+        }
+        if (weaponData.poison) {
+          uniqueProperties.push({ name: 'Poison', description: PropertyDescriptions.get('poison') });
+        }
+        if (weaponData.explosion) {
+          uniqueProperties.push({ name: 'Explosion', description: PropertyDescriptions.get('explosion') });
+        }
+        if (weaponData.bounce) {
+          uniqueProperties.push({ name: 'Bounce', description: PropertyDescriptions.get('bounce') });
+        }
+        if (weaponData.stun) {
+          uniqueProperties.push({ name: 'Stun', description: PropertyDescriptions.get('stun') });
+        }
+        // Parse statusEffects array for weapons that use the array format
+        if (weaponData.statusEffects && Array.isArray(weaponData.statusEffects)) {
+          for (var j = 0; j < weaponData.statusEffects.length; j++) {
+            var effect = weaponData.statusEffects[j];
+            var effectType = effect.type;
+            if (effectType) {
+              var effectName = effectType.charAt(0).toUpperCase() + effectType.slice(1);
+              var desc = PropertyDescriptions.get(effectType) || 'Applies ' + effectType;
+              if (effect.duration) desc += ' - ' + effect.duration.toFixed(1) + 's';
+              if (effect.damagePerTick) desc += ', ' + effect.damagePerTick + ' dmg/tick';
+              uniqueProperties.push({ name: effectName, description: desc });
+            }
+          }
+        }
+      }
+
       var content = {
         type: 'weaponDetail',
         name: i18n.tw(weapon.id, weapon.name),
@@ -804,6 +897,7 @@
         cooldown: cooldownMax,
         range: range,
         traits: traits,
+        uniqueProperties: uniqueProperties,
         totalDamageDealt: weapon.totalDamageDealt || 0,
         attackType: weapon.attackType,
         isMaxLevel: weapon.level >= weapon.maxLevel,

@@ -42,11 +42,11 @@
         passiveProcs: {},
       };
 
-      // Auto-unlock base tech at level 0 (unlocked but not upgraded)
+      // Auto-unlock base tech at level 1 (grants immediate effects)
       if (coreId) {
         var coreData = TechCoreData.getCoreData(coreId);
         if (coreData && coreData.tree && coreData.tree.base) {
-          this._unlockedTechs.set(coreData.tree.base.id, 0);
+          this._unlockedTechs.set(coreData.tree.base.id, 1);
         }
       }
     }
@@ -457,11 +457,11 @@
         passiveProcs: {},
       };
 
-      // Re-unlock base tech
+      // Re-unlock base tech at level 1
       if (this._coreId) {
         var coreData = TechCoreData.getCoreData(this._coreId);
         if (coreData && coreData.tree && coreData.tree.base) {
-          this._unlockedTechs.set(coreData.tree.base.id, 0);
+          this._unlockedTechs.set(coreData.tree.base.id, 1);
         }
       }
     }

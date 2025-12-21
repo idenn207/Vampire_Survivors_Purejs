@@ -64,6 +64,7 @@
 
   <!-- Phase 4.7: Additional Components (depend on data) -->
   <script src="src/components/PlayerStats.js"></script>
+  <script src="src/components/PlayerData.js"></script>
 
   <!-- Phase 4.5: Data (needed by some entities) -->
   <script src="src/data/PickupConfig.js"></script>
@@ -224,6 +225,7 @@
   <script src="src/data/weapons/WeaponAggregator.js"></script>
   <script src="src/data/WeaponTierData.js"></script>
   <script src="src/data/WeaponEvolutionData.js"></script>
+  <script src="src/data/PropertyDescriptions.js"></script>
   <script src="src/data/DropTable.js"></script>
   <script src="src/data/WaveData.js"></script>
 
@@ -287,6 +289,9 @@
 
   <!-- Tech Core Aggregator (merges all cores into TechCoreData) -->
   <script src="src/data/techcores/TechCoreAggregator.js"></script>
+
+  <!-- Character Data (3 playable characters) -->
+  <script src="src/data/CharacterData.js"></script>
 
   <!-- Base Core Weapon Files (15 weapons, Tier 1) -->
   <script src="src/data/weapons/core/common/inferno_bolt.js"></script>
@@ -481,13 +486,15 @@
 
   <!-- Phase 7.92: Tech Tree UI Components -->
   <script src="src/ui/CoreSelectionScreen.js"></script>
+  <script src="src/ui/CharacterSelectionScreen.js"></script>
   <script src="src/ui/TechUnlockPopup.js"></script>
 
   <!-- Phase 7.95: Game Over UI Components -->
   <script src="src/ui/GameOverScreen.js"></script>
   <script src="src/systems/GameOverSystem.js"></script>
 
-  <!-- Phase 7.97: Tech Tree Systems -->
+  <!-- Phase 7.97: Character and Tech Tree Systems -->
+  <script src="src/systems/CharacterSelectionSystem.js"></script>
   <script src="src/systems/CoreSelectionSystem.js"></script>
   <script src="src/systems/TechTreeSystem.js"></script>
 

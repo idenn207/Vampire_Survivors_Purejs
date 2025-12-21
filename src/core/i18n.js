@@ -326,6 +326,98 @@
     }
 
     /**
+     * Get translated character name
+     * @param {string} characterId - Character ID (e.g., 'knight', 'rogue')
+     * @param {string} [fallback] - Fallback name if translation not found
+     * @returns {string}
+     */
+    tchn(characterId, fallback) {
+      var key = 'characters.' + characterId + '.name';
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or characterId
+      if (translation === key) {
+        return fallback || characterId;
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated character description
+     * @param {string} characterId - Character ID (e.g., 'knight', 'rogue')
+     * @param {string} [fallback] - Fallback description if translation not found
+     * @returns {string}
+     */
+    tchd(characterId, fallback) {
+      var key = 'characters.' + characterId + '.description';
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or empty string
+      if (translation === key) {
+        return fallback || '';
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated passive name
+     * @param {string} passiveId - Passive ID (e.g., 'stalwart', 'backstab')
+     * @param {string} [fallback] - Fallback name if translation not found
+     * @returns {string}
+     */
+    tpn(passiveId, fallback) {
+      var key = 'passives.' + passiveId + '.name';
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or passiveId
+      if (translation === key) {
+        return fallback || passiveId;
+      }
+
+      return translation;
+    }
+
+    /**
+     * Get translated passive description
+     * @param {string} passiveId - Passive ID (e.g., 'stalwart', 'backstab')
+     * @param {string} [fallback] - Fallback description if translation not found
+     * @returns {string}
+     */
+    tpd(passiveId, fallback) {
+      var key = 'passives.' + passiveId + '.description';
+      var translation = this._getTranslation(key, this._currentLanguage);
+
+      // Fallback to English if not found in current language
+      if (translation === key && this._currentLanguage !== 'en') {
+        translation = this._getTranslation(key, 'en');
+      }
+
+      // If still not found, use fallback or empty string
+      if (translation === key) {
+        return fallback || '';
+      }
+
+      return translation;
+    }
+
+    /**
      * Set current language
      * @param {string} langCode - Language code (e.g., 'en', 'ko')
      */

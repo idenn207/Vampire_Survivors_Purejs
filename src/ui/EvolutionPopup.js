@@ -18,26 +18,28 @@
   var POPUP_WIDTH = 560;
   var POPUP_HEIGHT = 460;
 
-  // Colors
-  var OVERLAY_COLOR = 'rgba(0, 0, 0, 0.85)';
-  var POPUP_BG = '#1A2332';
-  var POPUP_BORDER = '#3D566E';
-  var TITLE_COLOR = '#FFFFFF';
-  var TEXT_COLOR = '#ECF0F1';
-  var DESC_COLOR = '#BDC3C7';
-  var SLOT_BG = '#2C3E50';
-  var SLOT_BORDER = '#4A6278';
-  var SLOT_EMPTY_COLOR = '#34495E';
-  var SLOT_HOVER_BORDER = '#2ECC71';
-  var SLOT_SELECTED_BORDER = '#F39C12';
-  var RESULT_SLOT_BORDER = '#2ECC71';
-  var BUTTON_BG = '#9B59B6';
-  var BUTTON_HOVER_BG = '#8E44AD';
-  var BUTTON_DISABLED_BG = '#4A6278';
-  var CLOSE_BUTTON_BG = '#7F8C8D';
-  var CLOSE_BUTTON_HOVER = '#95A5A6';
-  var UNKNOWN_RESULT_COLOR = '#F39C12';
-  var FORMULA_COLOR = '#BDC3C7';
+  // Blue theme colors
+  var OVERLAY_COLOR = 'rgba(20, 25, 40, 0.85)';
+  var POPUP_BG = '#1F2330';
+  var POPUP_BG_TOP = '#2D3545';
+  var POPUP_BG_BOTTOM = '#1F2330';
+  var POPUP_BORDER = '#4A5580';
+  var TITLE_COLOR = '#F5F0E1';
+  var TEXT_COLOR = '#E8E2D0';
+  var DESC_COLOR = '#A8B4C8';
+  var SLOT_BG = '#3D4560';
+  var SLOT_BORDER = '#5A6D90';
+  var SLOT_EMPTY_COLOR = '#2D3545';
+  var SLOT_HOVER_BORDER = '#7C90C0';
+  var SLOT_SELECTED_BORDER = '#D4A84B';
+  var RESULT_SLOT_BORDER = '#5EB8B8';
+  var BUTTON_BG = '#8B6B9B';
+  var BUTTON_HOVER_BG = '#9B7BAB';
+  var BUTTON_DISABLED_BG = '#4A5570';
+  var CLOSE_BUTTON_BG = '#5A6D90';
+  var CLOSE_BUTTON_HOVER = '#6B7BA0';
+  var UNKNOWN_RESULT_COLOR = '#D4A84B';
+  var FORMULA_COLOR = '#A8B4C8';
 
   // Slot dimensions
   var SLOT_SIZE = 80;
@@ -74,9 +76,10 @@
     _mainSlot = null;
     _materialSlot = null;
 
-    // Eligible weapons (same tier at max level)
+    // Eligible weapons (max level weapons from all tiers)
     _eligibleWeapons = [];
-    _selectedTier = 1;
+    _selectedTier = 0;  // 0 = no tier selected
+    _tierCounts = {};   // Track count of weapons per tier
 
     // Result preview
     _evolutionResult = null;
@@ -181,8 +184,11 @@
       ctx.fillStyle = OVERLAY_COLOR;
       ctx.fillRect(0, 0, this._canvasWidth, this._canvasHeight);
 
-      // Popup background
-      ctx.fillStyle = POPUP_BG;
+      // Popup background with gradient
+      var gradient = ctx.createLinearGradient(this._x, this._y, this._x, this._y + POPUP_HEIGHT);
+      gradient.addColorStop(0, POPUP_BG_TOP);
+      gradient.addColorStop(1, POPUP_BG_BOTTOM);
+      ctx.fillStyle = gradient;
       ctx.fillRect(this._x, this._y, POPUP_WIDTH, POPUP_HEIGHT);
 
       // Popup border
@@ -197,17 +203,22 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(i18n.t('evolution.title'), this._x + POPUP_WIDTH / 2, this._y + 35);
 
-      // Tier indicator
-      if (this._selectedTier > 0) {
+      // Tier indicator - only show when main weapon selected
+      if (this._mainSlot && this._selectedTier > 0) {
         var tierConfig = WeaponTierData.getTierConfig(this._selectedTier);
         var nextTierConfig = WeaponTierData.getTierConfig(this._selectedTier + 1);
         ctx.font = '14px Arial';
         ctx.fillStyle = tierConfig.color;
         var tierText = 'Tier ' + tierConfig.icon + ' (' + tierConfig.name + ')';
         if (nextTierConfig) {
-          tierText += ' -> Tier ' + nextTierConfig.icon + ' (' + nextTierConfig.name + ')';
+          tierText += ' → Tier ' + nextTierConfig.icon + ' (' + nextTierConfig.name + ')';
         }
         ctx.fillText(tierText, this._x + POPUP_WIDTH / 2, this._y + 60);
+      } else {
+        // Show instruction when no main selected
+        ctx.font = '14px Arial';
+        ctx.fillStyle = DESC_COLOR;
+        ctx.fillText(i18n.t('evolution.selectMain') || 'Select a main weapon', this._x + POPUP_WIDTH / 2, this._y + 60);
       }
 
       // Render formula: [MAIN] + [MATERIAL] = [RESULT]
@@ -234,7 +245,8 @@
     // ----------------------------------------
     _findEligibleWeapons(options) {
       this._eligibleWeapons = [];
-      this._selectedTier = 1;
+      this._selectedTier = 0;  // No tier selected initially
+      this._tierCounts = {};   // Track weapon counts per tier
 
       if (!this._player) return;
 
@@ -244,9 +256,7 @@
 
       var weapons = weaponSlot.weapons;
 
-      // Group weapons by tier that are at max level and below max tier
-      var tierGroups = {};
-
+      // Collect ALL max-level weapons (all tiers)
       for (var i = 0; i < weapons.length; i++) {
         var weapon = weapons[i];
         if (!weapon) continue;
@@ -257,31 +267,12 @@
         // Must be below max tier
         if (weapon.tier >= weapon.maxTier) continue;
 
+        // Add to eligible weapons (ALL tiers)
+        this._eligibleWeapons.push(weapon);
+
+        // Track tier counts
         var tier = weapon.tier;
-        if (!tierGroups[tier]) {
-          tierGroups[tier] = [];
-        }
-        tierGroups[tier].push(weapon);
-      }
-
-      // Find a tier with 2+ weapons
-      for (var t in tierGroups) {
-        if (tierGroups[t].length >= 2) {
-          this._selectedTier = parseInt(t);
-          this._eligibleWeapons = tierGroups[t];
-          break;
-        }
-      }
-
-      // If options provided with eligibleTiers, use that
-      if (options && options.eligibleTiers) {
-        for (var tier in options.eligibleTiers) {
-          if (options.eligibleTiers[tier].length >= 2) {
-            this._selectedTier = parseInt(tier);
-            this._eligibleWeapons = options.eligibleTiers[tier];
-            break;
-          }
-        }
+        this._tierCounts[tier] = (this._tierCounts[tier] || 0) + 1;
       }
     }
 
@@ -374,7 +365,11 @@
       // Check weapon grid
       for (var i = 0; i < this._weaponGridRects.length; i++) {
         if (i < this._eligibleWeapons.length && this._isPointInRect(mouseX, mouseY, this._weaponGridRects[i])) {
-          this._hoveredWeaponIndex = i;
+          var weapon = this._eligibleWeapons[i];
+          // Only hover if weapon is selectable
+          if (this._isWeaponSelectable(weapon)) {
+            this._hoveredWeaponIndex = i;
+          }
           return;
         }
       }
@@ -415,6 +410,8 @@
       if (this._isPointInRect(mouseX, mouseY, this._mainSlotRect)) {
         if (this._mainSlot) {
           this._mainSlot = null;
+          this._materialSlot = null;  // Also clear material when deselecting main
+          this._selectedTier = 0;     // Reset tier
           this._updateEvolutionPreview();
         }
         return null;
@@ -439,21 +436,33 @@
             return null;
           }
 
-          // Check if weapon can be used as material (core weapons cannot)
-          var isCoreWeapon = WeaponEvolutionData.isCoreWeapon(weapon.id);
+          // Check if weapon can be used as material (core chain weapons cannot)
+          var isCoreChain = WeaponEvolutionData.isPartOfCoreEvolutionChain(weapon.id);
 
           // Fill main slot first, then material
           if (!this._mainSlot) {
+            // Check if this weapon's tier has at least 2 weapons
+            if ((this._tierCounts[weapon.tier] || 0) < 2) {
+              return null;  // Can't evolve with single weapon in tier
+            }
             this._mainSlot = weapon;
+            this._selectedTier = weapon.tier;  // Set tier on main selection
           } else if (!this._materialSlot) {
-            // Core weapons cannot be used as material
-            if (isCoreWeapon) {
+            // Must be same tier as main
+            if (weapon.tier !== this._selectedTier) {
+              return null;  // Reject different tier
+            }
+            // Core chain weapons cannot be used as material
+            if (isCoreChain) {
               return null; // Reject selection
             }
             this._materialSlot = weapon;
           } else {
-            // Both filled, replace material (only if not core weapon)
-            if (isCoreWeapon) {
+            // Both filled, replace material (only if same tier and not core)
+            if (weapon.tier !== this._selectedTier) {
+              return null;  // Reject different tier
+            }
+            if (isCoreChain) {
               return null; // Reject selection
             }
             this._materialSlot = weapon;
@@ -474,9 +483,40 @@
     _canEvolve() {
       if (!this._mainSlot || !this._materialSlot) return false;
 
-      // If main weapon is a core weapon, require a known recipe
-      if (WeaponEvolutionData.isCoreWeapon(this._mainSlot.id)) {
+      // If main weapon is a core chain weapon, require a known recipe
+      if (WeaponEvolutionData.isPartOfCoreEvolutionChain(this._mainSlot.id)) {
         return this._isKnownRecipe;
+      }
+
+      return true;
+    }
+
+    /**
+     * Check if a weapon can be selected based on current state
+     * @param {Weapon} weapon
+     * @returns {boolean}
+     */
+    _isWeaponSelectable(weapon) {
+      if (!weapon) return false;
+
+      // If already selected in a slot, not selectable
+      if (this._mainSlot === weapon || this._materialSlot === weapon) {
+        return false;
+      }
+
+      // If no main selected, weapon is selectable if its tier has 2+ weapons
+      if (!this._mainSlot) {
+        return (this._tierCounts[weapon.tier] || 0) >= 2;
+      }
+
+      // Main is selected - only same tier is selectable (as material)
+      if (weapon.tier !== this._selectedTier) {
+        return false;
+      }
+
+      // Core chain weapons cannot be used as material
+      if (WeaponEvolutionData.isPartOfCoreEvolutionChain(weapon.id)) {
+        return false;
       }
 
       return true;
@@ -490,7 +530,7 @@
 
       var mainId = this._mainSlot.id;
       var materialId = this._materialSlot.id;
-      var isCoreWeapon = WeaponEvolutionData.isCoreWeapon(mainId);
+      var isCoreChain = WeaponEvolutionData.isPartOfCoreEvolutionChain(mainId);
 
       // Check for known recipe
       var tierEvolution = WeaponEvolutionData.findTierEvolution(mainId, materialId, this._selectedTier);
@@ -498,8 +538,8 @@
       if (tierEvolution && tierEvolution.isKnown) {
         this._isKnownRecipe = true;
         this._evolutionResult = tierEvolution.weaponData;
-      } else if (isCoreWeapon) {
-        // Core weapon with no recipe - cannot evolve
+      } else if (isCoreChain) {
+        // Core chain weapon with no recipe - cannot evolve
         this._isKnownRecipe = false;
         this._evolutionResult = {
           name: i18n.t('evolution.recipeRequired'),
@@ -766,10 +806,16 @@
         var weapon = i < this._eligibleWeapons.length ? this._eligibleWeapons[i] : null;
         var isHovered = this._hoveredWeaponIndex === i;
         var isSelected = weapon && (this._mainSlot === weapon || this._materialSlot === weapon);
+        var isSelectable = weapon && this._isWeaponSelectable(weapon);
 
-        // Slot background
-        ctx.fillStyle = weapon ? SLOT_BG : SLOT_EMPTY_COLOR;
-        ctx.globalAlpha = weapon ? 1.0 : 0.3;
+        // Slot background with selectability
+        if (weapon) {
+          ctx.fillStyle = isSelectable || isSelected ? SLOT_BG : SLOT_EMPTY_COLOR;
+          ctx.globalAlpha = isSelectable || isSelected ? 1.0 : 0.4;
+        } else {
+          ctx.fillStyle = SLOT_EMPTY_COLOR;
+          ctx.globalAlpha = 0.3;
+        }
         ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
         ctx.globalAlpha = 1.0;
 
@@ -777,7 +823,7 @@
         if (isSelected) {
           ctx.strokeStyle = SLOT_SELECTED_BORDER;
           ctx.lineWidth = 3;
-        } else if (isHovered && weapon) {
+        } else if (isHovered && isSelectable) {
           ctx.strokeStyle = SLOT_HOVER_BORDER;
           ctx.lineWidth = 2;
         } else {
@@ -788,18 +834,20 @@
 
         // Weapon content
         if (weapon) {
-          this._renderWeaponInGridSlot(ctx, rect, weapon, isSelected);
+          this._renderWeaponInGridSlot(ctx, rect, weapon, isSelected, isSelectable);
         }
       }
     }
 
-    _renderWeaponInGridSlot(ctx, rect, weapon, isSelected) {
+    _renderWeaponInGridSlot(ctx, rect, weapon, isSelected, isSelectable) {
       var centerX = rect.x + rect.width / 2;
       var centerY = rect.y + rect.height / 2 - 5;
-      var isCoreWeapon = WeaponEvolutionData.isCoreWeapon(weapon.id);
+      var isCoreChain = WeaponEvolutionData.isPartOfCoreEvolutionChain(weapon.id);
 
-      // Dim if selected (already in a slot)
-      if (isSelected) {
+      // Dim if not selectable or selected
+      if (!isSelectable && !isSelected) {
+        ctx.globalAlpha = 0.4;
+      } else if (isSelected) {
         ctx.globalAlpha = 0.5;
       }
 
@@ -825,13 +873,23 @@
 
       ctx.globalAlpha = 1.0;
 
-      // Core weapon indicator (star badge) - shows this weapon can only be MAIN
-      if (isCoreWeapon && !isSelected) {
+      // Tier badge - show tier icon for each weapon
+      var tierConfig = WeaponTierData.getTierConfig(weapon.tier);
+      if (tierConfig) {
         ctx.font = 'bold 10px Arial';
-        ctx.fillStyle = '#F1C40F';
+        ctx.fillStyle = tierConfig.color;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'top';
-        ctx.fillText('★', rect.x + 2, rect.y + 2);
+        ctx.fillText(tierConfig.icon, rect.x + 2, rect.y + 2);
+      }
+
+      // Core chain weapon indicator (star badge) - shows this weapon can only be MAIN
+      if (isCoreChain && !isSelected) {
+        ctx.font = 'bold 10px Arial';
+        ctx.fillStyle = '#F1C40F';
+        ctx.textAlign = 'right';
+        ctx.textBaseline = 'top';
+        ctx.fillText('★', rect.x + rect.width - 2, rect.y + 2);
       }
 
       // Selection indicator

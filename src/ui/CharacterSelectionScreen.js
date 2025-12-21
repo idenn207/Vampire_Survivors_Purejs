@@ -1,6 +1,6 @@
 /**
- * @fileoverview Core selection screen - displayed at game start
- * @module UI/CoreSelectionScreen
+ * @fileoverview Character selection screen - displayed before core selection
+ * @module UI/CharacterSelectionScreen
  */
 (function (UI) {
   'use strict';
@@ -8,58 +8,66 @@
   // ============================================
   // Imports
   // ============================================
-  var TechCoreData = window.VampireSurvivors.Data.TechCoreData;
-  var CoreWeaponData = window.VampireSurvivors.Data.CoreWeaponData;
+  var CharacterData = window.VampireSurvivors.Data.CharacterData;
   var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
   // Constants
   // ============================================
   var OVERLAY_COLOR = 'rgba(0, 0, 0, 0.95)';
-  var CARD_WIDTH = 140;
-  var CARD_HEIGHT = 260;
-  var CARD_GAP = 15;
-  var ICON_SIZE = 50;
+  var CARD_WIDTH = 200;
+  var CARD_HEIGHT = 320;
+  var CARD_GAP = 25;
+  var ICON_SIZE = 60;
+
+  // Colors
+  var BG_COLOR = '#2C3E50';
+  var CARD_BG = '#34495E';
+  var CARD_HOVER_BG = '#3D566E';
+  var TITLE_COLOR = '#FFFFFF';
+  var TEXT_COLOR = '#ECF0F1';
+  var DESC_COLOR = '#BDC3C7';
+  var STAT_LABEL_COLOR = '#95A5A6';
+  var STAT_POSITIVE_COLOR = '#2ECC71';
+  var STAT_NEGATIVE_COLOR = '#E74C3C';
+  var STAT_NEUTRAL_COLOR = '#F39C12';
 
   // ============================================
   // Class Definition
   // ============================================
-  class CoreSelectionScreen {
+  class CharacterSelectionScreen {
     // ----------------------------------------
     // Instance Properties
     // ----------------------------------------
     _isVisible = false;
-    _cores = [];
+    _characters = [];
     _canvasWidth = 800;
     _canvasHeight = 600;
     _cardRects = [];
     _hoveredIndex = -1;
-    _clickGuard = false; // Prevents click on first frame after showing
 
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
     constructor() {
       this._cardRects = [];
-      this._clickGuard = false;
     }
 
     // ----------------------------------------
     // Public Methods
     // ----------------------------------------
     /**
-     * Show the screen with given cores
-     * @param {Array<Object>} cores - Array of core data objects
+     * Show the screen with given characters
+     * @param {Array<Object>} characters - Array of character data objects
      * @param {number} canvasWidth
      * @param {number} canvasHeight
      */
-    show(cores, canvasWidth, canvasHeight) {
+    show(characters, canvasWidth, canvasHeight) {
       this._isVisible = true;
-      this._cores = cores || [];
+      this._characters = characters || CharacterData.getAllCharacters();
       this._canvasWidth = canvasWidth;
       this._canvasHeight = canvasHeight;
       this._hoveredIndex = -1;
-      this._clickGuard = true; // Activate guard to prevent immediate click
       this._calculateCardRects();
     }
 
@@ -73,7 +81,7 @@
     /**
      * Handle input and return result if selection made
      * @param {Input} input
-     * @returns {Object|null} { action: 'select', coreId: string } or null
+     * @returns {Object|null} { type: 'select', characterId: string } or null
      */
     handleInput(input) {
       if (!this._isVisible) return null;
@@ -81,19 +89,10 @@
       var mousePos = input.mousePosition;
       this._updateHoverState(mousePos.x, mousePos.y);
 
-      // Click guard: wait for mouse release before accepting clicks
-      // This prevents the same click that closed character selection from triggering here
-      if (this._clickGuard) {
-        if (!input.isMouseDown(0)) {
-          this._clickGuard = false; // Mouse released, guard is now off
-        }
-        return null; // Don't process clicks while guard is active
-      }
-
       if (input.isMousePressed(0) && this._hoveredIndex >= 0) {
         return {
-          action: 'select',
-          coreId: this._cores[this._hoveredIndex].id,
+          type: 'select',
+          characterId: this._characters[this._hoveredIndex].id,
         };
       }
 
@@ -116,29 +115,24 @@
 
       // Title
       ctx.font = 'bold 36px Arial';
-      ctx.fillStyle = '#FFFFFF';
+      ctx.fillStyle = TITLE_COLOR;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(i18n.t('core.title'), this._canvasWidth / 2, 50);
+      ctx.fillText(i18n.t('character.select'), this._canvasWidth / 2, 50);
 
       // Subtitle
       ctx.font = '16px Arial';
-      ctx.fillStyle = '#BDC3C7';
+      ctx.fillStyle = DESC_COLOR;
       ctx.fillText(
-        i18n.t('core.subtitle'),
+        i18n.t('character.selectHint'),
         this._canvasWidth / 2,
         85
       );
 
-      // Render core cards
-      for (var i = 0; i < this._cores.length; i++) {
-        this._renderCoreCard(ctx, i);
+      // Render character cards
+      for (var i = 0; i < this._characters.length; i++) {
+        this._renderCharacterCard(ctx, i);
       }
-
-      // Instructions
-      ctx.font = '14px Arial';
-      ctx.fillStyle = '#7F8C8D';
-      ctx.fillText(i18n.t('core.subtitle'), this._canvasWidth / 2, this._canvasHeight - 30);
 
       // Restore context state
       ctx.restore();
@@ -161,11 +155,11 @@
       this._cardRects = [];
 
       var totalWidth =
-        this._cores.length * CARD_WIDTH + (this._cores.length - 1) * CARD_GAP;
+        this._characters.length * CARD_WIDTH + (this._characters.length - 1) * CARD_GAP;
       var startX = (this._canvasWidth - totalWidth) / 2;
       var startY = 120;
 
-      for (var i = 0; i < this._cores.length; i++) {
+      for (var i = 0; i < this._characters.length; i++) {
         this._cardRects.push({
           x: startX + i * (CARD_WIDTH + CARD_GAP),
           y: startY,
@@ -198,132 +192,183 @@
     }
 
     /**
-     * Render a single core card
+     * Render a single character card
      * @param {CanvasRenderingContext2D} ctx
      * @param {number} index
      */
-    _renderCoreCard(ctx, index) {
-      var core = this._cores[index];
+    _renderCharacterCard(ctx, index) {
+      var character = this._characters[index];
       var rect = this._cardRects[index];
       var isHovered = index === this._hoveredIndex;
 
       // Card background
-      ctx.fillStyle = isHovered ? '#3D566E' : '#2C3E50';
+      ctx.fillStyle = isHovered ? CARD_HOVER_BG : CARD_BG;
       ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
 
-      // Card border (core color when hovered)
-      ctx.strokeStyle = isHovered ? core.color : '#4A6278';
+      // Card border (character color when hovered)
+      ctx.strokeStyle = isHovered ? character.color : '#4A6278';
       ctx.lineWidth = isHovered ? 3 : 2;
       ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
       // Glow effect when hovered
       if (isHovered) {
-        ctx.shadowColor = core.color;
+        ctx.shadowColor = character.color;
         ctx.shadowBlur = 15;
-        ctx.strokeStyle = core.color;
+        ctx.strokeStyle = character.color;
         ctx.strokeRect(rect.x, rect.y, rect.width, rect.height);
         ctx.shadowBlur = 0;
       }
 
-      // Core icon (large colored circle with icon)
+      // Character icon
       var iconX = rect.x + rect.width / 2;
       var iconY = rect.y + 50;
+      this._renderCharacterIcon(ctx, character, iconX, iconY);
 
-      // Icon background circle
-      ctx.fillStyle = core.color;
-      ctx.beginPath();
-      ctx.arc(iconX, iconY, ICON_SIZE / 2, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Icon inner circle (darker)
-      ctx.fillStyle = this._darkenColor(core.color, 0.3);
-      ctx.beginPath();
-      ctx.arc(iconX, iconY, ICON_SIZE / 2 - 5, 0, Math.PI * 2);
-      ctx.fill();
-
-      // Icon symbol
-      this._renderCoreIcon(ctx, core.icon, iconX, iconY, core.color);
-
-      // Core name
-      ctx.font = 'bold 14px Arial';
-      ctx.fillStyle = '#FFFFFF';
+      // Character name
+      ctx.font = 'bold 16px Arial';
+      ctx.fillStyle = character.color;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(i18n.tcn(core.id, core.name), rect.x + rect.width / 2, rect.y + 95);
+      ctx.fillText(
+        i18n.tchn(character.id, character.name),
+        rect.x + rect.width / 2,
+        rect.y + 95
+      );
 
-      // Theme indicator
+      // Character description
       ctx.font = '11px Arial';
-      ctx.fillStyle = core.color;
-      ctx.fillText(i18n.tth(core.theme).toUpperCase(), rect.x + rect.width / 2, rect.y + 112);
-
-      // Core description (wrapped)
-      ctx.font = '11px Arial';
-      ctx.fillStyle = '#BDC3C7';
+      ctx.fillStyle = DESC_COLOR;
       this._renderWrappedText(
         ctx,
-        i18n.tcd(core.id, core.description),
+        i18n.tchd(character.id, character.description),
         rect.x + 10,
-        rect.y + 130,
+        rect.y + 115,
         rect.width - 20,
         13
       );
 
-      // Starting weapon info
-      var weaponData = CoreWeaponData[core.startingWeapon];
-      if (weaponData) {
-        ctx.font = '10px Arial';
-        ctx.fillStyle = '#95A5A6';
-        ctx.fillText(i18n.t('core.startingWeapon'), rect.x + rect.width / 2, rect.y + rect.height - 45);
+      // Stats section header
+      ctx.font = 'bold 10px Arial';
+      ctx.fillStyle = STAT_LABEL_COLOR;
+      ctx.textAlign = 'center';
+      ctx.fillText(i18n.t('character.stats'), rect.x + rect.width / 2, rect.y + 155);
+
+      // Base stats
+      var statsY = rect.y + 170;
+      this._renderStat(ctx, rect.x + 15, statsY, i18n.t('character.attack'), character.baseStats.attack, 'multiplier');
+      this._renderStat(ctx, rect.x + 15, statsY + 18, i18n.t('character.speed'), character.baseStats.speed, 'multiplier');
+      this._renderStat(ctx, rect.x + 15, statsY + 36, i18n.t('character.hp'), character.baseStats.maxHealth, 'multiplier');
+      this._renderStat(ctx, rect.x + 15, statsY + 54, i18n.t('character.critChance'), character.baseStats.critChance, 'percent');
+      this._renderStat(ctx, rect.x + 15, statsY + 72, i18n.t('character.luck'), character.baseStats.luck, 'percent');
+
+      // Passive section
+      if (character.passive) {
+        ctx.font = 'bold 10px Arial';
+        ctx.fillStyle = STAT_LABEL_COLOR;
+        ctx.textAlign = 'center';
+        ctx.fillText(i18n.t('character.passive'), rect.x + rect.width / 2, rect.y + 265);
 
         ctx.font = 'bold 11px Arial';
-        ctx.fillStyle = weaponData.color || '#FFFFFF';
-        ctx.fillText(i18n.tw(core.startingWeapon, weaponData.name), rect.x + rect.width / 2, rect.y + rect.height - 30);
-
-        // Weapon type indicator
-        ctx.font = '9px Arial';
-        ctx.fillStyle = '#7F8C8D';
+        ctx.fillStyle = character.color;
         ctx.fillText(
-          i18n.tat(weaponData.attackType).toUpperCase(),
+          i18n.tpn(character.passive.id, character.passive.name),
           rect.x + rect.width / 2,
-          rect.y + rect.height - 15
+          rect.y + 280
+        );
+
+        ctx.font = '10px Arial';
+        ctx.fillStyle = DESC_COLOR;
+        this._renderWrappedText(
+          ctx,
+          i18n.tpd(character.passive.id, character.passive.description),
+          rect.x + 10,
+          rect.y + 295,
+          rect.width - 20,
+          12
         );
       }
     }
 
     /**
-     * Render core icon based on type
+     * Render character icon
      * @param {CanvasRenderingContext2D} ctx
-     * @param {string} icon
+     * @param {Object} character
      * @param {number} x
      * @param {number} y
-     * @param {string} color
      */
-    _renderCoreIcon(ctx, icon, x, y, color) {
+    _renderCharacterIcon(ctx, character, x, y) {
+      // Icon background circle
+      ctx.fillStyle = character.color;
+      ctx.beginPath();
+      ctx.arc(x, y, ICON_SIZE / 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Icon inner circle (darker)
+      ctx.fillStyle = this._darkenColor(character.color, 0.3);
+      ctx.beginPath();
+      ctx.arc(x, y, ICON_SIZE / 2 - 6, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Icon symbol
       ctx.fillStyle = '#FFFFFF';
-      ctx.font = 'bold 18px Arial';
+      ctx.font = 'bold 24px Arial';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
 
-      // Simple icon representations
       var symbols = {
-        flame: '\u2B50', // star as flame
-        snowflake: '\u2744', // snowflake
-        bolt: '\u26A1', // lightning
-        moon: '\u263D', // moon
-        droplet: '\u2665', // heart as blood
-        star: '\u2726', // star
-        leaf: '\u2618', // shamrock as leaf
-        shield: '\u2B21', // hexagon as shield
-        wind: '\u2248', // wavy lines
-        mountain: '\u25B2', // triangle
-        void: '\u25CF', // circle
-        sun: '\u2600', // sun
-        gear: '\u2699', // gear
-        paw: '\u2726', // star as paw
-        clock: '\u231A', // clock
+        shield: '\u2B21',
+        dagger: '\u2020',
+        magic_orb: '\u2726',
       };
 
-      ctx.fillText(symbols[icon] || '\u2726', x, y);
+      ctx.fillText(symbols[character.icon] || '\u2726', x, y);
+    }
+
+    /**
+     * Render a stat row
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} x
+     * @param {number} y
+     * @param {string} label
+     * @param {number} value
+     * @param {string} type - 'multiplier' or 'percent'
+     */
+    _renderStat(ctx, x, y, label, value, type) {
+      // Label
+      ctx.font = '10px Arial';
+      ctx.fillStyle = STAT_LABEL_COLOR;
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(label, x, y);
+
+      // Value
+      ctx.textAlign = 'right';
+
+      var valueText;
+      var valueColor;
+
+      if (type === 'multiplier') {
+        valueText = (value * 100).toFixed(0) + '%';
+        if (value > 1) {
+          valueColor = STAT_POSITIVE_COLOR;
+        } else if (value < 1) {
+          valueColor = STAT_NEGATIVE_COLOR;
+        } else {
+          valueColor = STAT_NEUTRAL_COLOR;
+        }
+      } else {
+        valueText = (value * 100).toFixed(0) + '%';
+        if (value > 0.05) {
+          valueColor = STAT_POSITIVE_COLOR;
+        } else if (value > 0) {
+          valueColor = STAT_NEUTRAL_COLOR;
+        } else {
+          valueColor = STAT_LABEL_COLOR;
+        }
+      }
+
+      ctx.fillStyle = valueColor;
+      ctx.fillText(valueText, x + 170, y);
     }
 
     /**
@@ -365,7 +410,6 @@
      * @returns {string}
      */
     _darkenColor(color, amount) {
-      // Simple hex color darkening
       var hex = color.replace('#', '');
       var r = parseInt(hex.substr(0, 2), 16);
       var g = parseInt(hex.substr(2, 2), 16);
@@ -387,5 +431,5 @@
   // ============================================
   // Export to Namespace
   // ============================================
-  UI.CoreSelectionScreen = CoreSelectionScreen;
+  UI.CharacterSelectionScreen = CharacterSelectionScreen;
 })(window.VampireSurvivors.UI = window.VampireSurvivors.UI || {});

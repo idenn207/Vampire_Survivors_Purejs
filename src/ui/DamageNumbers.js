@@ -28,6 +28,7 @@
 
   var CRIT_COLOR = '#FFD700'; // Gold for critical hits
   var HEAL_COLOR = '#2ECC71'; // Green for healing
+  var LIFESTEAL_COLOR = '#FF69B4'; // Pink for lifesteal
 
   var RANDOM_OFFSET_X = 20; // Random horizontal spread
   var RANDOM_OFFSET_Y = 10; // Random vertical spread
@@ -98,6 +99,8 @@
         color = CRIT_COLOR;
       } else if (this.type === 'heal') {
         color = HEAL_COLOR;
+      } else if (this.type === 'lifesteal') {
+        color = LIFESTEAL_COLOR;
       }
 
       // Scale
@@ -107,7 +110,7 @@
       ctx.textBaseline = 'middle';
 
       var text = this.amount.toString();
-      if (this.type === 'heal') {
+      if (this.type === 'heal' || this.type === 'lifesteal') {
         text = '+' + text;
       }
 
@@ -137,6 +140,8 @@
     // Event handlers
     _boundOnEntityDamaged = null;
     _boundOnEntityHealed = null;
+    _boundOnPlayerHealed = null;
+    _boundOnPlayerLifesteal = null;
 
     // ----------------------------------------
     // Constructor
@@ -144,9 +149,13 @@
     constructor() {
       this._boundOnEntityDamaged = this._onEntityDamaged.bind(this);
       this._boundOnEntityHealed = this._onEntityHealed.bind(this);
+      this._boundOnPlayerHealed = this._onPlayerHealed.bind(this);
+      this._boundOnPlayerLifesteal = this._onPlayerLifesteal.bind(this);
 
       events.on('entity:damaged', this._boundOnEntityDamaged);
       events.on('entity:healed', this._boundOnEntityHealed);
+      events.on('player:healed', this._boundOnPlayerHealed);
+      events.on('player:lifesteal', this._boundOnPlayerLifesteal);
     }
 
     // ----------------------------------------
@@ -222,12 +231,42 @@
       this.spawn(worldX, worldY, data.amount, 'heal');
     }
 
+    _onPlayerHealed(data) {
+      // Get player position from global reference
+      var player = window.VampireSurvivors.player;
+      if (!player) return;
+
+      var transform = player.getComponent(Transform);
+      if (!transform) return;
+
+      var worldX = transform.x + transform.width / 2;
+      var worldY = transform.y;
+
+      this.spawn(worldX, worldY, data.amount, 'heal');
+    }
+
+    _onPlayerLifesteal(data) {
+      // Get player position from global reference
+      var player = window.VampireSurvivors.player;
+      if (!player) return;
+
+      var transform = player.getComponent(Transform);
+      if (!transform) return;
+
+      var worldX = transform.x + transform.width / 2;
+      var worldY = transform.y;
+
+      this.spawn(worldX, worldY, data.amount, 'lifesteal');
+    }
+
     // ----------------------------------------
     // Lifecycle
     // ----------------------------------------
     dispose() {
       events.off('entity:damaged', this._boundOnEntityDamaged);
       events.off('entity:healed', this._boundOnEntityHealed);
+      events.off('player:healed', this._boundOnPlayerHealed);
+      events.off('player:lifesteal', this._boundOnPlayerLifesteal);
       this._numbers = [];
       this._camera = null;
     }

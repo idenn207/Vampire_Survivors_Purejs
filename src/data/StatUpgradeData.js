@@ -19,6 +19,7 @@
       bonusPerLevel: 0.10,
       maxLevel: 10,
       description: '+10% Max HP',
+      tooltip: 'Increases maximum HP. Higher max HP lets you survive longer in combat.',
       isPercent: true,
     },
     damage: {
@@ -31,6 +32,7 @@
       bonusPerLevel: 0.10,
       maxLevel: 10,
       description: '+10% All Damage',
+      tooltip: 'Boosts all weapon damage. Affects projectiles, area effects, and melee attacks.',
       isPercent: true,
     },
     moveSpeed: {
@@ -43,6 +45,7 @@
       bonusPerLevel: 0.08,
       maxLevel: 10,
       description: '+8% Move Speed',
+      tooltip: 'Increases movement speed. Move faster to dodge enemies and collect pickups.',
       isPercent: true,
     },
     critChance: {
@@ -55,6 +58,7 @@
       bonusPerLevel: 0.05,
       maxLevel: 10,
       description: '+5% Crit Chance',
+      tooltip: 'Chance to deal critical hits. Crits deal bonus damage based on Crit Damage stat.',
       isPercent: true,
       isFlat: true,
     },
@@ -68,6 +72,7 @@
       bonusPerLevel: 0.15,
       maxLevel: 10,
       description: '+15% Crit Damage',
+      tooltip: 'Multiplier for critical hit damage. Higher = more damage on critical strikes.',
       isPercent: true,
     },
     pickupRange: {
@@ -80,6 +85,7 @@
       bonusPerLevel: 0.15,
       maxLevel: 10,
       description: '+15% Pickup Range',
+      tooltip: 'Distance at which XP gems and gold are automatically collected.',
       isPercent: true,
     },
     xpGain: {
@@ -92,6 +98,7 @@
       bonusPerLevel: 0.10,
       maxLevel: 10,
       description: '+10% XP Gain',
+      tooltip: 'Bonus experience from all sources. Level up faster to unlock more weapons.',
       isPercent: true,
     },
     range: {
@@ -104,6 +111,7 @@
       bonusPerLevel: 0.08,
       maxLevel: 10,
       description: '+8% Weapon Range',
+      tooltip: 'Attack range for all weapons. Projectiles travel further, areas are larger.',
       isPercent: true,
     },
     cooldownReduction: {
@@ -116,6 +124,7 @@
       bonusPerLevel: 0.05,
       maxLevel: 10,
       description: '-5% Cooldown',
+      tooltip: 'Reduces time between attacks. Weapons fire more frequently.',
       isPercent: true,
     },
     duration: {
@@ -128,6 +137,7 @@
       bonusPerLevel: 0.10,
       maxLevel: 10,
       description: '+10% Effect Duration',
+      tooltip: 'Extends duration of weapon effects, buffs, and area damage zones.',
       isPercent: true,
     },
     luck: {
@@ -140,6 +150,7 @@
       bonusPerLevel: 0.05,
       maxLevel: 10,
       description: '+5% Luck (Crits & Drops)',
+      tooltip: 'Affects crit chance and drop rates. Higher luck = more gold and better loot.',
       isPercent: true,
     },
   };

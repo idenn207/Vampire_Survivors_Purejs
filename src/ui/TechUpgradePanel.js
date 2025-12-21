@@ -16,29 +16,31 @@
   // ============================================
   // Constants
   // ============================================
-  var TITLE_HEIGHT = 30;
+  var TITLE_HEIGHT = 0;
   var SLOT_SIZE = 50;
   var SLOT_GAP = 6;
   var SLOT_BORDER = 2;
   var SLOTS_PER_ROW = 5;
   var TOTAL_SLOTS = 5; // Maximum 5 tech slots
-  var COST_HEIGHT = 14;
+  var COST_HEIGHT = 12;
 
-  // Colors
-  var BG_COLOR = '#2C3E50';
-  var BORDER_COLOR = '#34495E';
-  var TITLE_COLOR = '#FFFFFF';
-  var SLOT_EMPTY_BG = '#1A252F';
-  var SLOT_EMPTY_BORDER = '#2C3E50';
-  var SLOT_FILLED_BG = '#34495E';
-  var SLOT_FILLED_BORDER = '#4A6278';
-  var SLOT_HOVER_BORDER = '#9B59B6';
-  var SLOT_MAX_BORDER = '#2ECC71';
-  var TEXT_COLOR = '#ECF0F1';
-  var COST_COLOR = '#F1C40F';
-  var CANNOT_AFFORD_COLOR = '#E74C3C';
-  var MAX_LEVEL_COLOR = '#2ECC71';
-  var LOCKED_COLOR = '#7F8C8D';
+  // Blue theme colors
+  var BG_COLOR = '#2D3545';
+  var BG_COLOR_TOP = '#3D4560';
+  var BG_COLOR_BOTTOM = '#2D3545';
+  var BORDER_COLOR = '#4A5580';
+  var TITLE_COLOR = '#F5F0E1';
+  var SLOT_EMPTY_BG = '#1F2330';
+  var SLOT_EMPTY_BORDER = '#3A4555';
+  var SLOT_FILLED_BG = '#3D4560';
+  var SLOT_FILLED_BORDER = '#5A6D90';
+  var SLOT_HOVER_BORDER = '#9B7BAB';
+  var SLOT_MAX_BORDER = '#5EB8B8';
+  var TEXT_COLOR = '#E8E2D0';
+  var COST_COLOR = '#F0C040';
+  var CANNOT_AFFORD_COLOR = '#C85A5A';
+  var MAX_LEVEL_COLOR = '#5EB8B8';
+  var LOCKED_COLOR = '#6B7B8B';
 
   // Depth colors (matching TechCoreData)
   var DEPTH_COLORS = {
@@ -83,6 +85,7 @@
     _slotRects = [];
     _hoveredSlot = -1;
     _coreData = null;
+    _isEmbedded = false;
 
     // ----------------------------------------
     // Constructor
@@ -117,6 +120,14 @@
       this._width = width;
       this._height = height;
       this._calculateSlotRects();
+    }
+
+    /**
+     * Set embedded mode (skip background/border rendering)
+     * @param {boolean} embedded
+     */
+    setEmbedded(embedded) {
+      this._isEmbedded = embedded;
     }
 
     /**
@@ -170,34 +181,20 @@
     render(ctx) {
       if (!this._player) return;
 
-      // Background
-      ctx.fillStyle = BG_COLOR;
-      ctx.fillRect(this._x, this._y, this._width, this._height);
+      // Skip background/border when embedded
+      if (!this._isEmbedded) {
+        // Background with gradient
+        var gradient = ctx.createLinearGradient(this._x, this._y, this._x, this._y + this._height);
+        gradient.addColorStop(0, BG_COLOR_TOP);
+        gradient.addColorStop(1, BG_COLOR_BOTTOM);
+        ctx.fillStyle = gradient;
+        ctx.fillRect(this._x, this._y, this._width, this._height);
 
-      // Border
-      ctx.strokeStyle = BORDER_COLOR;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(this._x, this._y, this._width, this._height);
-
-      // Title with core name
-      ctx.font = 'bold 12px Arial';
-      ctx.fillStyle = TITLE_COLOR;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-
-      var titleText = i18n.t('tech.title');
-      if (this._coreData) {
-        ctx.fillStyle = this._coreData.color || TITLE_COLOR;
-        titleText = i18n.tcn(this._coreData.id, this._coreData.name).toUpperCase();
+        // Border
+        ctx.strokeStyle = BORDER_COLOR;
+        ctx.lineWidth = 2;
+        ctx.strokeRect(this._x, this._y, this._width, this._height);
       }
-      ctx.fillText(titleText, this._x + this._width / 2, this._y + TITLE_HEIGHT / 2);
-
-      // Separator line
-      ctx.strokeStyle = BORDER_COLOR;
-      ctx.beginPath();
-      ctx.moveTo(this._x + 8, this._y + TITLE_HEIGHT);
-      ctx.lineTo(this._x + this._width - 8, this._y + TITLE_HEIGHT);
-      ctx.stroke();
 
       // Get current gold
       var gold = this._player.getComponent(Gold);
@@ -228,7 +225,7 @@
 
       var totalWidthPerRow = SLOTS_PER_ROW * SLOT_SIZE + (SLOTS_PER_ROW - 1) * SLOT_GAP;
       var startX = this._x + (this._width - totalWidthPerRow) / 2;
-      var startY = this._y + TITLE_HEIGHT + 10;
+      var startY = this._y + 10;
 
       for (var i = 0; i < TOTAL_SLOTS; i++) {
         var col = i % SLOTS_PER_ROW;

@@ -17,13 +17,14 @@
   var BORDER_RADIUS = 5;
   var MAX_WIDTH = 200;
   var LINE_HEIGHT = 18;
-  var BG_COLOR = 'rgba(0, 0, 0, 0.9)';
-  var BORDER_COLOR = '#34495E';
-  var TITLE_COLOR = '#FFFFFF';
-  var DESC_COLOR = '#BDC3C7';
-  var COST_COLOR = '#F1C40F';
-  var CANNOT_AFFORD_COLOR = '#E74C3C';
-  var VALUE_COLOR = '#2ECC71';
+  // Blue theme colors
+  var BG_COLOR = 'rgba(31, 35, 55, 0.95)';
+  var BORDER_COLOR = '#4A5580';
+  var TITLE_COLOR = '#F5F0E1';
+  var DESC_COLOR = '#A8B4C8';
+  var COST_COLOR = '#F0C040';
+  var CANNOT_AFFORD_COLOR = '#C85A5A';
+  var VALUE_COLOR = '#5EB85E';
 
   // ============================================
   // Class Definition
@@ -125,6 +126,9 @@
 
       if (this._content.type === 'stat') {
         lines = 4; // Title + current + next + cost
+        if (this._content.description) {
+          lines += 2; // Add 2 lines for description
+        }
       } else if (this._content.type === 'weapon') {
         lines = 5; // Title + level + stats + cost
       } else if (this._content.type === 'weaponDetail') {
@@ -132,7 +136,16 @@
         if (this._content.traits && this._content.traits.length > 2) {
           lines += Math.min(this._content.traits.length - 2, 2); // Extra trait lines
         }
-        this._width = 220; // Wider for detailed stats
+        // Determine if we need a wider tooltip for right-side properties
+        var hasProperties = this._content.uniqueProperties && this._content.uniqueProperties.length > 0;
+        if (hasProperties) {
+          // Two-column layout: wider tooltip, properties on right
+          var propLines = Math.min(this._content.uniqueProperties.length, 5) + 1; // +1 for header
+          lines = Math.max(lines, propLines + 2); // Ensure enough height for properties
+          this._width = 380; // Wider for two-column layout
+        } else {
+          this._width = 240; // Standard width
+        }
         this._height = PADDING * 2 + lines * LINE_HEIGHT;
         return;
       } else if (this._content.type === 'newWeapon') {
@@ -168,6 +181,18 @@
       ctx.textBaseline = 'top';
       ctx.fillText(content.name, x, y);
       y += LINE_HEIGHT;
+
+      // Description (role explanation)
+      if (content.description) {
+        ctx.font = '11px Arial';
+        ctx.fillStyle = DESC_COLOR;
+        var descLines = this._wrapText(ctx, content.description, MAX_WIDTH - PADDING * 2);
+        for (var i = 0; i < Math.min(descLines.length, 2); i++) {
+          ctx.fillText(descLines[i], x, y);
+          y += LINE_HEIGHT - 2;
+        }
+        y += 2;
+      }
 
       // Current value
       ctx.font = '12px Arial';
@@ -232,6 +257,7 @@
 
     _renderWeaponDetailTooltip(ctx, x, y) {
       var content = this._content;
+      var startY = y; // Remember start Y for right column
 
       // Tier colors
       var tierColors = {
@@ -268,13 +294,16 @@
       // Damage and DPS
       ctx.fillStyle = '#E67E22'; // Orange for damage
       ctx.fillText(i18n.t('tooltip.damage') + ' ' + content.damage, x, y);
-      ctx.fillStyle = VALUE_COLOR;
-      ctx.fillText('  ' + i18n.t('tooltip.dps') + ' ' + content.dps.toFixed(1), x + 80, y);
+      if (content.dps !== undefined && content.dps !== null) {
+        ctx.fillStyle = VALUE_COLOR;
+        ctx.fillText('  ' + i18n.t('tooltip.dps') + ' ' + Number(content.dps).toFixed(1), x + 80, y);
+      }
       y += LINE_HEIGHT;
 
       // Cooldown
       ctx.fillStyle = '#1ABC9C'; // Teal for cooldown
-      ctx.fillText(i18n.t('tooltip.cooldown') + ' ' + content.cooldown.toFixed(2) + 's', x, y);
+      var cooldownValue = Number(content.cooldown) || 0;
+      ctx.fillText(i18n.t('tooltip.cooldown') + ' ' + cooldownValue.toFixed(2) + 's', x, y);
       y += LINE_HEIGHT;
 
       // Range (if applicable)
@@ -288,17 +317,50 @@
       if (content.traits && content.traits.length > 0) {
         ctx.fillStyle = '#3498DB'; // Blue for traits
         var traitsText = content.traits.slice(0, 4).join(', ');
-        if (traitsText.length > 30) {
-          traitsText = traitsText.substring(0, 27) + '...';
+        if (traitsText.length > 25) {
+          traitsText = traitsText.substring(0, 22) + '...';
         }
         ctx.fillText(traitsText, x, y);
         y += LINE_HEIGHT;
       }
 
-      // Total Damage Dealt
+      // Total Damage Dealt (left column)
       ctx.fillStyle = COST_COLOR;
       ctx.fillText(i18n.t('tooltip.totalDealt') + ' ' + this._formatNumber(content.totalDamageDealt), x, y);
       y += LINE_HEIGHT;
+
+      // Unique Properties - render on RIGHT side as vertical list
+      if (content.uniqueProperties && content.uniqueProperties.length > 0) {
+        var propX = x + 170; // Right column starts here
+        var propY = startY;
+
+        // Header
+        ctx.font = 'bold 12px Arial';
+        ctx.fillStyle = '#9B9BC0';
+        ctx.fillText(i18n.t('tooltip.properties') || 'Properties', propX, propY);
+        propY += LINE_HEIGHT;
+
+        // Property list
+        ctx.font = '11px Arial';
+        for (var j = 0; j < Math.min(content.uniqueProperties.length, 5); j++) {
+          var prop = content.uniqueProperties[j];
+          if (prop && prop.name) {
+            // Property name
+            ctx.fillStyle = '#B8B8D0';
+            ctx.fillText('\u2022 ' + prop.name, propX, propY);
+            propY += LINE_HEIGHT - 4;
+            // Property description (smaller, wrapped)
+            if (prop.description) {
+              ctx.fillStyle = '#8888A8';
+              ctx.font = '10px Arial';
+              var descLines = this._wrapText(ctx, prop.description, 130);
+              ctx.fillText(descLines[0] || '', propX + 8, propY);
+              propY += LINE_HEIGHT - 2;
+              ctx.font = '11px Arial';
+            }
+          }
+        }
+      }
 
       return y;
     }
@@ -345,16 +407,17 @@
         // Damage and DPS
         ctx.fillStyle = '#E67E22'; // Orange for damage
         ctx.fillText(i18n.t('tooltip.damage') + ' ' + content.damage, x, y);
-        if (content.dps !== undefined) {
+        if (content.dps !== undefined && content.dps !== null) {
           ctx.fillStyle = VALUE_COLOR;
-          ctx.fillText('  ' + i18n.t('tooltip.dps') + ' ' + content.dps.toFixed(1), x + 75, y);
+          ctx.fillText('  ' + i18n.t('tooltip.dps') + ' ' + Number(content.dps).toFixed(1), x + 75, y);
         }
         y += LINE_HEIGHT;
 
         // Cooldown
         if (content.cooldown) {
           ctx.fillStyle = '#1ABC9C'; // Teal for cooldown
-          ctx.fillText(i18n.t('tooltip.cooldown') + ' ' + content.cooldown.toFixed(2) + 's', x, y);
+          var cooldownVal = Number(content.cooldown) || 0;
+          ctx.fillText(i18n.t('tooltip.cooldown') + ' ' + cooldownVal.toFixed(2) + 's', x, y);
           y += LINE_HEIGHT;
         }
       }

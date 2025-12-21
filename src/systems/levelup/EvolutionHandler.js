@@ -64,13 +64,12 @@
         return;
       }
 
-      // Remove source weapons (by ID)
-      weaponSlot.removeWeapon(mainWeapon.id);
+      // Remove material weapon first
       weaponSlot.removeWeapon(materialWeapon.id);
 
-      // Create and add evolved weapon
+      // Create evolved weapon and replace main weapon (preserves slot index)
       var evolvedWeapon = new Weapon(option.evolutionResult);
-      weaponSlot.addWeapon(evolvedWeapon);
+      weaponSlot.replaceWeapon(mainWeapon.id, evolvedWeapon);
 
       // Reset evolution state
       stateRef.evolutionState = EvolutionState.NORMAL;
@@ -106,13 +105,9 @@
         return;
       }
 
-      // Add main weapon to blacklist
-      if (blacklistManager) {
-        blacklistManager.addToBlacklist(mainWeapon.id);
-      }
+      // Note: Blacklist removed - weapons can reappear after evolution
 
-      // Remove source weapons (by ID)
-      weaponSlot.removeWeapon(mainWeapon.id);
+      // Remove material weapon first (main weapon will be replaced to preserve slot index)
       weaponSlot.removeWeapon(materialWeapon.id);
 
       // Determine the evolved weapon
@@ -150,9 +145,9 @@
         return;
       }
 
-      // Create and add evolved weapon
+      // Create evolved weapon and replace main weapon (preserves slot index)
       var evolvedWeapon = new Weapon(evolvedWeaponData);
-      weaponSlot.addWeapon(evolvedWeapon);
+      weaponSlot.replaceWeapon(mainWeapon.id, evolvedWeapon);
 
       // Reset evolution state
       stateRef.evolutionState = EvolutionState.NORMAL;

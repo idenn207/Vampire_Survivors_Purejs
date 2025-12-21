@@ -29,12 +29,12 @@
     _player = null;
     _isActive = false;
 
-    // Debounce tab key
-    _tabKeyWasPressed = false;
-
     // Reference to other systems to check their state
     _levelUpSystem = null;
     _gameOverSystem = null;
+
+    // Flag to skip Tab key on the frame we were opened from another screen
+    _skipNextTabKey = false;
 
     // ----------------------------------------
     // Constructor
@@ -128,18 +128,20 @@
      * @param {Object} input
      */
     _handleTabKey(input) {
-      var isTabPressed = input.isKeyDown('Tab');
+      // Use isKeyPressed for single-frame detection (not isKeyDown which checks held state)
+      if (input.isKeyPressed('Tab')) {
+        // Skip processing if we were just opened from another screen
+        if (this._skipNextTabKey) {
+          this._skipNextTabKey = false;
+          return;
+        }
 
-      // Detect key press (not held)
-      if (isTabPressed && !this._tabKeyWasPressed) {
         if (this._isActive) {
           this._closeScreen();
         } else if (!this._isAnotherScreenActive()) {
           this._openScreen();
         }
       }
-
-      this._tabKeyWasPressed = isTabPressed;
     }
 
     /**
@@ -167,9 +169,15 @@
 
     /**
      * Open the tab screen
+     * @param {boolean} skipTabKey - If true, skip Tab key processing on this frame
      */
-    _openScreen() {
+    _openScreen(skipTabKey) {
       if (!this._player) return;
+
+      // Set flag to skip Tab key on same frame if opened from another screen
+      if (skipTabKey) {
+        this._skipNextTabKey = true;
+      }
 
       this._game.pause();
       this._isActive = true;
@@ -189,7 +197,14 @@
     _closeScreen() {
       this._screen.hide();
       this._isActive = false;
-      this._game.resume();
+
+      // Check if level-up screen was suspended - if so, resume it
+      if (this._levelUpSystem && this._levelUpSystem.isSuspended) {
+        this._levelUpSystem.resumeFromSuspend();
+      } else if (!this._isAnotherScreenActive()) {
+        // Only resume game if no other screen is active
+        this._game.resume();
+      }
 
       events.emit('tabscreen:closed', {});
     }

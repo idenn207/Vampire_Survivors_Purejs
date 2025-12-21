@@ -21,17 +21,19 @@
   var BUTTON_SIZE = 28;
   var BUTTON_MARGIN = 8;
 
-  // Colors
-  var BG_COLOR = '#2C3E50';
-  var BORDER_COLOR = '#34495E';
-  var TITLE_COLOR = '#FFFFFF';
-  var TEXT_COLOR = '#ECF0F1';
-  var VALUE_COLOR = '#2ECC71';
-  var BUTTON_COLOR = '#3498DB';
-  var BUTTON_HOVER_COLOR = '#2980B9';
-  var BUTTON_DISABLED_COLOR = '#7F8C8D';
-  var COST_COLOR = '#F1C40F';
-  var CANNOT_AFFORD_COLOR = '#E74C3C';
+  // Blue theme colors
+  var BG_COLOR = '#2D3545';
+  var BG_COLOR_TOP = '#3D4560';
+  var BG_COLOR_BOTTOM = '#2D3545';
+  var BORDER_COLOR = '#4A5580';
+  var TITLE_COLOR = '#F5F0E1';
+  var TEXT_COLOR = '#E8E2D0';
+  var VALUE_COLOR = '#5EB8B8';
+  var BUTTON_COLOR = '#C9A227';
+  var BUTTON_HOVER_COLOR = '#D4B84B';
+  var BUTTON_DISABLED_COLOR = '#5A5B7A';
+  var COST_COLOR = '#F0C040';
+  var CANNOT_AFFORD_COLOR = '#C85A5A';
 
   // ============================================
   // Class Definition
@@ -125,8 +127,11 @@
      * @param {CanvasRenderingContext2D} ctx
      */
     render(ctx) {
-      // Background
-      ctx.fillStyle = BG_COLOR;
+      // Background with gradient
+      var gradient = ctx.createLinearGradient(this._x, this._y, this._x, this._y + this._height);
+      gradient.addColorStop(0, BG_COLOR_TOP);
+      gradient.addColorStop(1, BG_COLOR_BOTTOM);
+      ctx.fillStyle = gradient;
       ctx.fillRect(this._x, this._y, this._width, this._height);
 
       // Border
@@ -333,6 +338,7 @@
       return {
         type: 'stat',
         name: i18n.tsn(statId, config.name),
+        description: config.tooltip || '',
         currentPercent: Math.round(currentBonus * 100),
         nextPercent: Math.round(nextBonus * 100),
         cost: cost,

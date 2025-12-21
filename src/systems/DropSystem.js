@@ -106,8 +106,8 @@
         enemyType = 'tank';
       }
 
-      // Calculate wave-based XP bonus (+10% per wave)
-      var xpMultiplier = 1 + (this._currentWave - 1) * 0.1;
+      // Calculate wave-based XP bonus (+20% per wave)
+      var xpMultiplier = 1 + (this._currentWave - 1) * 0.2;
 
       // Roll drops based on enemy type with wave multiplier
       var drops = DropTable.rollDrops(enemyType, { bonusXpMultiplier: xpMultiplier });

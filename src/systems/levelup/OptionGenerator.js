@@ -17,27 +17,40 @@
   // ============================================
   var OptionGenerator = {
     /**
+     * Get maximum tier available based on current wave
+     * @param {number} wave - Current wave number
+     * @returns {number} Maximum tier (1-2)
+     */
+    _getMaxTierForWave: function (wave) {
+      if (wave >= 6) return 2; // Tier 2 unlocks at wave 6
+      return 1; // Only Tier 1 before wave 6
+    },
+
+    /**
      * Generate weapon options based on current state
      * @param {Entity} player - Player entity
      * @param {string} evolutionState - Current evolution state
      * @param {Weapon} selectedMainWeapon - Selected main weapon (for material selection)
      * @param {BlacklistManager} blacklistManager - Blacklist manager
+     * @param {number} [currentWave=1] - Current wave number
      * @returns {Array<Object>} Array of options
      */
-    generateOptions: function (player, evolutionState, selectedMainWeapon, blacklistManager) {
+    generateOptions: function (player, evolutionState, selectedMainWeapon, blacklistManager, currentWave) {
       if (evolutionState === EvolutionState.SELECTING_MATERIAL) {
         return this.generateMaterialOptions(player, selectedMainWeapon);
       }
-      return this.generateNormalOptions(player, blacklistManager);
+      return this.generateNormalOptions(player, blacklistManager, currentWave);
     },
 
     /**
      * Generate normal weapon options (new weapons, upgrades, evolution main weapons)
      * @param {Entity} player - Player entity
      * @param {BlacklistManager} blacklistManager - Blacklist manager
+     * @param {number} [currentWave=1] - Current wave number
      * @returns {Array<Object>}
      */
-    generateNormalOptions: function (player, blacklistManager) {
+    generateNormalOptions: function (player, blacklistManager, currentWave) {
+      currentWave = currentWave || 1;
       var options = [];
       var pool = [];
       var OPTIONS_COUNT = LevelUpConstants.OPTIONS_COUNT;
@@ -90,11 +103,15 @@
           allWeaponIds = blacklistManager.filterBlacklisted(allWeaponIds);
         }
 
+        // Get max tier for current wave
+        var maxTier = this._getMaxTierForWave(currentWave);
+
         for (var i = 0; i < allWeaponIds.length; i++) {
           var weaponId = allWeaponIds[i];
           if (equippedIds.indexOf(weaponId) === -1) {
             var weaponData = Data.getWeaponData(weaponId);
-            if (weaponData) {
+            // Filter by tier based on wave progression
+            if (weaponData && (weaponData.tier || 1) <= maxTier) {
               pool.push({
                 type: 'new',
                 weaponId: weaponId,

@@ -739,5 +739,44 @@
     "thor_judgment": "Enemies near player periodically take lightning damage",
     "void_god": "Permanent void aura that damages and weakens enemies",
     "world_tree": "Permanent aura that poisons enemies and heals player"
+  },
+  "character": {
+    "select": "SELECT YOUR CHARACTER",
+    "selectHint": "Choose a character to play",
+    "stats": "BASE STATS",
+    "passive": "PASSIVE",
+    "attack": "Attack",
+    "speed": "Speed",
+    "hp": "HP",
+    "critChance": "Crit%",
+    "luck": "Luck"
+  },
+  "characters": {
+    "knight": {
+      "name": "Knight",
+      "description": "Balanced fighter with strong defense"
+    },
+    "rogue": {
+      "name": "Rogue",
+      "description": "Fast and lucky with critical strikes"
+    },
+    "mage": {
+      "name": "Mage",
+      "description": "Powerful but fragile spell caster"
+    }
+  },
+  "passives": {
+    "stalwart": {
+      "name": "Stalwart",
+      "description": "Take 15% less damage from all sources"
+    },
+    "backstab": {
+      "name": "Backstab",
+      "description": "Critical hits deal 50% extra damage"
+    },
+    "arcane_mastery": {
+      "name": "Arcane Mastery",
+      "description": "Weapon cooldowns reduced by 10%"
+    }
   }
 }

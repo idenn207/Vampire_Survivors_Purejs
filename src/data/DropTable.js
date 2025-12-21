@@ -22,7 +22,7 @@
       goldMultiplier: 5.0,
     },
     boss: {
-      xpMultiplier: 50.0,
+      xpMultiplier: 15.0,
       goldMultiplier: 20.0,
     },
     swarm: {

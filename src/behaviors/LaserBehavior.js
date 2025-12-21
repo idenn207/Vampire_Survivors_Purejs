@@ -13,6 +13,7 @@
   var Transform = window.VampireSurvivors.Components.Transform;
   var Health = window.VampireSurvivors.Components.Health;
   var events = window.VampireSurvivors.Core.events;
+  var EffectHandlers = window.VampireSurvivors.Systems.EffectHandlers;
 
   // ============================================
   // Class Definition
@@ -86,6 +87,12 @@
             type: 'laser',
           });
         }
+      }
+
+      // Process healOnHit for laser weapons (heal once per laser fire if enemies hit)
+      var healOnHit = weapon.getStat('healOnHit', 0);
+      if (healOnHit > 0 && hitEnemies.length > 0 && EffectHandlers) {
+        EffectHandlers.processHealOnHit(player, healOnHit);
       }
 
       // Create laser visual data
