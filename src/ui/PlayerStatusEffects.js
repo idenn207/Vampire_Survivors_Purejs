@@ -9,8 +9,6 @@
   // Imports
   // ============================================
   var UIScale = window.VampireSurvivors.Core.UIScale;
-  var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
-  var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
   var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
   var Data = window.VampireSurvivors.Data;
 
@@ -121,7 +119,7 @@
 
       var effects = [];
 
-      // Check BuffDebuff component first (new unified system)
+      // Get effects from BuffDebuff component
       var buffDebuff = this._player.getComponent(BuffDebuff);
       if (buffDebuff) {
         var effectIds = buffDebuff.getActiveEffectIds();
@@ -142,39 +140,6 @@
               color: color,
             });
           }
-        }
-      } else {
-        // Fallback to legacy StatusEffect component
-        var statusEffect = this._player.getComponent(StatusEffect);
-        if (statusEffect) {
-          var effectTypes = statusEffect.getActiveEffectTypes();
-          for (var i = 0; i < effectTypes.length; i++) {
-            var effectType = effectTypes[i];
-            var effectData = statusEffect.getEffect(effectType);
-            if (effectData) {
-              effects.push({
-                type: effectType,
-                isDebuff: true,
-                remainingDuration: effectData.remainingDuration,
-                duration: effectData.duration,
-                stacks: effectData.stacks || 1,
-                color: EFFECT_COLORS[effectType] || '#FFFFFF',
-              });
-            }
-          }
-        }
-
-        // Get buffs from ActiveBuff component (legacy)
-        var activeBuff = this._player.getComponent(ActiveBuff);
-        if (activeBuff && activeBuff.hasBuff) {
-          effects.push({
-            type: activeBuff.activeBuff,
-            isDebuff: false,
-            remainingDuration: activeBuff.duration,
-            duration: activeBuff.maxDuration,
-            stacks: 1,
-            color: EFFECT_COLORS[activeBuff.activeBuff] || '#FFFFFF',
-          });
         }
       }
 

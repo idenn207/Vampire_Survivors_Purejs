@@ -11,7 +11,6 @@
   var System = Systems.System;
   var Transform = window.VampireSurvivors.Components.Transform;
   var Velocity = window.VampireSurvivors.Components.Velocity;
-  var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
   var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
 
   // ============================================
@@ -44,16 +43,12 @@
 
         var transform = entity.getComponent(Transform);
         var velocity = entity.getComponent(Velocity);
-        var statusEffect = entity.getComponent(StatusEffect);
         var buffDebuff = entity.getComponent(BuffDebuff);
 
-        // Get speed modifier from status effects (freeze, slow, stun)
-        // Check both StatusEffect (legacy) and BuffDebuff (new unified system)
+        // Get speed modifier from BuffDebuff component (freeze, slow, stun)
         var speedModifier = 1;
         if (buffDebuff) {
           speedModifier = buffDebuff.getSpeedModifier();
-        } else if (statusEffect) {
-          speedModifier = statusEffect.getSpeedModifier();
         }
 
         // Apply max speed clamping if set

@@ -10,7 +10,7 @@
   // ============================================
   var Health = window.VampireSurvivors.Components.Health;
   var Transform = window.VampireSurvivors.Components.Transform;
-  var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
+  var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
   var ProjectileComponent = window.VampireSurvivors.Components.Projectile;
   var events = window.VampireSurvivors.Core.events;
   var areaEffectPool = window.VampireSurvivors.Pool.areaEffectPool;
@@ -82,8 +82,8 @@
 
       // Process shatter (for frozen enemies)
       if (onKill.shatter) {
-        var statusEffect = killedEnemy.getComponent(StatusEffect);
-        if (statusEffect && statusEffect.isFrozen()) {
+        var buffDebuff = killedEnemy.getComponent(BuffDebuff);
+        if (buffDebuff && buffDebuff.isFrozen()) {
           this.createExplosion(
             enemyTransform.x,
             enemyTransform.y,

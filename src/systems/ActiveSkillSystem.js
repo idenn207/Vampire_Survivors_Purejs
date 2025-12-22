@@ -17,7 +17,7 @@
   var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
   var PlayerData = window.VampireSurvivors.Components.PlayerData;
   var ActiveSkillData = window.VampireSurvivors.Data.ActiveSkillData;
-  var StatusEffectDefaults = window.VampireSurvivors.Data.StatusEffectDefaults;
+  var Managers = window.VampireSurvivors.Managers;
 
   // ============================================
   // Constants
@@ -304,21 +304,12 @@
         // Apply damage
         health.takeDamage(auraDamage);
 
-        // Apply all status effects
-        var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
-        if (StatusEffect) {
-          var statusComp = enemy.getComponent(StatusEffect);
-          if (!statusComp) {
-            statusComp = new StatusEffect();
-            enemy.addComponent(statusComp);
-          }
-
+        // Apply all status effects via BuffDebuffManager
+        var buffDebuffManager = Managers.buffDebuffManager;
+        if (buffDebuffManager) {
           for (var j = 0; j < statusEffects.length; j++) {
             var effectType = statusEffects[j];
-            var defaults = StatusEffectDefaults[effectType];
-            if (defaults) {
-              statusComp.applyEffect(effectType, defaults.duration, this._player);
-            }
+            buffDebuffManager.applyEffectToEntity(enemy, effectType, { level: 1 });
           }
         }
 

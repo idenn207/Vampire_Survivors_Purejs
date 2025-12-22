@@ -9,8 +9,6 @@
   // Imports
   // ============================================
   var Health = window.VampireSurvivors.Components.Health;
-  var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
-  var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
   var Transform = window.VampireSurvivors.Components.Transform;
   var Velocity = window.VampireSurvivors.Components.Velocity;
   var Managers = window.VampireSurvivors.Managers;
@@ -46,30 +44,15 @@
         var chance = effectConfig.chance !== undefined ? effectConfig.chance : 1;
         if (Math.random() > chance) continue;
 
-        // Use BuffDebuffManager if available
-        if (buffDebuffManager) {
-          var options = {
-            duration: effectConfig.duration,
-            stacks: effectConfig.stacks || 1,
-            source: { position: sourcePosition },
-            level: effectConfig.level || 1,
-          };
-          buffDebuffManager.applyEffectToEntity(enemy, effectConfig.type, options);
-          if (stats) stats.statusEffectsApplied++;
-        } else {
-          // Fallback to legacy StatusEffect component
-          var statusEffect = enemy.getComponent(StatusEffect);
-          if (!statusEffect) {
-            statusEffect = new StatusEffect();
-            enemy.addComponent(statusEffect);
-          }
-
-          var config = Object.assign({}, effectConfig);
-          config.sourcePosition = sourcePosition;
-
-          statusEffect.applyEffect(effectConfig.type, config);
-          if (stats) stats.statusEffectsApplied++;
-        }
+        // Apply effect via BuffDebuffManager
+        var options = {
+          duration: effectConfig.duration,
+          stacks: effectConfig.stacks || 1,
+          source: { position: sourcePosition },
+          level: effectConfig.level || 1,
+        };
+        buffDebuffManager.applyEffectToEntity(enemy, effectConfig.type, options);
+        if (stats) stats.statusEffectsApplied++;
       }
     },
 
