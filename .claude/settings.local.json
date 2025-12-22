@@ -33,7 +33,9 @@
       "Bash(for f in src/data/weapons/epic/*.js)",
       "Bash(for f in src/data/weapons/evolved/uncommon/*.js)",
       "Bash(node -e:*)",
-      "Bash(paste:*)"
+      "Bash(paste:*)",
+      "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/buffdebuff/effects/debuffs\"/*.js)",
+      "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/buffdebuff/effects/buffs\"/*.js)"
     ]
   }
 }

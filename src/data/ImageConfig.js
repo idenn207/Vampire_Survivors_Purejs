@@ -221,14 +221,6 @@
     summon_golem: { path: 'summons/golem.png' },
     summon_fairy: { path: 'summons/fairy.png' },
 
-    // ------------- TEST IMAGES (Sprite System Verification) -------------
-    test_projectile: { path: 'test/test_projectile.png' },
-    test_area: { path: 'test/test_area.png' },
-    test_melee: { path: 'test/test_melee.png' },
-    test_laser: { path: 'test/test_laser.png' },
-    test_mine: { path: 'test/test_mine.png' },
-    test_particle: { path: 'test/test_particle.png' },
-
     // ============================================
     // WEAPON ATTACK TYPE IMAGES
     // ============================================
@@ -517,7 +509,7 @@
         assets.push({
           id: id,
           path: IMAGES[id].path,
-          type: 'single'
+          type: 'single',
         });
       }
     }
@@ -530,7 +522,7 @@
           id: sheetId,
           path: sheet.path,
           type: 'spritesheet',
-          frames: sheet.frames
+          frames: sheet.frames,
         });
       }
     }
@@ -573,6 +565,6 @@
     getAllAssets: getAllAssets,
     getImageConfig: getImageConfig,
     getSpriteSheetConfig: getSpriteSheetConfig,
-    getBasePath: getBasePath
+    getBasePath: getBasePath,
   };
 })(window.VampireSurvivors.Data);
