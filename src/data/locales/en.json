@@ -31,6 +31,11 @@
     "hp": "HP",
     "sg": "SG"
   },
+  "skills": {
+    "dash": "Dash",
+    "active": "Skill",
+    "ready": "Ready"
+  },
   "core": {
     "title": "SELECT YOUR CORE",
     "subtitle": "Click a core to begin",

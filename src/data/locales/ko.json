@@ -31,6 +31,11 @@
     "hp": "HP",
     "sg": "SG"
   },
+  "skills": {
+    "dash": "대시",
+    "active": "스킬",
+    "ready": "준비"
+  },
   "core": {
     "title": "코어를 선택하세요",
     "subtitle": "코어를 클릭하여 시작",

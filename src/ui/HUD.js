@@ -15,6 +15,7 @@
   var DamageNumbers = UI.DamageNumbers;
   var WaveAnnouncement = UI.WaveAnnouncement;
   var BossHealthBar = UI.BossHealthBar;
+  var SkillCooldowns = UI.SkillCooldowns;
   var events = window.VampireSurvivors.Core.events;
   var UIScale = window.VampireSurvivors.Core.UIScale;
   var i18n = window.VampireSurvivors.Core.i18n;
@@ -59,6 +60,7 @@
     _damageNumbers = null;
     _waveAnnouncement = null;
     _bossHealthBar = null;
+    _skillCooldowns = null;
 
     // Event handlers
     _boundOnWaveAnnouncing = null;
@@ -75,6 +77,7 @@
       this._damageNumbers = new DamageNumbers();
       this._waveAnnouncement = new WaveAnnouncement();
       this._bossHealthBar = new BossHealthBar();
+      this._skillCooldowns = new SkillCooldowns();
 
       // Bind event handlers
       this._boundOnWaveAnnouncing = this._onWaveAnnouncing.bind(this);
@@ -100,6 +103,7 @@
       this._playerOverhead.setCamera(camera);
       this._entityHealthBars.setCamera(camera);
       this._damageNumbers.setCamera(camera);
+      this._skillCooldowns.setPlayer(player);
     }
 
     setPlayer(player) {
@@ -107,6 +111,7 @@
       this._statusPanel.setPlayer(player);
       this._weaponSlots.setPlayer(player);
       this._playerOverhead.setPlayer(player);
+      this._skillCooldowns.setPlayer(player);
     }
 
     setGame(game) {
@@ -172,6 +177,7 @@
       // Render sub-components (screen space)
       this._statusPanel.render(ctx);
       this._weaponSlots.render(ctx);
+      this._skillCooldowns.render(ctx, canvasWidth, canvasHeight);
 
       // Render wave announcement on top
       this._waveAnnouncement.render(ctx, canvasWidth, canvasHeight);
@@ -319,6 +325,10 @@
       if (this._bossHealthBar) {
         this._bossHealthBar.dispose();
         this._bossHealthBar = null;
+      }
+      if (this._skillCooldowns) {
+        this._skillCooldowns.dispose();
+        this._skillCooldowns = null;
       }
 
       this._player = null;
