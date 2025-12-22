@@ -38,7 +38,23 @@
       if (!this._player || !this._player.isActive) return;
       if (!this._game || !this._game.input) return;
 
-      this._player.update(deltaTime, this._game.input);
+      var input = this._game.input;
+
+      // Update dash timer (always)
+      this._player.updateDash(deltaTime);
+
+      // Check for dash input (Shift key)
+      if (input.isKeyPressed('ShiftLeft') || input.isKeyPressed('ShiftRight')) {
+        var direction = input.getMovementDirection();
+        // If no movement, use last movement direction
+        if (direction.x === 0 && direction.y === 0) {
+          direction = input.lastMovementDirection;
+        }
+        this._player.startDash(direction);
+      }
+
+      // Update player (handles velocity)
+      this._player.update(deltaTime, input);
 
       // Update magnet timer
       this._player.updateMagnet(deltaTime);

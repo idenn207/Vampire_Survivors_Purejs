@@ -417,6 +417,14 @@
               maxHealth: playerHealth.maxHealth,
             });
 
+            // Check for player death
+            if (playerHealth.isDead) {
+              events.emit('player:died', {
+                player: this._player,
+                killer: null, // Boss projectile
+              });
+            }
+
             // Remove projectile
             this._bossProjectiles.splice(i, 1);
           }

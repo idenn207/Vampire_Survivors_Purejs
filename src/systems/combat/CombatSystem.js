@@ -43,6 +43,9 @@
     // Per-enemy collision cooldown tracking
     _enemyCollisionCooldowns = new Map();
 
+    // Dash hit tracking (enemies hit during current dash)
+    _dashHitEnemies = null;
+
     // Enemy explosion passive
     _enemyExplosionEnabled = false;
     _enemyExplosionDamage = 30;
@@ -105,6 +108,11 @@
 
       // Update per-enemy collision cooldowns
       this._updateCollisionCooldowns(deltaTime);
+
+      // Clear dash hit tracking when player stops dashing
+      if (this._player && !this._player.isDashing && this._dashHitEnemies && this._dashHitEnemies.size > 0) {
+        this._dashHitEnemies.clear();
+      }
 
       // Process collisions
       this._processCollisions();
@@ -307,6 +315,42 @@
     _handlePlayerEnemyCollision(player, enemy) {
       var playerHealth = player.getComponent(Health);
       var enemyHealth = enemy.getComponent(Health);
+
+      // If player is dashing, deal damage to enemy instead of taking damage
+      if (player.isDashing && enemyHealth && !enemyHealth.isDead) {
+        // Initialize dash hit tracking if needed
+        if (!this._dashHitEnemies) this._dashHitEnemies = new Set();
+
+        // Check if this enemy was already hit during this dash
+        if (this._dashHitEnemies.has(enemy.id)) return;
+
+        var dashDamage = player.contactDamage * 2; // 2x damage during dash
+        var wasAlive = !enemyHealth.isDead;
+        enemyHealth.takeDamage(dashDamage);
+        this._dashHitEnemies.add(enemy.id);
+        this._damageDealt += dashDamage;
+
+        // Emit dash hit event
+        events.emit('player:dashHit', {
+          player: player,
+          enemy: enemy,
+          damage: dashDamage,
+        });
+
+        // Check for enemy death
+        if (wasAlive && enemyHealth.isDead) {
+          var enemyTransform = enemy.getComponent(Transform);
+          events.emit('entity:died', {
+            entity: enemy,
+            killer: player,
+            position: enemyTransform
+              ? { x: enemyTransform.centerX, y: enemyTransform.centerY }
+              : null,
+          });
+        }
+
+        return; // Don't take damage from enemy while dashing (handled by invincibility)
+      }
 
       // Check if this enemy is on cooldown
       if (this._enemyCollisionCooldowns.has(enemy.id)) {

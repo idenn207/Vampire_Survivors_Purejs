@@ -186,6 +186,14 @@
               var playerHealth = this._player.getComponent(Health);
               if (playerHealth) {
                 playerHealth.takeDamage(projectile.damage);
+
+                // Check for player death
+                if (playerHealth.isDead && this._events) {
+                  this._events.emit('player:died', {
+                    player: this._player,
+                    killer: projectile.sourceEnemy,
+                  });
+                }
               }
 
               // Emit hit event

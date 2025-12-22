@@ -47,6 +47,16 @@
     _magnetTimer = 0;
     _magnetMaxSpeed = 600;
 
+    // Dash state
+    _isDashing = false;
+    _dashTimer = 0;
+    _dashDuration = 0.2; // 0.2 seconds dash duration
+    _dashSpeed = 800; // 4x normal speed during dash
+    _dashDirection = { x: 0, y: 0 };
+    _dashCooldown = 0;
+    _dashCooldownMax = 5.0; // 5 second cooldown
+    _dashInvincibilityAfter = 0.5; // 0.5 seconds invincibility after dash
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -80,11 +90,16 @@
     // Public Methods
     // ----------------------------------------
     update(deltaTime, input) {
-      // Get input direction
-      var direction = input.getMovementDirection();
-
-      // Set velocity based on input
       var velocity = this.getComponent(Velocity);
+
+      // If dashing, override velocity with dash velocity
+      if (this._isDashing) {
+        this.applyDashVelocity(velocity);
+        return;
+      }
+
+      // Normal movement
+      var direction = input.getMovementDirection();
       velocity.vx = direction.x * this._speed;
       velocity.vy = direction.y * this._speed;
     }
@@ -112,6 +127,59 @@
           this._magnetTimer = 0;
         }
       }
+    }
+
+    /**
+     * Start a dash in specified direction
+     * @param {object} direction - Direction to dash {x, y}
+     * @returns {boolean} - True if dash started
+     */
+    startDash(direction) {
+      if (this._dashCooldown > 0 || this._isDashing) return false;
+      if (direction.x === 0 && direction.y === 0) return false;
+
+      this._isDashing = true;
+      this._dashTimer = this._dashDuration;
+      this._dashDirection = { x: direction.x, y: direction.y };
+      this._dashCooldown = this._dashCooldownMax;
+
+      // Set invincibility for dash duration + after-dash invincibility
+      var health = this.getComponent(Health);
+      if (health) {
+        health.setInvincible(this._dashDuration + this._dashInvincibilityAfter);
+      }
+
+      return true;
+    }
+
+    /**
+     * Update dash state (call each frame)
+     * @param {number} deltaTime
+     */
+    updateDash(deltaTime) {
+      // Update cooldown
+      if (this._dashCooldown > 0) {
+        this._dashCooldown -= deltaTime;
+      }
+
+      // Update dash
+      if (this._isDashing) {
+        this._dashTimer -= deltaTime;
+        if (this._dashTimer <= 0) {
+          this._isDashing = false;
+          this._dashTimer = 0;
+        }
+      }
+    }
+
+    /**
+     * Apply dash velocity (called during update if dashing)
+     * @param {Velocity} velocity
+     */
+    applyDashVelocity(velocity) {
+      if (!this._isDashing) return;
+      velocity.vx = this._dashDirection.x * this._dashSpeed;
+      velocity.vy = this._dashDirection.y * this._dashSpeed;
     }
 
     // ----------------------------------------
@@ -190,6 +258,23 @@
 
     get magnetMaxSpeed() {
       return this._magnetMaxSpeed;
+    }
+
+    get isDashing() {
+      return this._isDashing;
+    }
+
+    get dashCooldown() {
+      return this._dashCooldown;
+    }
+
+    get dashCooldownMax() {
+      return this._dashCooldownMax;
+    }
+
+    get dashCooldownProgress() {
+      if (this._dashCooldownMax <= 0) return 1;
+      return 1 - this._dashCooldown / this._dashCooldownMax;
     }
 
     // ----------------------------------------

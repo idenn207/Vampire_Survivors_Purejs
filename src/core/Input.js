@@ -148,6 +148,11 @@
         e.preventDefault();
       }
 
+      // Prevent browser default for Shift key (used for dash)
+      if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+        e.preventDefault();
+      }
+
       if (!this._keys.get(e.code)) {
         this._keysPressed.add(e.code);
       }
