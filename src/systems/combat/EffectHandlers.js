@@ -10,8 +10,10 @@
   // ============================================
   var Health = window.VampireSurvivors.Components.Health;
   var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
+  var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
   var Transform = window.VampireSurvivors.Components.Transform;
   var Velocity = window.VampireSurvivors.Components.Velocity;
+  var Managers = window.VampireSurvivors.Managers;
   var events = window.VampireSurvivors.Core.events;
 
   // ============================================
@@ -28,18 +30,14 @@
     applyStatusEffects: function (enemy, statusEffects, hitbox, stats) {
       if (!statusEffects || statusEffects.length === 0) return;
 
-      // Get or add StatusEffect component
-      var statusEffect = enemy.getComponent(StatusEffect);
-      if (!statusEffect) {
-        statusEffect = new StatusEffect();
-        enemy.addComponent(statusEffect);
-      }
-
       // Get hitbox position for pull source
       var hitboxTransform = hitbox.getComponent(Transform);
       var sourcePosition = hitboxTransform
         ? { x: hitboxTransform.x, y: hitboxTransform.y }
         : null;
+
+      // Check if BuffDebuffManager is available (new unified system)
+      var buffDebuffManager = Managers.buffDebuffManager;
 
       for (var i = 0; i < statusEffects.length; i++) {
         var effectConfig = statusEffects[i];
@@ -48,12 +46,30 @@
         var chance = effectConfig.chance !== undefined ? effectConfig.chance : 1;
         if (Math.random() > chance) continue;
 
-        // Apply the effect
-        var config = Object.assign({}, effectConfig);
-        config.sourcePosition = sourcePosition;
+        // Use BuffDebuffManager if available
+        if (buffDebuffManager) {
+          var options = {
+            duration: effectConfig.duration,
+            stacks: effectConfig.stacks || 1,
+            source: { position: sourcePosition },
+            level: effectConfig.level || 1,
+          };
+          buffDebuffManager.applyEffectToEntity(enemy, effectConfig.type, options);
+          if (stats) stats.statusEffectsApplied++;
+        } else {
+          // Fallback to legacy StatusEffect component
+          var statusEffect = enemy.getComponent(StatusEffect);
+          if (!statusEffect) {
+            statusEffect = new StatusEffect();
+            enemy.addComponent(statusEffect);
+          }
 
-        statusEffect.applyEffect(effectConfig.type, config);
-        if (stats) stats.statusEffectsApplied++;
+          var config = Object.assign({}, effectConfig);
+          config.sourcePosition = sourcePosition;
+
+          statusEffect.applyEffect(effectConfig.type, config);
+          if (stats) stats.statusEffectsApplied++;
+        }
       }
     },
 

@@ -269,6 +269,29 @@
   <script src="src/data/TechEffectData.js"></script>
   <script src="src/data/StatusEffectConfig.js"></script>
 
+  <!-- Phase 5.76: Buff/Debuff Data -->
+  <script src="src/data/buffdebuff/BuffDebuffConstants.js"></script>
+  <!-- Debuff data files -->
+  <script src="src/data/buffdebuff/effects/debuffs/burn.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/poison.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/bleed.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/freeze.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/slow.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/stun.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/weakness.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/mark.js"></script>
+  <script src="src/data/buffdebuff/effects/debuffs/pull.js"></script>
+  <!-- Buff data files -->
+  <script src="src/data/buffdebuff/effects/buffs/attack_boost.js"></script>
+  <script src="src/data/buffdebuff/effects/buffs/speed_boost.js"></script>
+  <script src="src/data/buffdebuff/effects/buffs/defense_boost.js"></script>
+  <script src="src/data/buffdebuff/effects/buffs/regen.js"></script>
+  <script src="src/data/buffdebuff/effects/buffs/shield_buff.js"></script>
+  <script src="src/data/buffdebuff/effects/buffs/aurora.js"></script>
+  <script src="src/data/buffdebuff/effects/buffs/magnet.js"></script>
+  <!-- Buff/Debuff Aggregator -->
+  <script src="src/data/buffdebuff/BuffDebuffAggregator.js"></script>
+
   <!-- Tech Core Constants and Registry (must load before individual cores) -->
   <script src="src/data/techcores/TechCoreConstants.js"></script>
 
@@ -398,6 +421,7 @@
 
   <!-- Phase 5.78: StatusEffect Component (depends on StatusEffectConfig) -->
   <script src="src/components/StatusEffect.js"></script>
+  <script src="src/components/BuffDebuff.js"></script>
   <script src="src/components/ActiveSkill.js"></script>
 
   <!-- Phase 5.8: Boss Entity (depends on BossData) -->
@@ -406,6 +430,7 @@
   <!-- Phase 6: Managers -->
   <script src="src/managers/EntityManager.js"></script>
   <script src="src/managers/BlacklistManager.js"></script>
+  <script src="src/managers/BuffDebuffManager.js"></script>
 
   <!-- Phase 7: Systems -->
   <script src="src/systems/System.js"></script>
@@ -423,6 +448,7 @@
   <script src="src/systems/SummonSystem.js"></script>
   <script src="src/systems/CollisionSystem.js"></script>
   <script src="src/systems/StatusEffectSystem.js"></script>
+  <script src="src/systems/BuffDebuffSystem.js"></script>
   <!-- Combat System Modules -->
   <script src="src/systems/combat/CombatConstants.js"></script>
   <script src="src/systems/combat/DamageProcessor.js"></script>

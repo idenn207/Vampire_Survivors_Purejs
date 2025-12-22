@@ -10,6 +10,7 @@
   // ============================================
   var Health = window.VampireSurvivors.Components.Health;
   var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
+  var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
 
   // ============================================
   // Damage Processor
@@ -52,8 +53,13 @@
       }
 
       // 3. Apply weakness/mark damage modifiers from status effects
+      // Check both BuffDebuff (new unified system) and StatusEffect (legacy)
+      var buffDebuff = enemy.getComponent(BuffDebuff);
       var statusEffect = enemy.getComponent(StatusEffect);
-      if (statusEffect) {
+      if (buffDebuff) {
+        var damageTakenModifier = buffDebuff.getDamageTakenModifier();
+        damage *= damageTakenModifier;
+      } else if (statusEffect) {
         var damageTakenModifier = statusEffect.getDamageTakenModifier();
         damage *= damageTakenModifier;
       }
@@ -97,11 +103,19 @@
      * @returns {number} Modified damage
      */
     applyStatusEffectModifiers: function (damage, enemy) {
+      // Check both BuffDebuff (new unified system) and StatusEffect (legacy)
+      var buffDebuff = enemy.getComponent(BuffDebuff);
       var statusEffect = enemy.getComponent(StatusEffect);
-      if (!statusEffect) return damage;
 
-      var damageTakenModifier = statusEffect.getDamageTakenModifier();
-      return Math.round(damage * damageTakenModifier);
+      if (buffDebuff) {
+        var damageTakenModifier = buffDebuff.getDamageTakenModifier();
+        return Math.round(damage * damageTakenModifier);
+      } else if (statusEffect) {
+        var damageTakenModifier = statusEffect.getDamageTakenModifier();
+        return Math.round(damage * damageTakenModifier);
+      }
+
+      return damage;
     },
   };
 

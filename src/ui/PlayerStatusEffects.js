@@ -11,6 +11,8 @@
   var UIScale = window.VampireSurvivors.Core.UIScale;
   var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
   var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+  var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
+  var Data = window.VampireSurvivors.Data;
 
   // ============================================
   // Constants (base values at 800x600)
@@ -49,10 +51,17 @@
     weakness: '#9966FF',
     mark: '#FF00FF',
     pull: '#9933FF',
-    // Buffs (from ActiveBuff)
+    // Buffs (from ActiveBuff - legacy)
     attack: '#E74C3C',
     speed: '#2ECC71',
     aurora: '#9B59B6',
+    // Buffs (from BuffDebuff - new unified system)
+    attack_boost: '#E74C3C',
+    speed_boost: '#2ECC71',
+    defense_boost: '#3498DB',
+    regen: '#27AE60',
+    shield_buff: '#F1C40F',
+    magnet: '#E91E63',
   };
 
   // ============================================
@@ -112,37 +121,61 @@
 
       var effects = [];
 
-      // Get debuffs from StatusEffect component
-      var statusEffect = this._player.getComponent(StatusEffect);
-      if (statusEffect) {
-        var effectTypes = statusEffect.getActiveEffectTypes();
-        for (var i = 0; i < effectTypes.length; i++) {
-          var effectType = effectTypes[i];
-          var effectData = statusEffect.getEffect(effectType);
-          if (effectData) {
+      // Check BuffDebuff component first (new unified system)
+      var buffDebuff = this._player.getComponent(BuffDebuff);
+      if (buffDebuff) {
+        var effectIds = buffDebuff.getActiveEffectIds();
+        for (var i = 0; i < effectIds.length; i++) {
+          var effectId = effectIds[i];
+          var effectInstance = buffDebuff.getEffect(effectId);
+          if (effectInstance) {
+            var effectDef = Data.getEffectData ? Data.getEffectData(effectId) : null;
+            var isDebuff = effectDef ? effectDef.category === 'debuff' : true;
+            var color = EFFECT_COLORS[effectId] || (effectDef && effectDef.visual ? effectDef.visual.color : '#FFFFFF');
+
             effects.push({
-              type: effectType,
-              isDebuff: true,
-              remainingDuration: effectData.remainingDuration,
-              duration: effectData.duration,
-              stacks: effectData.stacks || 1,
-              color: EFFECT_COLORS[effectType] || '#FFFFFF',
+              type: effectId,
+              isDebuff: isDebuff,
+              remainingDuration: effectInstance.remainingDuration,
+              duration: effectInstance.duration,
+              stacks: effectInstance.stacks || 1,
+              color: color,
             });
           }
         }
-      }
+      } else {
+        // Fallback to legacy StatusEffect component
+        var statusEffect = this._player.getComponent(StatusEffect);
+        if (statusEffect) {
+          var effectTypes = statusEffect.getActiveEffectTypes();
+          for (var i = 0; i < effectTypes.length; i++) {
+            var effectType = effectTypes[i];
+            var effectData = statusEffect.getEffect(effectType);
+            if (effectData) {
+              effects.push({
+                type: effectType,
+                isDebuff: true,
+                remainingDuration: effectData.remainingDuration,
+                duration: effectData.duration,
+                stacks: effectData.stacks || 1,
+                color: EFFECT_COLORS[effectType] || '#FFFFFF',
+              });
+            }
+          }
+        }
 
-      // Get buffs from ActiveBuff component
-      var activeBuff = this._player.getComponent(ActiveBuff);
-      if (activeBuff && activeBuff.hasBuff) {
-        effects.push({
-          type: activeBuff.activeBuff,
-          isDebuff: false,
-          remainingDuration: activeBuff.duration,
-          duration: activeBuff.maxDuration,
-          stacks: 1,
-          color: EFFECT_COLORS[activeBuff.activeBuff] || '#FFFFFF',
-        });
+        // Get buffs from ActiveBuff component (legacy)
+        var activeBuff = this._player.getComponent(ActiveBuff);
+        if (activeBuff && activeBuff.hasBuff) {
+          effects.push({
+            type: activeBuff.activeBuff,
+            isDebuff: false,
+            remainingDuration: activeBuff.duration,
+            duration: activeBuff.maxDuration,
+            stacks: 1,
+            color: EFFECT_COLORS[activeBuff.activeBuff] || '#FFFFFF',
+          });
+        }
       }
 
       return effects;
@@ -281,6 +314,25 @@
           break;
         case 'aurora':
           this._drawAuroraSymbol(ctx, centerX, centerY, radius);
+          break;
+        // New unified buff types
+        case 'attack_boost':
+          this._drawSwordSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'speed_boost':
+          this._drawSpeedSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'defense_boost':
+          this._drawShieldSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'regen':
+          this._drawHeartSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'shield_buff':
+          this._drawShieldSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'magnet':
+          this._drawMagnetSymbol(ctx, centerX, centerY, radius);
           break;
         default:
           // Default: simple circle
@@ -441,6 +493,38 @@
       ctx.beginPath();
       ctx.arc(cx, cy, r * 0.3, 0, Math.PI * 2);
       ctx.fill();
+    }
+
+    _drawShieldSymbol(ctx, cx, cy, r) {
+      // Shield shape
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r);
+      ctx.lineTo(cx + r * 0.8, cy - r * 0.5);
+      ctx.lineTo(cx + r * 0.8, cy + r * 0.3);
+      ctx.lineTo(cx, cy + r);
+      ctx.lineTo(cx - r * 0.8, cy + r * 0.3);
+      ctx.lineTo(cx - r * 0.8, cy - r * 0.5);
+      ctx.closePath();
+      ctx.stroke();
+    }
+
+    _drawHeartSymbol(ctx, cx, cy, r) {
+      // Heart shape for regen
+      ctx.beginPath();
+      ctx.moveTo(cx, cy + r * 0.7);
+      ctx.bezierCurveTo(cx - r, cy, cx - r, cy - r * 0.7, cx, cy - r * 0.3);
+      ctx.bezierCurveTo(cx + r, cy - r * 0.7, cx + r, cy, cx, cy + r * 0.7);
+      ctx.fill();
+    }
+
+    _drawMagnetSymbol(ctx, cx, cy, r) {
+      // U-shaped magnet
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.7, cy - r);
+      ctx.lineTo(cx - r * 0.7, cy + r * 0.3);
+      ctx.arc(cx, cy + r * 0.3, r * 0.7, Math.PI, 0, false);
+      ctx.lineTo(cx + r * 0.7, cy - r);
+      ctx.stroke();
     }
 
     // ----------------------------------------

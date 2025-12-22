@@ -48,6 +48,8 @@
   var CoreSelectionSystem = Systems.CoreSelectionSystem;
   var TechTreeSystem = Systems.TechTreeSystem;
   var StatusEffectSystem = Systems.StatusEffectSystem;
+  var BuffDebuffSystem = Systems.BuffDebuffSystem;
+  var BuffDebuffManager = Managers.BuffDebuffManager;
   var MineSystem = Systems.MineSystem;
   var SummonSystem = Systems.SummonSystem;
   var TabScreenSystem = Systems.TabScreenSystem;
@@ -173,6 +175,17 @@
       var statusEffectSystem = new StatusEffectSystem();
       statusEffectSystem.initialize(game, entityManager);
       game.addSystem(statusEffectSystem);
+
+      // Create and initialize BuffDebuffManager
+      var buffDebuffManager = new BuffDebuffManager();
+      buffDebuffManager.initialize(entityManager);
+      Managers.buffDebuffManager = buffDebuffManager;
+
+      // Create BuffDebuffSystem and wire up with manager
+      var buffDebuffSystem = new BuffDebuffSystem();
+      buffDebuffSystem.initialize(game, entityManager);
+      buffDebuffSystem.setBuffDebuffManager(buffDebuffManager);
+      game.addSystem(buffDebuffSystem);
 
       var combatSystem = new CombatSystem();
       combatSystem.initialize(game, entityManager);
@@ -421,6 +434,8 @@
       game.debugManager.register(bossSystem);
       game.debugManager.register(collisionSystem);
       game.debugManager.register(statusEffectSystem);
+      game.debugManager.register(buffDebuffSystem);
+      game.debugManager.register(buffDebuffManager);
       game.debugManager.register(combatSystem);
       game.debugManager.register(weaponSystem);
       game.debugManager.register(dropSystem);

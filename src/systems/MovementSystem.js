@@ -12,6 +12,7 @@
   var Transform = window.VampireSurvivors.Components.Transform;
   var Velocity = window.VampireSurvivors.Components.Velocity;
   var StatusEffect = window.VampireSurvivors.Components.StatusEffect;
+  var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
 
   // ============================================
   // Class Definition
@@ -44,10 +45,14 @@
         var transform = entity.getComponent(Transform);
         var velocity = entity.getComponent(Velocity);
         var statusEffect = entity.getComponent(StatusEffect);
+        var buffDebuff = entity.getComponent(BuffDebuff);
 
         // Get speed modifier from status effects (freeze, slow, stun)
+        // Check both StatusEffect (legacy) and BuffDebuff (new unified system)
         var speedModifier = 1;
-        if (statusEffect) {
+        if (buffDebuff) {
+          speedModifier = buffDebuff.getSpeedModifier();
+        } else if (statusEffect) {
           speedModifier = statusEffect.getSpeedModifier();
         }
 
