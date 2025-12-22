@@ -12,6 +12,7 @@
   var WeaponEvolutionData = window.VampireSurvivors.Data.WeaponEvolutionData;
   var ScrollBar = UI.ScrollBar;
   var i18n = window.VampireSurvivors.Core.i18n;
+  var UpgradeTooltip = window.VampireSurvivors.UI.UpgradeTooltip;
 
   // ============================================
   // Constants
@@ -531,29 +532,11 @@
       if (!weaponData) return null;
 
       var isOwned = this._ownedWeaponIds.indexOf(weaponId) !== -1;
-      var tierConfig = WeaponTierData.getTierConfig(weaponData.tier || 1);
 
-      // Calculate DPS
-      var damage = weaponData.damage || 0;
-      var cooldown = weaponData.cooldown || 1;
-      var dps = cooldown > 0 ? damage / cooldown : 0;
-
-      return {
-        type: 'newWeapon',
-        name: i18n.tw(weaponId, weaponData.name || weaponId),
-        attackType: i18n.tat(weaponData.attackType || 'projectile'),
-        description: i18n.twd(weaponId, weaponData.description || ''),
+      // Use shared utility for detailed weapon tooltip
+      return UpgradeTooltip.buildWeaponDetailContent(weaponData, {
         isNew: !isOwned,
-        level: 1,
-        tier: weaponData.tier || 1,
-        tierName: tierConfig.name,
-        tierColor: tierConfig.color,
-        // New performance stats
-        damage: damage,
-        dps: dps,
-        cooldown: cooldown,
-        range: weaponData.range || 0
-      };
+      });
     }
 
     _renderTabs(ctx) {

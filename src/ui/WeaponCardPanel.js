@@ -10,6 +10,7 @@
   // ============================================
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
   var i18n = window.VampireSurvivors.Core.i18n;
+  var UpgradeTooltip = window.VampireSurvivors.UI.UpgradeTooltip;
 
   // ============================================
   // Constants
@@ -716,30 +717,19 @@
       if (!option) return null;
 
       if (option.type === 'new') {
-        var data = option.weaponData;
-        var dps = data.damage && data.cooldown ? data.damage / data.cooldown : 0;
-        return {
-          type: 'newWeapon',
-          name: i18n.tw(data.id, data.name),
-          attackType: data.attackType,
-          description: i18n.twd(data.id, data.description),
+        // Use shared utility for new weapon tooltip
+        return UpgradeTooltip.buildWeaponDetailContent(option.weaponData, {
           isNew: true,
-          level: 1,
-          damage: data.damage || 0,
-          cooldown: data.cooldown || 1.0,
-          dps: dps,
-        };
+        });
       }
 
       if (option.type === 'upgrade') {
-        return {
-          type: 'newWeapon',
-          name: i18n.tw(option.weaponData.id, option.weaponData.name),
-          attackType: option.weaponData.attackType,
-          description: this._getOptionDescription(option),
+        // Use shared utility for weapon upgrade tooltip
+        // Use the actual weapon instance if available, otherwise fall back to weaponData
+        var weaponSource = option.weapon || option.weaponData;
+        return UpgradeTooltip.buildWeaponDetailContent(weaponSource, {
           isNew: false,
-          level: option.currentLevel,
-        };
+        });
       }
 
       return null;

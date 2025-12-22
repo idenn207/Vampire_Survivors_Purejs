@@ -132,9 +132,21 @@
       } else if (this._content.type === 'weapon') {
         lines = 5; // Title + level + stats + cost
       } else if (this._content.type === 'weaponDetail') {
-        lines = 7; // Title + tier + damage/DPS + cooldown + range + traits + total damage
+        lines = 6; // Title + tier + damage/DPS + cooldown + range + traits
         if (this._content.traits && this._content.traits.length > 2) {
           lines += Math.min(this._content.traits.length - 2, 2); // Extra trait lines
+        }
+        // Add line for total damage if > 0
+        if (this._content.totalDamageDealt > 0) {
+          lines += 1;
+        }
+        // Add line for next stats preview
+        if (this._content.nextStats) {
+          lines += 1;
+        }
+        // Add line for cost
+        if (this._content.cost !== undefined && this._content.cost !== null) {
+          lines += 1;
         }
         // Determine if we need a wider tooltip for right-side properties
         var hasProperties = this._content.uniqueProperties && this._content.uniqueProperties.length > 0;
@@ -324,10 +336,31 @@
         y += LINE_HEIGHT;
       }
 
-      // Total Damage Dealt (left column)
-      ctx.fillStyle = COST_COLOR;
-      ctx.fillText(i18n.t('tooltip.totalDealt') + ' ' + this._formatNumber(content.totalDamageDealt), x, y);
-      y += LINE_HEIGHT;
+      // Total Damage Dealt (left column) - only if > 0
+      if (content.totalDamageDealt > 0) {
+        ctx.fillStyle = COST_COLOR;
+        ctx.fillText(i18n.t('tooltip.totalDealt') + ' ' + this._formatNumber(content.totalDamageDealt), x, y);
+        y += LINE_HEIGHT;
+      }
+
+      // Next Stats preview (for weapon upgrades)
+      if (content.nextStats) {
+        ctx.fillStyle = VALUE_COLOR;
+        ctx.fillText(i18n.t('tooltip.next') + ' ' + content.nextStats, x, y);
+        y += LINE_HEIGHT;
+      }
+
+      // Cost (for weapon upgrades)
+      if (content.cost !== undefined && content.cost !== null) {
+        if (content.isMaxLevel) {
+          ctx.fillStyle = DESC_COLOR;
+          ctx.fillText(i18n.t('tooltip.maxLevel'), x, y);
+        } else {
+          ctx.fillStyle = content.canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
+          ctx.fillText(i18n.t('tooltip.cost') + ' ' + content.cost + ' ' + i18n.t('tooltip.gold'), x, y);
+        }
+        y += LINE_HEIGHT;
+      }
 
       // Unique Properties - render on RIGHT side as vertical list
       if (content.uniqueProperties && content.uniqueProperties.length > 0) {
@@ -551,6 +584,160 @@
     // ----------------------------------------
     dispose() {
       this._content = null;
+    }
+
+    // ----------------------------------------
+    // Static Methods
+    // ----------------------------------------
+    /**
+     * Build weaponDetail tooltip content from weapon or weapon data
+     * @param {Object} weaponOrData - Weapon instance or raw weapon data
+     * @param {Object} [options] - Additional options
+     * @param {number} [options.cost] - Upgrade cost to display
+     * @param {boolean} [options.canAfford] - Whether player can afford upgrade
+     * @param {boolean} [options.isNew] - True if this is a new weapon (not owned)
+     * @param {string} [options.nextStats] - Next upgrade stats preview
+     * @returns {Object} - Tooltip content for 'weaponDetail' type
+     */
+    static buildWeaponDetailContent(weaponOrData, options) {
+      options = options || {};
+
+      // Determine if this is a weapon instance or raw data
+      var isWeaponInstance = weaponOrData && typeof weaponOrData.getAllStats === 'function';
+      var weaponData = isWeaponInstance ? (weaponOrData.data || weaponOrData) : weaponOrData;
+
+      if (!weaponData) {
+        return null;
+      }
+
+      var allStats = isWeaponInstance ? weaponOrData.getAllStats() : {};
+
+      // Extract values with fallbacks
+      var damage = weaponOrData.damage || allStats.damage || weaponData.damage || 0;
+      var cooldown = weaponOrData.cooldownMax || allStats.cooldown || weaponData.cooldown || 1.0;
+      var dps = isWeaponInstance && weaponOrData.getDPS ? weaponOrData.getDPS() : (cooldown > 0 ? damage / cooldown : 0);
+      var range = allStats.range || weaponData.range || 0;
+      var piercing = allStats.piercing || weaponData.piercing || 0;
+      var projectileCount = allStats.projectileCount || weaponData.projectileCount || 1;
+      var areaRadius = allStats.areaRadius || weaponData.areaRadius || 0;
+
+      // Build traits array
+      var traits = [];
+      var attackType = weaponOrData.attackType || weaponData.attackType;
+      var targetingMode = weaponOrData.targetingMode || weaponData.targetingMode;
+      var isAuto = weaponOrData.isAuto !== undefined ? weaponOrData.isAuto : weaponData.isAuto;
+
+      if (attackType) traits.push(i18n.tat(attackType));
+      if (targetingMode) traits.push(i18n.ttm(targetingMode));
+      if (isAuto === false) traits.push('Manual');
+      if (piercing > 0) traits.push('Piercing: ' + piercing);
+      if (projectileCount > 1) traits.push('Multi-shot: ' + projectileCount);
+      if (areaRadius > 0) traits.push('Area: ' + areaRadius);
+
+      // Build unique properties list with descriptions
+      var PropertyDescriptions = window.VampireSurvivors.Data.PropertyDescriptions;
+      var uniqueProperties = [];
+
+      if (PropertyDescriptions) {
+        if (piercing > 0) {
+          uniqueProperties.push({ name: 'Piercing', description: PropertyDescriptions.get('pierce') });
+        }
+        if (projectileCount > 1) {
+          uniqueProperties.push({ name: 'Multi-shot', description: PropertyDescriptions.get('projectileCount') });
+        }
+        if (areaRadius > 0) {
+          uniqueProperties.push({ name: 'Area Effect', description: PropertyDescriptions.get('areaRadius') });
+        }
+        if (weaponData.homing) {
+          uniqueProperties.push({ name: 'Homing', description: PropertyDescriptions.get('homing') });
+        }
+        if (weaponData.chain) {
+          uniqueProperties.push({ name: 'Chain', description: PropertyDescriptions.get('chain') });
+        }
+        if (weaponData.knockback) {
+          uniqueProperties.push({ name: 'Knockback', description: PropertyDescriptions.get('knockback') });
+        }
+        if (weaponData.lifesteal) {
+          uniqueProperties.push({ name: 'Lifesteal', description: PropertyDescriptions.get('lifesteal') });
+        }
+        if (weaponData.healing) {
+          uniqueProperties.push({ name: 'Healing', description: PropertyDescriptions.get('healing') });
+        }
+        if (weaponData.burn) {
+          uniqueProperties.push({ name: 'Burn', description: PropertyDescriptions.get('burn') });
+        }
+        if (weaponData.freeze) {
+          uniqueProperties.push({ name: 'Freeze', description: PropertyDescriptions.get('freeze') });
+        }
+        if (weaponData.slow) {
+          uniqueProperties.push({ name: 'Slow', description: PropertyDescriptions.get('slow') });
+        }
+        if (weaponData.poison) {
+          uniqueProperties.push({ name: 'Poison', description: PropertyDescriptions.get('poison') });
+        }
+        if (weaponData.explosion) {
+          uniqueProperties.push({ name: 'Explosion', description: PropertyDescriptions.get('explosion') });
+        }
+        if (weaponData.bounce) {
+          uniqueProperties.push({ name: 'Bounce', description: PropertyDescriptions.get('bounce') });
+        }
+        if (weaponData.stun) {
+          uniqueProperties.push({ name: 'Stun', description: PropertyDescriptions.get('stun') });
+        }
+
+        // Parse statusEffects array for weapons that use the array format
+        if (weaponData.statusEffects && Array.isArray(weaponData.statusEffects)) {
+          for (var j = 0; j < weaponData.statusEffects.length; j++) {
+            var effect = weaponData.statusEffects[j];
+            var effectType = effect.type;
+            if (effectType) {
+              var effectName = effectType.charAt(0).toUpperCase() + effectType.slice(1);
+              var desc = PropertyDescriptions.get(effectType) || 'Applies ' + effectType;
+              if (effect.duration) desc += ' - ' + effect.duration.toFixed(1) + 's';
+              if (effect.damagePerTick) desc += ', ' + effect.damagePerTick + ' dmg/tick';
+              uniqueProperties.push({ name: effectName, description: desc });
+            }
+          }
+        }
+      }
+
+      // Get weapon ID and name
+      var weaponId = weaponOrData.id || weaponData.id || '';
+      var weaponName = weaponOrData.name || weaponData.name || 'Unknown';
+
+      // Build content object
+      var content = {
+        type: 'weaponDetail',
+        name: i18n.tw(weaponId, weaponName),
+        level: isWeaponInstance ? weaponOrData.level : 1,
+        maxLevel: isWeaponInstance ? weaponOrData.maxLevel : (weaponData.maxLevel || 5),
+        tier: weaponOrData.tier || weaponData.tier || 1,
+        damage: damage,
+        dps: dps,
+        cooldown: cooldown,
+        range: range,
+        traits: traits,
+        uniqueProperties: uniqueProperties,
+        totalDamageDealt: isWeaponInstance ? (weaponOrData.totalDamageDealt || 0) : 0,
+        attackType: attackType,
+        isMaxLevel: isWeaponInstance ? (weaponOrData.level >= weaponOrData.maxLevel) : false,
+      };
+
+      // Add optional fields
+      if (options.cost !== undefined) {
+        content.cost = options.cost;
+      }
+      if (options.canAfford !== undefined) {
+        content.canAfford = options.canAfford;
+      }
+      if (options.isNew !== undefined) {
+        content.isNew = options.isNew;
+      }
+      if (options.nextStats !== undefined) {
+        content.nextStats = options.nextStats;
+      }
+
+      return content;
     }
   }
 

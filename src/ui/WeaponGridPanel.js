@@ -10,6 +10,7 @@
   // ============================================
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
   var i18n = window.VampireSurvivors.Core.i18n;
+  var UpgradeTooltip = window.VampireSurvivors.UI.UpgradeTooltip;
 
   // ============================================
   // Constants
@@ -583,16 +584,12 @@
         }
       }
 
-      return {
-        type: 'weapon',
-        name: i18n.tw(weapon.id, weapon.name || (weapon.data ? weapon.data.name : 'Unknown')),
-        level: weapon.level,
-        maxLevel: weapon.data ? weapon.data.maxLevel : 5,
-        nextStats: nextStats,
+      // Use shared utility for detailed weapon tooltip
+      return UpgradeTooltip.buildWeaponDetailContent(weapon, {
         cost: cost,
-        isMaxLevel: isMaxLevel,
         canAfford: canAfford,
-      };
+        nextStats: nextStats,
+      });
     }
 
     _drawStar(ctx, cx, cy, spikes, outerRadius, innerRadius) {

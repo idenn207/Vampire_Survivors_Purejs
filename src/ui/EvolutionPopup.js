@@ -11,6 +11,7 @@
   var WeaponTierData = window.VampireSurvivors.Data.WeaponTierData;
   var WeaponEvolutionData = window.VampireSurvivors.Data.WeaponEvolutionData;
   var i18n = window.VampireSurvivors.Core.i18n;
+  var UpgradeTooltip = window.VampireSurvivors.UI.UpgradeTooltip;
 
   // ============================================
   // Constants
@@ -98,11 +99,15 @@
     _hoveredWeaponIndex = -1;
     _hoveredButton = null; // 'evolve', 'close', or null
 
+    // Tooltip
+    _tooltip = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
     constructor() {
       this._weaponGridRects = [];
+      this._tooltip = new UpgradeTooltip();
     }
 
     // ----------------------------------------
@@ -238,6 +243,9 @@
       ctx.fillStyle = DESC_COLOR;
       ctx.textAlign = 'center';
       ctx.fillText(i18n.t('evolution.instruction'), this._x + POPUP_WIDTH / 2, this._y + POPUP_HEIGHT - 15);
+
+      // Render tooltip on top
+      this._tooltip.render(ctx, this._canvasWidth, this._canvasHeight);
     }
 
     // ----------------------------------------
@@ -350,15 +358,32 @@
       this._hoveredWeaponIndex = -1;
       this._hoveredButton = null;
 
+      // Hide tooltip by default
+      this._tooltip.hide();
+
       // Check main slot
       if (this._isPointInRect(mouseX, mouseY, this._mainSlotRect)) {
         this._hoveredSlot = 'main';
+        // Show tooltip for main slot weapon
+        if (this._mainSlot) {
+          var content = UpgradeTooltip.buildWeaponDetailContent(this._mainSlot);
+          if (content) {
+            this._tooltip.show(content, mouseX + 15, mouseY + 15);
+          }
+        }
         return;
       }
 
       // Check material slot
       if (this._isPointInRect(mouseX, mouseY, this._materialSlotRect)) {
         this._hoveredSlot = 'material';
+        // Show tooltip for material slot weapon
+        if (this._materialSlot) {
+          var content = UpgradeTooltip.buildWeaponDetailContent(this._materialSlot);
+          if (content) {
+            this._tooltip.show(content, mouseX + 15, mouseY + 15);
+          }
+        }
         return;
       }
 
@@ -366,7 +391,12 @@
       for (var i = 0; i < this._weaponGridRects.length; i++) {
         if (i < this._eligibleWeapons.length && this._isPointInRect(mouseX, mouseY, this._weaponGridRects[i])) {
           var weapon = this._eligibleWeapons[i];
-          // Only hover if weapon is selectable
+          // Show tooltip for any weapon in grid (even if not selectable)
+          var content = UpgradeTooltip.buildWeaponDetailContent(weapon);
+          if (content) {
+            this._tooltip.show(content, mouseX + 15, mouseY + 15);
+          }
+          // Only set hover index if weapon is selectable
           if (this._isWeaponSelectable(weapon)) {
             this._hoveredWeaponIndex = i;
           }
