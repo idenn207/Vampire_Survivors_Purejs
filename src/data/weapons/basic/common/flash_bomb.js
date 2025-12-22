@@ -32,6 +32,7 @@
     color: '#FFFFFF',
     icon: 'flash_bomb',
     imageId: 'weapon_flash_bomb',
+    mineImageId: 'flash_bomb_mine',
 
     statusEffect: {
       type: 'stun',

@@ -32,6 +32,7 @@
     color: '#FF6600',
     icon: 'ember_field',
     imageId: 'weapon_ember_field',
+    areaImageId: 'ember_field_area',
 
     statusEffect: {
       type: 'burn',

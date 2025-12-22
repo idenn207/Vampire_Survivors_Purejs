@@ -75,6 +75,7 @@
     lifetime: 3.0,
     icon: 'blizzard_lance',
     imageId: 'weapon_blizzard_lance',
+    projectileImageId: 'blizzard_lance_projectile',
 
     // Level upgrades
     upgrades: {

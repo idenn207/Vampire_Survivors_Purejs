@@ -45,6 +45,7 @@
     // Visual
     icon: 'blood_cleaver',
     imageId: 'weapon_blood_cleaver',
+    meleeImageId: 'blood_cleaver_melee',
 
     // Level upgrades
     upgrades: {

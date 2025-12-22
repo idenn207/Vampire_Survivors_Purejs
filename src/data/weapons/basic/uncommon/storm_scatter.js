@@ -37,6 +37,7 @@
     // Visual
     icon: 'storm_scatter',
     imageId: 'weapon_storm_scatter',
+    projectileImageId: 'storm_scatter_projectile',
 
     // Level upgrades
     upgrades: {

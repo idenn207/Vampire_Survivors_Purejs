@@ -36,6 +36,7 @@
     secondaryColor: '#AADDFF',
     icon: 'mirror_blade',
     imageId: 'weapon_mirrorblade',
+    meleeImageId: 'mirrorblade_melee',
 
     // Mirror image system
     mirrorImages: {

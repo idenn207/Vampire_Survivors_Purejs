@@ -42,6 +42,7 @@
     // Visual
     icon: 'umbral_wave',
     imageId: 'weapon_umbral_wave',
+    areaImageId: 'umbral_wave_melee',
 
     // Level upgrades
     upgrades: {

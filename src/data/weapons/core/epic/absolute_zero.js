@@ -85,6 +85,7 @@
     lifetime: 3.5,
     icon: 'absolute_zero',
     imageId: 'weapon_absolute_zero',
+    projectileImageId: 'absolute_zero_projectile',
 
     // Level upgrades
     upgrades: {

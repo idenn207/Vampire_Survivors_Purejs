@@ -70,6 +70,7 @@
     lifetime: 2.0,
     icon: 'gale_blade',
     imageId: 'weapon_gale_blade',
+    projectileImageId: 'gale_blade_projectile',
 
     // Level upgrades
     upgrades: {

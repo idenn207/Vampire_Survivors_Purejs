@@ -32,6 +32,7 @@
     color: '#666666',
     icon: 'axe',
     imageId: 'weapon_battle_axe',
+    meleeImageId: 'battle_axe_melee',
 
     swingEffect: {
       type: 'heavy_arc',

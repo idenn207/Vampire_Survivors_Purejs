@@ -35,6 +35,7 @@
     color: '#FF66AA', // Base color, changes with cycle
     icon: 'aurora',
     imageId: 'weapon_aurora_field',
+    areaImageId: 'aurora_field_area',
 
     // Element cycling system
     elementCycle: {

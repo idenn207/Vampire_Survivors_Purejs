@@ -33,6 +33,7 @@
     color: '#FF0000',
     icon: 'chain_reaction_mine',
     imageId: 'weapon_chain_reaction_mine',
+    mineImageId: 'chain_reaction_mine_mine',
 
     chainReaction: {
       enabled: true,

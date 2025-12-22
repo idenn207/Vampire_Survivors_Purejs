@@ -37,6 +37,7 @@
     knockback: 50,
     icon: 'wind',
     imageId: 'weapon_wind_cutter',
+    projectileImageId: 'wind_cutter_projectile',
 
     trail: {
       enabled: true,

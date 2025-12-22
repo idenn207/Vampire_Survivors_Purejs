@@ -33,6 +33,7 @@
     // Visual
     icon: 'celestial',
     imageId: 'weapon_celestial_orbit',
+    bladeImageId: 'celestial_orbit_blade',
 
     // Celestial body system
     celestialBodies: {

@@ -67,6 +67,7 @@
     lifetime: 0.5,
     icon: 'stone_cascade',
     imageId: 'weapon_stone_cascade',
+    areaImageId: 'stone_cascade_area',
 
     // Level upgrades
     upgrades: {

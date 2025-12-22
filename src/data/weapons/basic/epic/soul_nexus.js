@@ -36,6 +36,7 @@
     tertiaryColor: '#AAFFEE',
     icon: 'soul_nexus',
     imageId: 'weapon_soul_nexus',
+    bladeImageId: 'soul_nexus_blade',
 
     // Soul collection system
     soulCollection: {

@@ -32,6 +32,7 @@
     color: '#FF00AA',
     icon: 'piercing_gaze',
     imageId: 'weapon_piercing_gaze',
+    laserImageId: 'piercing_gaze_laser',
 
     lockOn: {
       enabled: true,

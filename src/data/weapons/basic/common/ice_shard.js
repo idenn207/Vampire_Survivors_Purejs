@@ -36,6 +36,7 @@
     lifetime: 2.0,
     icon: 'ice_shard',
     imageId: 'weapon_ice_shard',
+    projectileImageId: 'ice_shard_projectile',
 
     statusEffect: {
       type: 'slow',

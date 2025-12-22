@@ -40,6 +40,7 @@
     lifetime: 4.0,
     icon: 'black_hole',
     imageId: 'weapon_singularity_orb',
+    projectileImageId: 'singularity_orb_projectile',
 
     // Singularity behavior
     singularity: {

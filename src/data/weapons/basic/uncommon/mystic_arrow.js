@@ -44,6 +44,7 @@
     // Visual
     icon: 'mystic_arrow',
     imageId: 'weapon_mystic_arrow',
+    projectileImageId: 'mystic_arrow_projectile',
 
     // Level upgrades
     upgrades: {

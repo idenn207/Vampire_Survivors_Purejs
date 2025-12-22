@@ -75,6 +75,7 @@
     lifetime: 3.0,
     icon: 'glacial_spike',
     imageId: 'weapon_glacial_spike',
+    projectileImageId: 'glacial_spike_projectile',
 
     // Level upgrades
     upgrades: {

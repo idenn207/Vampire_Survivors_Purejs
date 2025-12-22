@@ -43,6 +43,7 @@
     size: 8,
     icon: 'thunder_strike',
     imageId: 'weapon_thunder_strike',
+    bladeImageId: 'thunder_strike_blade',
 
     upgrades: {
       2: { damage: 36, chainCount: 4, statusEffects: [{ type: StatusEffectType.STUN, chance: 0.2, duration: 0.8 }] },

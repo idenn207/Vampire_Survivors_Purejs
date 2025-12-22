@@ -32,6 +32,7 @@
     color: '#CCCCCC',
     icon: 'blade_vortex',
     imageId: 'weapon_blade_vortex',
+    bladeImageId: 'blade_vortex_blade',
 
     orbitExpansion: {
       enabled: true,

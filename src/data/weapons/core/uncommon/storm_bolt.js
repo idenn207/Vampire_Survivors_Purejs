@@ -69,6 +69,7 @@
     lifetime: 2.0,
     icon: 'storm_bolt',
     imageId: 'weapon_storm_bolt',
+    projectileImageId: 'storm_bolt_projectile',
 
     // Level upgrades
     upgrades: {

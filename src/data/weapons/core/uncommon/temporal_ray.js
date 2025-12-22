@@ -69,6 +69,7 @@
     lifetime: 0.4,
     icon: 'temporal_ray',
     imageId: 'weapon_temporal_ray',
+    laserImageId: 'temporal_ray_laser',
 
     // Level upgrades
     upgrades: {

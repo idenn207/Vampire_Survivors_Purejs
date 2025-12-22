@@ -50,6 +50,7 @@
     color: '#2F0032',
     icon: 'void_rift',
     imageId: 'weapon_void_rift',
+    areaImageId: 'void_rift_area',
 
     upgrades: {
       2: { damage: 11, statusEffects: [{ type: StatusEffectType.WEAKNESS, chance: 1.0, duration: 4, damageMultiplier: 1.3 }, { type: StatusEffectType.PULL, chance: 1.0, duration: 4, pullForce: 60 }] },

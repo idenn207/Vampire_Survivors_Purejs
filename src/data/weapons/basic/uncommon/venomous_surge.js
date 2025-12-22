@@ -44,6 +44,7 @@
     // Visual
     icon: 'venomous_surge',
     imageId: 'weapon_venomous_surge',
+    areaImageId: 'venomous_surge_area',
 
     // Level upgrades
     upgrades: {

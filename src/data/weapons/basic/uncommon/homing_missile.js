@@ -32,6 +32,7 @@
     color: '#FF3300',
     icon: 'homing_missile',
     imageId: 'weapon_homing_missile',
+    projectileImageId: 'homing_missile_projectile',
 
     homing: {
       enabled: true,

@@ -35,6 +35,7 @@
     secondaryColor: '#FFFF00',
     icon: 'cascade_lightning',
     imageId: 'weapon_cascade_lightning',
+    bladeImageId: 'cascade_lightning_blade',
 
     // Cascade mechanic - damage INCREASES per jump
     cascade: {

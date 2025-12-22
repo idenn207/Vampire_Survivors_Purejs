@@ -53,6 +53,7 @@
     lifetime: 3.0,
     icon: 'inferno_bolt',
     imageId: 'weapon_inferno_bolt',
+    projectileImageId: 'inferno_bolt_projectile',
 
     upgrades: {
       2: { damage: 24, statusEffects: [{ type: StatusEffectType.BURN, chance: 1.0, duration: 3, tickRate: 2, damagePerTick: 7 }] },

@@ -69,6 +69,7 @@
     lifetime: 0.15,
     icon: 'feral_strike',
     imageId: 'weapon_feral_strike',
+    meleeImageId: 'feral_strike_melee',
 
     // Level upgrades
     upgrades: {

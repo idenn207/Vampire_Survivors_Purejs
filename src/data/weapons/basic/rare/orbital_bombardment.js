@@ -35,6 +35,7 @@
     secondaryColor: '#663300',
     icon: 'meteor_storm',
     imageId: 'weapon_orbital_bombardment',
+    bladeImageId: 'orbital_bombardment_blade',
 
     // Meteor system
     meteorSystem: {

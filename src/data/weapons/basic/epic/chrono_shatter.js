@@ -38,6 +38,7 @@
     tertiaryColor: '#FFFFFF',
     icon: 'chrono_crystal',
     imageId: 'weapon_chrono_shatter',
+    projectileImageId: 'chrono_shatter_projectile',
 
     // Time recording system
     timeRecording: {

@@ -32,6 +32,7 @@
     color: '#9900CC',
     icon: 'gravity_well',
     imageId: 'weapon_gravity_well',
+    areaImageId: 'gravity_well_area',
 
     pull: {
       enabled: true,

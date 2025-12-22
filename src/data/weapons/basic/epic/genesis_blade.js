@@ -37,6 +37,7 @@
     tertiaryColor: '#FF69B4',
     icon: 'genesis_blade',
     imageId: 'weapon_genesis_blade',
+    meleeImageId: 'genesis_blade_melee',
 
     // Weapon spawning on kill
     weaponSpawning: {

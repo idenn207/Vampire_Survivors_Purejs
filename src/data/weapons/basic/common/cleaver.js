@@ -32,6 +32,7 @@
     color: '#888888',
     icon: 'cleaver',
     imageId: 'weapon_cleaver',
+    meleeImageId: 'cleaver_melee',
 
     // Execute mechanic
     execute: {

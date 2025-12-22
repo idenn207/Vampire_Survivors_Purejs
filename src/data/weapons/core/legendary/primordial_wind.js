@@ -96,6 +96,7 @@
     lifetime: 3.0,
     icon: 'primordial_wind',
     imageId: 'weapon_primordial_wind',
+    projectileImageId: 'primordial_wind_projectile',
 
     // Level upgrades
     upgrades: {

@@ -37,6 +37,7 @@
     tertiaryColor: '#FFFFFF',
     icon: 'cosmic_beam',
     imageId: 'weapon_cosmic_annihilator',
+    laserImageId: 'cosmic_annihilator_laser',
 
     // Sweep behavior
     sweepPattern: {

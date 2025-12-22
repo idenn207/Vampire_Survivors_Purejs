@@ -69,6 +69,7 @@
     lifetime: 2.5,
     icon: 'mystic_storm',
     imageId: 'weapon_mystic_storm',
+    projectileImageId: 'mystic_storm_projectile',
 
     // Level upgrades
     upgrades: {

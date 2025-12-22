@@ -30,6 +30,7 @@
     color: '#66DDFF',
     icon: 'frost_elemental',
     imageId: 'weapon_frost_elemental',
+    summonImageId: 'frost_elemental_summon',
 
     summonStats: {
       health: 100,

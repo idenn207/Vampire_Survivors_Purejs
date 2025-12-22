@@ -36,6 +36,7 @@
     tertiaryColor: '#FFFF00',
     icon: 'divine_lightning',
     imageId: 'weapon_heavens_wrath',
+    bladeImageId: 'heavens_wrath_blade',
 
     // NO damage decay - unique property
     chainBehavior: {

@@ -31,6 +31,7 @@
     color: '#6688FF',
     icon: 'phantom_blade',
     imageId: 'weapon_phantom_blade',
+    meleeImageId: 'phantom_blade_melee',
 
     echo: {
       enabled: true,

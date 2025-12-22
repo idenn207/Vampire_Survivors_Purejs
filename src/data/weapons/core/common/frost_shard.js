@@ -57,6 +57,7 @@
     lifetime: 3.0,
     icon: 'frost_shard',
     imageId: 'weapon_frost_shard',
+    projectileImageId: 'frost_shard_projectile',
 
     upgrades: {
       2: { damage: 20, statusEffects: [{ type: StatusEffectType.SLOW, chance: 1.0, duration: 2, speedModifier: 0.65 }, { type: StatusEffectType.FREEZE, chance: 0.15, duration: 1.5 }] },

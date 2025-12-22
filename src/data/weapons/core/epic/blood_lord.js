@@ -83,6 +83,7 @@
     lifetime: 0.3,
     icon: 'blood_lord',
     imageId: 'weapon_blood_lord',
+    meleeImageId: 'blood_lord_melee',
 
     // Level upgrades
     upgrades: {

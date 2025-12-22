@@ -80,6 +80,7 @@
     lifetime: 3.5,
     icon: 'reality_collapse',
     imageId: 'weapon_reality_collapse',
+    areaImageId: 'reality_collapse_area',
 
     // Level upgrades
     upgrades: {

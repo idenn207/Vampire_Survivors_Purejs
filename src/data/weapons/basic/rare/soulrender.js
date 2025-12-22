@@ -36,6 +36,7 @@
     secondaryColor: '#66FFCC',
     icon: 'soul_blade',
     imageId: 'weapon_soulrender',
+    meleeImageId: 'soulrender_melee',
 
     // Mark enemies on hit
     statusEffect: {

@@ -36,6 +36,7 @@
     // Visual
     icon: 'berserker_blade',
     imageId: 'weapon_berserker_blade',
+    meleeImageId: 'berserker_blade_melee',
 
     // Level upgrades
     upgrades: {

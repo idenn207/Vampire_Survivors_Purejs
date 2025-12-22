@@ -88,6 +88,7 @@
     lifetime: 0.25,
     icon: 'void_assassin',
     imageId: 'weapon_void_assassin',
+    meleeImageId: 'void_assassin_melee',
 
     // Level upgrades
     upgrades: {

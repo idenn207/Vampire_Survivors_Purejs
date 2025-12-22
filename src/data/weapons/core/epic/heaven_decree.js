@@ -85,6 +85,7 @@
     lifetime: 3.0,
     icon: 'heaven_decree',
     imageId: 'weapon_heaven_decree',
+    projectileImageId: 'heaven_decree_projectile',
 
     // Level upgrades
     upgrades: {

@@ -86,6 +86,7 @@
     lifetime: 0.18,
     icon: 'beast_king',
     imageId: 'weapon_beast_king',
+    meleeImageId: 'beast_king_melee',
 
     // Level upgrades
     upgrades: {

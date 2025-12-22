@@ -78,6 +78,7 @@
     lifetime: 3.5,
     icon: 'blazing_apocalypse',
     imageId: 'weapon_blazing_apocalypse',
+    projectileImageId: 'blazing_apocalypse_projectile',
 
     // Level upgrades
     upgrades: {

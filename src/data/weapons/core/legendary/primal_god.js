@@ -95,6 +95,7 @@
     lifetime: 0.2,
     icon: 'primal_god',
     imageId: 'weapon_primal_god',
+    meleeImageId: 'primal_god_melee',
 
     // Level upgrades
     upgrades: {

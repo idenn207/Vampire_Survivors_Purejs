@@ -228,6 +228,262 @@
     test_laser: { path: 'test/test_laser.png' },
     test_mine: { path: 'test/test_mine.png' },
     test_particle: { path: 'test/test_particle.png' },
+
+    // ============================================
+    // WEAPON ATTACK TYPE IMAGES
+    // ============================================
+
+    // ------------- PROJECTILE ATTACK IMAGES -------------
+    // Basic Common
+    arcane_dart_projectile: { path: 'weapons/projectiles/arcane_dart.png' },
+    stone_throw_projectile: { path: 'weapons/projectiles/stone_throw.png' },
+    ice_shard_projectile: { path: 'weapons/projectiles/ice_shard.png' },
+    ember_bolt_projectile: { path: 'weapons/projectiles/ember_bolt.png' },
+    spectral_arrow_projectile: { path: 'weapons/projectiles/spectral_arrow.png' },
+    scatter_shot_projectile: { path: 'weapons/projectiles/scatter_shot.png' },
+    venom_fang_projectile: { path: 'weapons/projectiles/venom_fang.png' },
+    wind_cutter_projectile: { path: 'weapons/projectiles/wind_cutter.png' },
+    // Basic Uncommon
+    bifrost_bolt_projectile: { path: 'weapons/projectiles/bifrost_bolt.png' },
+    homing_missile_projectile: { path: 'weapons/projectiles/homing_missile.png' },
+    ricochet_shot_projectile: { path: 'weapons/projectiles/ricochet_shot.png' },
+    split_arrow_projectile: { path: 'weapons/projectiles/split_arrow.png' },
+    plasma_orb_projectile: { path: 'weapons/projectiles/plasma_orb.png' },
+    chakram_projectile: { path: 'weapons/projectiles/chakram.png' },
+    void_bullet_projectile: { path: 'weapons/projectiles/void_bullet.png' },
+    crystal_lance_projectile: { path: 'weapons/projectiles/crystal_lance.png' },
+    arcane_cannon_projectile: { path: 'weapons/projectiles/arcane_cannon.png' },
+    blazing_bolt_projectile: { path: 'weapons/projectiles/blazing_bolt.png' },
+    frozen_burst_projectile: { path: 'weapons/projectiles/frozen_burst.png' },
+    phantom_volley_projectile: { path: 'weapons/projectiles/phantom_volley.png' },
+    storm_scatter_projectile: { path: 'weapons/projectiles/storm_scatter.png' },
+    mystic_arrow_projectile: { path: 'weapons/projectiles/mystic_arrow.png' },
+    spread_seeker_projectile: { path: 'weapons/projectiles/spread_seeker.png' },
+    arcane_scatter_projectile: { path: 'weapons/projectiles/arcane_scatter.png' },
+    rock_storm_projectile: { path: 'weapons/projectiles/rock_storm.png' },
+    storm_blades_projectile: { path: 'weapons/projectiles/storm_blades.png' },
+    // Basic Rare
+    constellation_arrow_projectile: { path: 'weapons/projectiles/constellation_arrow.png' },
+    singularity_orb_projectile: { path: 'weapons/projectiles/singularity_orb.png' },
+    phoenix_feather_projectile: { path: 'weapons/projectiles/phoenix_feather.png' },
+    temporal_bolt_projectile: { path: 'weapons/projectiles/temporal_bolt.png' },
+    dragonbreath_volley_projectile: { path: 'weapons/projectiles/dragonbreath_volley.png' },
+    // Basic Epic
+    chrono_shatter_projectile: { path: 'weapons/projectiles/chrono_shatter.png' },
+    // Core Common
+    inferno_bolt_projectile: { path: 'weapons/projectiles/inferno_bolt.png' },
+    frost_shard_projectile: { path: 'weapons/projectiles/frost_shard.png' },
+    wind_cutter_core_projectile: { path: 'weapons/projectiles/wind_cutter_core.png' },
+    arcane_barrage_projectile: { path: 'weapons/projectiles/arcane_barrage.png' },
+    tech_turret_projectile: { path: 'weapons/projectiles/tech_turret.png' },
+    // Core Uncommon
+    auto_sentinel_projectile: { path: 'weapons/projectiles/auto_sentinel.png' },
+    divine_spear_projectile: { path: 'weapons/projectiles/divine_spear.png' },
+    gale_blade_projectile: { path: 'weapons/projectiles/gale_blade.png' },
+    glacial_spike_projectile: { path: 'weapons/projectiles/glacial_spike.png' },
+    inferno_surge_projectile: { path: 'weapons/projectiles/inferno_surge.png' },
+    mystic_storm_projectile: { path: 'weapons/projectiles/mystic_storm.png' },
+    storm_bolt_projectile: { path: 'weapons/projectiles/storm_bolt.png' },
+    // Core Rare
+    arcane_tempest_projectile: { path: 'weapons/projectiles/arcane_tempest.png' },
+    blizzard_lance_projectile: { path: 'weapons/projectiles/blizzard_lance.png' },
+    hurricane_slash_projectile: { path: 'weapons/projectiles/hurricane_slash.png' },
+    phoenix_storm_projectile: { path: 'weapons/projectiles/phoenix_storm.png' },
+    seraph_judgment_projectile: { path: 'weapons/projectiles/seraph_judgment.png' },
+    siege_platform_projectile: { path: 'weapons/projectiles/siege_platform.png' },
+    tempest_fury_projectile: { path: 'weapons/projectiles/tempest_fury.png' },
+    // Core Epic
+    absolute_zero_projectile: { path: 'weapons/projectiles/absolute_zero.png' },
+    blazing_apocalypse_projectile: { path: 'weapons/projectiles/blazing_apocalypse.png' },
+    heaven_decree_projectile: { path: 'weapons/projectiles/heaven_decree.png' },
+    lightning_god_projectile: { path: 'weapons/projectiles/lightning_god.png' },
+    reality_shatter_projectile: { path: 'weapons/projectiles/reality_shatter.png' },
+    storm_emperor_projectile: { path: 'weapons/projectiles/storm_emperor.png' },
+    war_machine_projectile: { path: 'weapons/projectiles/war_machine.png' },
+    // Core Legendary
+    cosmic_weave_projectile: { path: 'weapons/projectiles/cosmic_weave.png' },
+    eternal_winter_projectile: { path: 'weapons/projectiles/eternal_winter.png' },
+    god_light_projectile: { path: 'weapons/projectiles/god_light.png' },
+    omega_protocol_projectile: { path: 'weapons/projectiles/omega_protocol.png' },
+    primordial_wind_projectile: { path: 'weapons/projectiles/primordial_wind.png' },
+    solar_annihilation_projectile: { path: 'weapons/projectiles/solar_annihilation.png' },
+    thor_judgment_projectile: { path: 'weapons/projectiles/thor_judgment.png' },
+
+    // ------------- LASER ATTACK IMAGES -------------
+    // Basic Common
+    shadow_beam_laser: { path: 'weapons/lasers/shadow_beam.png' },
+    light_ray_laser: { path: 'weapons/lasers/light_ray.png' },
+    // Basic Uncommon
+    prismatic_ray_laser: { path: 'weapons/lasers/prismatic_ray.png' },
+    piercing_gaze_laser: { path: 'weapons/lasers/piercing_gaze.png' },
+    death_ray_laser: { path: 'weapons/lasers/death_ray.png' },
+    // Basic Rare
+    moonlight_slash_laser: { path: 'weapons/lasers/moonlight_slash.png' },
+    sunbeam_laser: { path: 'weapons/lasers/sunbeam.png' },
+    // Basic Epic
+    cosmic_annihilator_laser: { path: 'weapons/lasers/cosmic_annihilator.png' },
+    // Core Common
+    chrono_beam_laser: { path: 'weapons/lasers/chrono_beam.png' },
+    holy_lance_laser: { path: 'weapons/lasers/holy_lance.png' },
+    // Core Uncommon
+    temporal_ray_laser: { path: 'weapons/lasers/temporal_ray.png' },
+    // Core Rare
+    time_distortion_laser: { path: 'weapons/lasers/time_distortion.png' },
+    // Core Epic
+    chrono_master_laser: { path: 'weapons/lasers/chrono_master.png' },
+    // Core Legendary
+    eternity_weaver_laser: { path: 'weapons/lasers/eternity_weaver.png' },
+
+    // ------------- MELEE ATTACK IMAGES -------------
+    // Basic Common
+    monks_fist_melee: { path: 'weapons/melee/monks_fist.png' },
+    cleaver_melee: { path: 'weapons/melee/cleaver.png' },
+    whip_lash_melee: { path: 'weapons/melee/whip_lash.png' },
+    battle_axe_melee: { path: 'weapons/melee/battle_axe.png' },
+    claw_strike_melee: { path: 'weapons/melee/claw_strike.png' },
+    rusty_blade_melee: { path: 'weapons/melee/rusty_blade.png' },
+    // Basic Uncommon
+    phantom_blade_melee: { path: 'weapons/melee/phantom_blade.png' },
+    flame_scythe_melee: { path: 'weapons/melee/flame_scythe.png' },
+    thunder_hammer_melee: { path: 'weapons/melee/thunder_hammer.png' },
+    blood_razor_melee: { path: 'weapons/melee/blood_razor.png' },
+    crescent_moon_melee: { path: 'weapons/melee/crescent_moon.png' },
+    berserker_blade_melee: { path: 'weapons/melee/berserker_blade.png' },
+    blood_cleaver_melee: { path: 'weapons/melee/blood_cleaver.png' },
+    primal_strike_melee: { path: 'weapons/melee/primal_strike.png' },
+    lightning_lash_melee: { path: 'weapons/melee/lightning_lash.png' },
+    blade_storm_melee: { path: 'weapons/melee/blade_storm.png' },
+    umbral_wave_melee: { path: 'weapons/melee/umbral_wave.png' },
+    // Basic Rare
+    void_reaver_melee: { path: 'weapons/melee/void_reaver.png' },
+    storm_caller_melee: { path: 'weapons/melee/storm_caller.png' },
+    mirrorblade_melee: { path: 'weapons/melee/mirrorblade.png' },
+    soulrender_melee: { path: 'weapons/melee/soulrender.png' },
+    // Basic Epic
+    ragnarok_melee: { path: 'weapons/melee/ragnarok.png' },
+    infinity_gauntlet_melee: { path: 'weapons/melee/infinity_gauntlet.png' },
+    genesis_blade_melee: { path: 'weapons/melee/genesis_blade.png' },
+    // Core Common
+    shadow_blade_melee: { path: 'weapons/melee/shadow_blade.png' },
+    steel_hammer_melee: { path: 'weapons/melee/steel_hammer.png' },
+    blood_scythe_melee: { path: 'weapons/melee/blood_scythe.png' },
+    beast_claw_melee: { path: 'weapons/melee/beast_claw.png' },
+    // Core Uncommon
+    crimson_reaper_melee: { path: 'weapons/melee/crimson_reaper.png' },
+    feral_strike_melee: { path: 'weapons/melee/feral_strike.png' },
+    iron_crusher_melee: { path: 'weapons/melee/iron_crusher.png' },
+    phantom_edge_melee: { path: 'weapons/melee/phantom_edge.png' },
+    // Core Rare
+    alpha_predator_melee: { path: 'weapons/melee/alpha_predator.png' },
+    nightmare_slash_melee: { path: 'weapons/melee/nightmare_slash.png' },
+    soul_harvester_melee: { path: 'weapons/melee/soul_harvester.png' },
+    titan_maul_melee: { path: 'weapons/melee/titan_maul.png' },
+    // Core Epic
+    adamantine_breaker_melee: { path: 'weapons/melee/adamantine_breaker.png' },
+    beast_king_melee: { path: 'weapons/melee/beast_king.png' },
+    blood_lord_melee: { path: 'weapons/melee/blood_lord.png' },
+    void_assassin_melee: { path: 'weapons/melee/void_assassin.png' },
+    // Core Legendary
+    eternal_bloodlust_melee: { path: 'weapons/melee/eternal_bloodlust.png' },
+    mjolnir_melee: { path: 'weapons/melee/mjolnir.png' },
+    oblivion_blade_melee: { path: 'weapons/melee/oblivion_blade.png' },
+    primal_god_melee: { path: 'weapons/melee/primal_god.png' },
+
+    // ------------- AREA DAMAGE ATTACK IMAGES -------------
+    // Basic Common
+    frost_circle_area: { path: 'weapons/areas/frost_circle.png' },
+    ember_field_area: { path: 'weapons/areas/ember_field.png' },
+    shadow_pool_area: { path: 'weapons/areas/shadow_pool.png' },
+    holy_ground_area: { path: 'weapons/areas/holy_ground.png' },
+    poison_puddle_area: { path: 'weapons/areas/poison_puddle.png' },
+    // Basic Uncommon
+    toxic_spores_area: { path: 'weapons/areas/toxic_spores.png' },
+    gravity_well_area: { path: 'weapons/areas/gravity_well.png' },
+    hallowed_ring_area: { path: 'weapons/areas/hallowed_ring.png' },
+    meteor_crater_area: { path: 'weapons/areas/meteor_crater.png' },
+    blizzard_zone_area: { path: 'weapons/areas/blizzard_zone.png' },
+    elemental_clash_area: { path: 'weapons/areas/elemental_clash.png' },
+    toxic_inferno_area: { path: 'weapons/areas/toxic_inferno.png' },
+    radiant_ground_area: { path: 'weapons/areas/radiant_ground.png' },
+    venomous_surge_area: { path: 'weapons/areas/venomous_surge.png' },
+    inferno_swarm_area: { path: 'weapons/areas/inferno_swarm.png' },
+    // Basic Rare
+    aurora_field_area: { path: 'weapons/areas/aurora_field.png' },
+    dimensional_rift_area: { path: 'weapons/areas/dimensional_rift.png' },
+    supernova_core_area: { path: 'weapons/areas/supernova_core.png' },
+    // Basic Epic
+    void_emperor_area: { path: 'weapons/areas/void_emperor.png' },
+    // Core Common
+    void_rift_area: { path: 'weapons/areas/void_rift.png' },
+    venom_spore_area: { path: 'weapons/areas/venom_spore.png' },
+    earth_spike_area: { path: 'weapons/areas/earth_spike.png' },
+    // Core Uncommon
+    toxic_bloom_area: { path: 'weapons/areas/toxic_bloom.png' },
+    stone_cascade_area: { path: 'weapons/areas/stone_cascade.png' },
+    null_tear_area: { path: 'weapons/areas/null_tear.png' },
+    // Core Rare
+    dimension_rend_area: { path: 'weapons/areas/dimension_rend.png' },
+    plague_forest_area: { path: 'weapons/areas/plague_forest.png' },
+    tectonic_surge_area: { path: 'weapons/areas/tectonic_surge.png' },
+    // Core Epic
+    earthquake_area: { path: 'weapons/areas/earthquake.png' },
+    nature_wrath_area: { path: 'weapons/areas/nature_wrath.png' },
+    reality_collapse_area: { path: 'weapons/areas/reality_collapse.png' },
+    // Core Legendary
+    continental_drift_area: { path: 'weapons/areas/continental_drift.png' },
+    world_tree_area: { path: 'weapons/areas/world_tree.png' },
+    void_god_area: { path: 'weapons/areas/void_god.png' },
+
+    // ------------- PARTICLE/BLADE ATTACK IMAGES -------------
+    // Basic Common
+    orbiting_stones_blade: { path: 'weapons/particles/orbiting_stones.png' },
+    spark_chain_blade: { path: 'weapons/particles/spark_chain.png' },
+    spirit_wisps_blade: { path: 'weapons/particles/spirit_wisps.png' },
+    fire_motes_blade: { path: 'weapons/particles/fire_motes.png' },
+    // Basic Uncommon
+    arc_lightning_blade: { path: 'weapons/particles/arc_lightning.png' },
+    blade_vortex_blade: { path: 'weapons/particles/blade_vortex.png' },
+    toxic_chain_blade: { path: 'weapons/particles/toxic_chain.png' },
+    flame_dancers_blade: { path: 'weapons/particles/flame_dancers.png' },
+    soul_orbit_blade: { path: 'weapons/particles/soul_orbit.png' },
+    // Basic Rare
+    celestial_orbit_blade: { path: 'weapons/particles/celestial_orbit.png' },
+    cascade_lightning_blade: { path: 'weapons/particles/cascade_lightning.png' },
+    orbital_bombardment_blade: { path: 'weapons/particles/orbital_bombardment.png' },
+    // Basic Epic
+    heavens_wrath_blade: { path: 'weapons/particles/heavens_wrath.png' },
+    soul_nexus_blade: { path: 'weapons/particles/soul_nexus.png' },
+    // Core Common
+    thunder_strike_blade: { path: 'weapons/particles/thunder_strike.png' },
+
+    // ------------- MINE ATTACK IMAGES -------------
+    // Basic Common
+    flash_bomb_mine: { path: 'weapons/mines/flash_bomb.png' },
+    ice_bomb_mine: { path: 'weapons/mines/ice_bomb.png' },
+    spike_trap_mine: { path: 'weapons/mines/spike_trap.png' },
+    // Basic Uncommon
+    cluster_mine_mine: { path: 'weapons/mines/cluster_mine.png' },
+    magnetic_mine_mine: { path: 'weapons/mines/magnetic_mine.png' },
+    chain_reaction_mine_mine: { path: 'weapons/mines/chain_reaction_mine.png' },
+    explosive_trap_mine: { path: 'weapons/mines/explosive_trap.png' },
+    // Basic Rare
+    quantum_mine_mine: { path: 'weapons/mines/quantum_mine.png' },
+    void_anchor_mine: { path: 'weapons/mines/void_anchor.png' },
+    // Basic Epic
+    apocalypse_engine_mine: { path: 'weapons/mines/apocalypse_engine.png' },
+
+    // ------------- SUMMON ATTACK IMAGES -------------
+    // Basic Common
+    skeleton_minion_summon: { path: 'weapons/summons/skeleton_minion.png' },
+    fire_sprite_summon: { path: 'weapons/summons/fire_sprite.png' },
+    // Basic Uncommon
+    shadow_clone_summon: { path: 'weapons/summons/shadow_clone.png' },
+    frost_elemental_summon: { path: 'weapons/summons/frost_elemental.png' },
+    undead_legion_summon: { path: 'weapons/summons/undead_legion.png' },
+    // Basic Rare
+    phoenix_guardian_summon: { path: 'weapons/summons/phoenix_guardian.png' },
+    // Basic Epic
+    world_serpent_summon: { path: 'weapons/summons/world_serpent.png' },
   };
 
   // ============================================

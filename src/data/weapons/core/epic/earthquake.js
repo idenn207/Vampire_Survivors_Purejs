@@ -89,6 +89,7 @@
     lifetime: 0.7,
     icon: 'earthquake',
     imageId: 'weapon_earthquake',
+    areaImageId: 'earthquake_area',
 
     // Level upgrades
     upgrades: {

@@ -32,6 +32,7 @@
     color: '#66DDFF',
     icon: 'ice_bomb',
     imageId: 'weapon_ice_bomb',
+    mineImageId: 'ice_bomb_mine',
 
     statusEffect: {
       type: 'freeze',

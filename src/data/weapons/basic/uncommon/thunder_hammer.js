@@ -31,6 +31,7 @@
     color: '#FFFF00',
     icon: 'thunder_hammer',
     imageId: 'weapon_thunder_hammer',
+    meleeImageId: 'thunder_hammer_melee',
 
     shockwave: {
       enabled: true,

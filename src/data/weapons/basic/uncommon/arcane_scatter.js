@@ -38,6 +38,7 @@
     // Visual
     icon: 'arcane_scatter',
     imageId: 'weapon_arcane_scatter',
+    projectileImageId: 'arcane_scatter_projectile',
 
     // Level upgrades
     upgrades: {

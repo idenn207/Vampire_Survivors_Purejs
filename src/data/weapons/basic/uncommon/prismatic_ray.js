@@ -32,6 +32,7 @@
     color: '#FF00FF',
     icon: 'prismatic_ray',
     imageId: 'weapon_prismatic_ray',
+    laserImageId: 'prismatic_ray_laser',
 
     colorCycle: {
       enabled: true,

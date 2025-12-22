@@ -32,6 +32,7 @@
     color: '#FFDD66',
     icon: 'holy_ground',
     imageId: 'weapon_holy_ground',
+    areaImageId: 'holy_ground_area',
 
     // Healing effect
     healing: {

@@ -32,6 +32,7 @@
     color: '#66AA00',
     icon: 'toxic_spores',
     imageId: 'weapon_toxic_spores',
+    areaImageId: 'toxic_spores_area',
 
     spreadOnKill: {
       enabled: true,

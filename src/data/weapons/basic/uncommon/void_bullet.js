@@ -32,6 +32,7 @@
     color: '#330066',
     icon: 'void_bullet',
     imageId: 'weapon_void_bullet',
+    projectileImageId: 'void_bullet_projectile',
 
     gravity: {
       enabled: true,

@@ -67,6 +67,7 @@
     lifetime: 2.0,
     icon: 'siege_platform',
     imageId: 'weapon_siege_platform',
+    projectileImageId: 'siege_platform_projectile',
 
     // Level upgrades
     upgrades: {

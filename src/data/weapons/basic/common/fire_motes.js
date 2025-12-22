@@ -32,7 +32,7 @@
     size: 6,
     icon: 'fire_motes',
     imageId: 'weapon_fire_motes',
-    bladeImageId: 'test_particle',
+    bladeImageId: 'fire_motes_blade',
 
     statusEffect: {
       type: 'burn',

@@ -48,6 +48,7 @@
     // Visual
     icon: 'elemental_clash',
     imageId: 'weapon_elemental_clash',
+    areaImageId: 'elemental_clash_area',
 
     // Level upgrades
     upgrades: {

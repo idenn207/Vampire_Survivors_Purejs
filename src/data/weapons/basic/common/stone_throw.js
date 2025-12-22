@@ -36,6 +36,7 @@
     lifetime: 2.5,
     icon: 'stone',
     imageId: 'weapon_stone_throw',
+    projectileImageId: 'stone_throw_projectile',
 
     // Gravity arc
     gravity: {

@@ -32,6 +32,7 @@
     color: '#774422',
     icon: 'whip',
     imageId: 'weapon_whip_lash',
+    meleeImageId: 'whip_lash_melee',
 
     swingEffect: {
       type: 'whip_crack',

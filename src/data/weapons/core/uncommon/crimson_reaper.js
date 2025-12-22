@@ -68,6 +68,7 @@
     lifetime: 0.25,
     icon: 'crimson_reaper',
     imageId: 'weapon_crimson_reaper',
+    meleeImageId: 'crimson_reaper_melee',
 
     // Level upgrades
     upgrades: {

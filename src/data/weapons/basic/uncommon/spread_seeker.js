@@ -37,6 +37,7 @@
     // Visual
     icon: 'spread_seeker',
     imageId: 'weapon_spread_seeker',
+    projectileImageId: 'spread_seeker_projectile',
 
     // Level upgrades
     upgrades: {

@@ -89,6 +89,7 @@
     lifetime: 0.35,
     icon: 'adamantine_breaker',
     imageId: 'weapon_adamantine_breaker',
+    meleeImageId: 'adamantine_breaker_melee',
 
     // Level upgrades
     upgrades: {

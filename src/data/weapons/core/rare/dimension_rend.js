@@ -73,6 +73,7 @@
     lifetime: 3.0,
     icon: 'dimension_rend',
     imageId: 'weapon_dimension_rend',
+    areaImageId: 'dimension_rend_area',
 
     // Level upgrades
     upgrades: {

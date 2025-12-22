@@ -81,6 +81,7 @@
     lifetime: 0.5,
     icon: 'time_distortion',
     imageId: 'weapon_time_distortion',
+    laserImageId: 'time_distortion_laser',
 
     // Level upgrades
     upgrades: {

@@ -43,6 +43,7 @@
     color: '#8B4513',
     icon: 'earth_spike',
     imageId: 'weapon_earth_spike',
+    areaImageId: 'earth_spike_area',
 
     upgrades: {
       2: { damage: 46, radius: 95 },

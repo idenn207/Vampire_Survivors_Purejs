@@ -80,6 +80,7 @@
     lifetime: 0.6,
     icon: 'tectonic_surge',
     imageId: 'weapon_tectonic_surge',
+    areaImageId: 'tectonic_surge_area',
 
     // Level upgrades
     upgrades: {

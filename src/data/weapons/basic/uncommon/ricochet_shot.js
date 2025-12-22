@@ -31,6 +31,7 @@
     color: '#CCCCCC',
     icon: 'ricochet_shot',
     imageId: 'weapon_ricochet_shot',
+    projectileImageId: 'ricochet_shot_projectile',
 
     ricochet: {
       enabled: true,

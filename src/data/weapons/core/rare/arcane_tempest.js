@@ -76,6 +76,7 @@
     lifetime: 2.5,
     icon: 'arcane_tempest',
     imageId: 'weapon_arcane_tempest',
+    projectileImageId: 'arcane_tempest_projectile',
 
     // Level upgrades
     upgrades: {

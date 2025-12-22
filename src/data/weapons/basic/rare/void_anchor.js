@@ -36,6 +36,7 @@
     secondaryColor: '#000000',
     icon: 'void_anchor',
     imageId: 'weapon_void_anchor',
+    mineImageId: 'void_anchor_mine',
 
     // Multi-phase anchor effect
     anchorPhases: {

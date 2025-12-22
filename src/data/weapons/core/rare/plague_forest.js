@@ -83,6 +83,7 @@
     lifetime: 5.0,
     icon: 'plague_forest',
     imageId: 'weapon_plague_forest',
+    areaImageId: 'plague_forest_area',
 
     // Level upgrades
     upgrades: {

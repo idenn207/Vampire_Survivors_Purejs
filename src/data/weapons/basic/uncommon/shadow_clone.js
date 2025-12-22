@@ -30,6 +30,7 @@
     color: '#333366',
     icon: 'shadow_clone',
     imageId: 'weapon_shadow_clone',
+    summonImageId: 'shadow_clone_summon',
 
     summonStats: {
       health: 80,

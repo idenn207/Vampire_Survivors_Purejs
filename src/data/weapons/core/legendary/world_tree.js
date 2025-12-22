@@ -100,6 +100,7 @@
     lifetime: 7.0,
     icon: 'world_tree',
     imageId: 'weapon_world_tree',
+    areaImageId: 'world_tree_area',
 
     // Level upgrades
     upgrades: {

@@ -32,6 +32,7 @@
     color: '#FFD700',
     icon: 'chakram',
     imageId: 'weapon_chakram',
+    projectileImageId: 'chakram_projectile',
 
     boomerang: {
       enabled: true,

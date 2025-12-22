@@ -42,6 +42,7 @@
     // Visual
     icon: 'radiant_ground',
     imageId: 'weapon_radiant_ground',
+    areaImageId: 'radiant_ground_area',
 
     // Level upgrades
     upgrades: {

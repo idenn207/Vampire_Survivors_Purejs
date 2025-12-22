@@ -36,6 +36,7 @@
     lifetime: 2.5,
     icon: 'spectral',
     imageId: 'weapon_spectral_arrow',
+    projectileImageId: 'spectral_arrow_projectile',
 
     // Ghostly appearance
     ghostly: {

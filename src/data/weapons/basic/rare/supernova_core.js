@@ -35,6 +35,7 @@
     tertiaryColor: '#FFFFFF',
     icon: 'supernova',
     imageId: 'weapon_supernova_core',
+    areaImageId: 'supernova_core_area',
 
     // Supernova phases
     supernovaPhases: {

@@ -36,6 +36,7 @@
     lifetime: 1.5,
     icon: 'scatter',
     imageId: 'weapon_scatter_shot',
+    projectileImageId: 'scatter_shot_projectile',
 
     trail: {
       enabled: true,

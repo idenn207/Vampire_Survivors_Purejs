@@ -32,6 +32,7 @@
     color: '#88DDFF',
     icon: 'blizzard_zone',
     imageId: 'weapon_blizzard_zone',
+    areaImageId: 'blizzard_zone_area',
 
     stackingSlow: {
       enabled: true,

@@ -41,6 +41,7 @@
     lifetime: 2.0,
     icon: 'wind_cutter',
     imageId: 'weapon_wind_cutter',
+    projectileImageId: 'wind_cutter_core_projectile',
 
     upgrades: {
       2: { damage: 28, knockback: 180, passiveSpeedBoost: 0.18 },

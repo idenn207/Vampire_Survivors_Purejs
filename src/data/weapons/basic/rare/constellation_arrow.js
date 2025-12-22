@@ -40,6 +40,7 @@
     lifetime: 3.0,
     icon: 'constellation',
     imageId: 'weapon_constellation_arrow',
+    projectileImageId: 'constellation_arrow_projectile',
 
     // Trail effect - leaves stars along path
     trail: {

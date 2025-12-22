@@ -37,6 +37,7 @@
     tertiaryColor: '#000000',
     icon: 'ragnarok',
     imageId: 'weapon_ragnarok',
+    meleeImageId: 'ragnarok_melee',
 
     // Permanent damage stacking
     permanentStacking: {

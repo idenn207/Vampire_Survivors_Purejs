@@ -35,6 +35,7 @@
     tertiaryColor: '#003300',
     icon: 'world_serpent',
     imageId: 'weapon_world_serpent',
+    summonImageId: 'world_serpent_summon',
 
     // Serpent stats
     serpentStats: {

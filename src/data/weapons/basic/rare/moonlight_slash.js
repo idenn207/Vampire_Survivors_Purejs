@@ -36,6 +36,7 @@
     secondaryColor: '#FFFFFF',
     icon: 'moonlight',
     imageId: 'weapon_moonlight_slash',
+    laserImageId: 'moonlight_slash_laser',
 
     // Status effect
     statusEffect: {

@@ -59,6 +59,7 @@
     lifetime: 2.0,
     icon: 'auto_sentinel',
     imageId: 'weapon_auto_sentinel',
+    projectileImageId: 'auto_sentinel_projectile',
 
     // Level upgrades
     upgrades: {

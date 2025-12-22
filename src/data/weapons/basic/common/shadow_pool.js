@@ -32,6 +32,7 @@
     color: '#330066',
     icon: 'shadow_pool',
     imageId: 'weapon_shadow_pool',
+    areaImageId: 'shadow_pool_area',
 
     statusEffect: {
       type: 'stun',

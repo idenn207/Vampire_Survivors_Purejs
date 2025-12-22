@@ -74,6 +74,7 @@
     lifetime: 2.5,
     icon: 'war_machine',
     imageId: 'weapon_war_machine',
+    projectileImageId: 'war_machine_projectile',
 
     // Level upgrades
     upgrades: {

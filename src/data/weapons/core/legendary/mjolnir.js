@@ -97,6 +97,7 @@
     lifetime: 0.4,
     icon: 'mjolnir',
     imageId: 'weapon_mjolnir',
+    meleeImageId: 'mjolnir_melee',
 
     // Level upgrades
     upgrades: {

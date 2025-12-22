@@ -32,6 +32,7 @@
     color: '#FFD700',
     icon: 'hallowed_ring',
     imageId: 'weapon_hallowed_ring',
+    areaImageId: 'hallowed_ring_area',
 
     ringShape: {
       enabled: true,

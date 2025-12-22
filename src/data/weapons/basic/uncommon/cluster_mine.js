@@ -32,6 +32,7 @@
     color: '#FF6600',
     icon: 'cluster_mine',
     imageId: 'weapon_cluster_mine',
+    mineImageId: 'cluster_mine_mine',
 
     cluster: {
       enabled: true,

@@ -75,6 +75,7 @@
     lifetime: 0.25,
     icon: 'soul_harvester',
     imageId: 'weapon_soul_harvester',
+    meleeImageId: 'soul_harvester_melee',
 
     // Level upgrades
     upgrades: {

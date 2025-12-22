@@ -35,6 +35,7 @@
     secondaryColor: '#FF33FF',
     icon: 'portal',
     imageId: 'weapon_dimensional_rift',
+    areaImageId: 'dimensional_rift_area',
 
     // Portal system
     portalSystem: {

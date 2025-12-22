@@ -76,6 +76,7 @@
     lifetime: 2.5,
     icon: 'seraph_judgment',
     imageId: 'weapon_seraph_judgment',
+    projectileImageId: 'seraph_judgment_projectile',
 
     // Level upgrades
     upgrades: {

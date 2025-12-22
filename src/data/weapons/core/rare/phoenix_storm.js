@@ -77,6 +77,7 @@
     lifetime: 3.0,
     icon: 'phoenix_storm',
     imageId: 'weapon_phoenix_storm',
+    projectileImageId: 'phoenix_storm_projectile',
 
     // Level upgrades
     upgrades: {

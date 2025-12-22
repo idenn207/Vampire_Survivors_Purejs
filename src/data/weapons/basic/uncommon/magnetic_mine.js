@@ -32,6 +32,7 @@
     color: '#0066FF',
     icon: 'magnetic_mine',
     imageId: 'weapon_magnetic_mine',
+    mineImageId: 'magnetic_mine_mine',
 
     magneticPull: {
       enabled: true,

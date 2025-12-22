@@ -68,6 +68,7 @@
     lifetime: 0.2,
     icon: 'phantom_edge',
     imageId: 'weapon_phantom_edge',
+    meleeImageId: 'phantom_edge_melee',
 
     // Level upgrades
     upgrades: {

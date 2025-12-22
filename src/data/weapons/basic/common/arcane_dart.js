@@ -36,7 +36,7 @@
     lifetime: 2.0,
     icon: 'arcane_dart',
     imageId: 'weapon_arcane_dart',
-    projectileImageId: 'test_projectile',
+    projectileImageId: 'arcane_dart_projectile',
     visualScale: 1.5,
 
     trail: {

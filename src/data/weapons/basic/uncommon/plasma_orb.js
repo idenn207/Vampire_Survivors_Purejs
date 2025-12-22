@@ -32,6 +32,7 @@
     color: '#FF00FF',
     icon: 'plasma_orb',
     imageId: 'weapon_plasma_orb',
+    projectileImageId: 'plasma_orb_projectile',
 
     growth: {
       enabled: true,

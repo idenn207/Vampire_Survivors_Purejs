@@ -36,6 +36,7 @@
     secondaryColor: '#9933FF',
     icon: 'void_reaver',
     imageId: 'weapon_void_reaver',
+    meleeImageId: 'void_reaver_melee',
 
     // Kill stacking mechanic
     killStacking: {

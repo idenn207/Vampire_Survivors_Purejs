@@ -85,6 +85,7 @@
     lifetime: 3.0,
     icon: 'reality_shatter',
     imageId: 'weapon_reality_shatter',
+    projectileImageId: 'reality_shatter_projectile',
 
     // Level upgrades
     upgrades: {

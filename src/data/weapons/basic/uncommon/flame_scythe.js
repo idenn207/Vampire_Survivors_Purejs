@@ -31,6 +31,7 @@
     color: '#FF6600',
     icon: 'flame_scythe',
     imageId: 'weapon_flame_scythe',
+    meleeImageId: 'flame_scythe_melee',
 
     statusEffect: {
       type: 'burn',

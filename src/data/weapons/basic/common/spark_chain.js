@@ -31,6 +31,7 @@
     color: '#FFFF00',
     icon: 'spark',
     imageId: 'weapon_spark_chain',
+    bladeImageId: 'spark_chain_blade',
 
     chainVisual: {
       type: 'electric_arc',

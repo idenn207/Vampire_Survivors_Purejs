@@ -69,6 +69,7 @@
     lifetime: 2.5,
     icon: 'divine_spear',
     imageId: 'weapon_divine_spear',
+    projectileImageId: 'divine_spear_projectile',
 
     // Level upgrades
     upgrades: {

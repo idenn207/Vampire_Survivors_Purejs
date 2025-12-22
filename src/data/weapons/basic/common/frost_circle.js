@@ -32,6 +32,7 @@
     color: '#66DDFF',
     icon: 'frost_ring',
     imageId: 'weapon_frost_circle',
+    areaImageId: 'frost_circle_area',
 
     statusEffect: {
       type: 'slow',

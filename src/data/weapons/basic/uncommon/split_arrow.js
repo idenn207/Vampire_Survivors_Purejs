@@ -32,6 +32,7 @@
     color: '#44AA44',
     icon: 'split_arrow',
     imageId: 'weapon_split_arrow',
+    projectileImageId: 'split_arrow_projectile',
 
     split: {
       enabled: true,

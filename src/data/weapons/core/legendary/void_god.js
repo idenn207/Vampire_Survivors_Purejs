@@ -88,6 +88,7 @@
     lifetime: 4.0,
     icon: 'void_god',
     imageId: 'weapon_void_god',
+    areaImageId: 'void_god_area',
 
     // Level upgrades
     upgrades: {

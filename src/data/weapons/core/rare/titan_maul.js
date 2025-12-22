@@ -81,6 +81,7 @@
     lifetime: 0.35,
     icon: 'titan_maul',
     imageId: 'weapon_titan_maul',
+    meleeImageId: 'titan_maul_melee',
 
     // Level upgrades
     upgrades: {

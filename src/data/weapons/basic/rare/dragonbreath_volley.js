@@ -40,6 +40,7 @@
     lifetime: 2.0,
     icon: 'dragon_fire',
     imageId: 'weapon_dragonbreath_volley',
+    projectileImageId: 'dragonbreath_volley_projectile',
 
     // Status effect
     statusEffect: {

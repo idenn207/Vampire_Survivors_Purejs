@@ -36,6 +36,7 @@
     secondaryColor: '#000000',
     icon: 'apocalypse',
     imageId: 'weapon_apocalypse_engine',
+    mineImageId: 'apocalypse_engine_mine',
 
     // Four Horsemen rotation
     fourHorsemen: {

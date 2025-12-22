@@ -32,6 +32,7 @@
     color: '#FF6600',
     icon: 'meteor_crater',
     imageId: 'weapon_meteor_crater',
+    areaImageId: 'meteor_crater_area',
 
     warning: {
       enabled: true,

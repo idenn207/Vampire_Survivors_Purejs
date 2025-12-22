@@ -47,6 +47,7 @@
     color: '#228B22',
     icon: 'venom_spore',
     imageId: 'weapon_venom_spore',
+    areaImageId: 'venom_spore_area',
 
     upgrades: {
       2: { damage: 8, statusEffects: [{ type: StatusEffectType.POISON, chance: 1.0, duration: 5, tickRate: 1, damagePerTick: 3 }] },

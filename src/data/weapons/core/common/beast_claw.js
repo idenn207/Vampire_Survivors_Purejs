@@ -50,6 +50,7 @@
     color: '#FF6347',
     icon: 'beast_claw',
     imageId: 'weapon_beast_claw',
+    meleeImageId: 'beast_claw_melee',
 
     upgrades: {
       2: { damage: 26, frenzy: { attackSpeedPerKill: 0.06, maxStacks: 10, decayTime: 5 } },

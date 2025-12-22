@@ -35,6 +35,7 @@
     // Visual
     icon: 'rock_storm',
     imageId: 'weapon_rock_storm',
+    bladeImageId: 'rock_storm_projectile',
 
     // Level upgrades
     upgrades: {

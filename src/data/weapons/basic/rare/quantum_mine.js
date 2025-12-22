@@ -36,6 +36,7 @@
     secondaryColor: '#FF00FF',
     icon: 'quantum_mine',
     imageId: 'weapon_quantum_mine',
+    mineImageId: 'quantum_mine_mine',
 
     // Quantum superposition mechanic
     quantumState: {

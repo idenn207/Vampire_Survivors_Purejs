@@ -31,6 +31,7 @@
     color: '#FFFF00',
     icon: 'arc_lightning',
     imageId: 'weapon_arc_lightning',
+    bladeImageId: 'arc_lightning_blade',
 
     stackingStun: {
       enabled: true,

@@ -91,6 +91,7 @@
     lifetime: 0.3,
     icon: 'eternal_bloodlust',
     imageId: 'weapon_eternal_bloodlust',
+    meleeImageId: 'eternal_bloodlust_melee',
 
     // Level upgrades
     upgrades: {

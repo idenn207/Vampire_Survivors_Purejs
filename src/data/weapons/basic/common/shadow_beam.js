@@ -32,6 +32,7 @@
     color: '#660099',
     icon: 'shadow_beam',
     imageId: 'weapon_shadow_beam',
+    laserImageId: 'shadow_beam_laser',
 
     statusEffect: {
       type: 'slow',

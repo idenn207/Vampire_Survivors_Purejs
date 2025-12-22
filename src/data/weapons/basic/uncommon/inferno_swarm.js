@@ -51,6 +51,7 @@
     // Visual
     icon: 'inferno_swarm',
     imageId: 'weapon_inferno_swarm',
+    areaImageId: 'inferno_swarm_area',
 
     // Level upgrades
     upgrades: {

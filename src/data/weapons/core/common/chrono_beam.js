@@ -51,6 +51,7 @@
     color: '#DDA0DD',
     icon: 'chrono_beam',
     imageId: 'weapon_chrono_beam',
+    laserImageId: 'chrono_beam_laser',
 
     upgrades: {
       2: { damage: 46, passiveCDR: 0.18 },

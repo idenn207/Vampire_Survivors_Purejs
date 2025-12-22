@@ -32,6 +32,7 @@
     color: '#FFFFFF',
     icon: 'fist',
     imageId: 'weapon_monks_fist',
+    meleeImageId: 'monks_fist_melee',
 
     // Combo system
     combo: {

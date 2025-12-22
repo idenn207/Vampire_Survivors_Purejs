@@ -68,6 +68,7 @@
     lifetime: 0.3,
     icon: 'iron_crusher',
     imageId: 'weapon_iron_crusher',
+    meleeImageId: 'iron_crusher_melee',
 
     // Level upgrades
     upgrades: {

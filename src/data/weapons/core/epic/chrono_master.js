@@ -88,6 +88,7 @@
     lifetime: 0.55,
     icon: 'chrono_master',
     imageId: 'weapon_chrono_master',
+    laserImageId: 'chrono_master_laser',
 
     // Level upgrades
     upgrades: {

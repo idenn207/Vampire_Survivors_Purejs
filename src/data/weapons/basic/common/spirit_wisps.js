@@ -32,6 +32,7 @@
     size: 8,
     icon: 'wisps',
     imageId: 'weapon_spirit_wisps',
+    bladeImageId: 'spirit_wisps_blade',
 
     // Varying orbit distances
     orbitLayers: {

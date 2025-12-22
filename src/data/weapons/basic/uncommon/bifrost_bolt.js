@@ -33,6 +33,7 @@
     color: '#FF6699',
     icon: 'bifrost_bolt',
     imageId: 'weapon_bifrost_bolt',
+    projectileImageId: 'bifrost_bolt_projectile',
 
     dualElement: {
       fire: {

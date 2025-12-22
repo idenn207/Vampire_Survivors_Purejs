@@ -79,6 +79,7 @@
     lifetime: 2.0,
     icon: 'hurricane_slash',
     imageId: 'weapon_hurricane_slash',
+    projectileImageId: 'hurricane_slash_projectile',
 
     // Level upgrades
     upgrades: {

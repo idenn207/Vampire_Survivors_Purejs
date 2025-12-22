@@ -34,6 +34,7 @@
     // Visual
     icon: 'death_ray',
     imageId: 'weapon_death_ray',
+    laserImageId: 'death_ray_laser',
 
     // Level upgrades
     upgrades: {

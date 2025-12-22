@@ -74,6 +74,7 @@
     lifetime: 2.0,
     icon: 'tempest_fury',
     imageId: 'weapon_tempest_fury',
+    projectileImageId: 'tempest_fury_projectile',
 
     // Level upgrades
     upgrades: {

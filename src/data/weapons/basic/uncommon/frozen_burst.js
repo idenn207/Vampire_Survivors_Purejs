@@ -45,6 +45,7 @@
     // Visual
     icon: 'frozen_burst',
     imageId: 'weapon_frozen_burst',
+    projectileImageId: 'frozen_burst_projectile',
 
     // Level upgrades
     upgrades: {

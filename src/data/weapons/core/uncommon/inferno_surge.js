@@ -78,6 +78,7 @@
     lifetime: 3.0,
     icon: 'inferno_surge',
     imageId: 'weapon_inferno_surge',
+    projectileImageId: 'inferno_surge_projectile',
 
     // Level upgrades
     upgrades: {

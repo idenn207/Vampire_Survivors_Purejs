@@ -39,6 +39,7 @@
     lifetime: 2.5,
     icon: 'arcane_barrage',
     imageId: 'weapon_arcane_barrage',
+    projectileImageId: 'arcane_barrage_projectile',
 
     upgrades: {
       2: { damage: 15, passiveCDR: 0.12 },

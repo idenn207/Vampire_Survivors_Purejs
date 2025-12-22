@@ -44,6 +44,7 @@
     // Visual
     icon: 'phantom_volley',
     imageId: 'weapon_phantom_volley',
+    projectileImageId: 'phantom_volley_projectile',
 
     // Level upgrades
     upgrades: {

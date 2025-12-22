@@ -67,6 +67,7 @@
     lifetime: 2.5,
     icon: 'null_tear',
     imageId: 'weapon_null_tear',
+    areaImageId: 'null_tear_area',
 
     // Level upgrades
     upgrades: {

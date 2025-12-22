@@ -69,6 +69,7 @@
     lifetime: 4.0,
     icon: 'toxic_bloom',
     imageId: 'weapon_toxic_bloom',
+    areaImageId: 'toxic_bloom_area',
 
     // Level upgrades
     upgrades: {

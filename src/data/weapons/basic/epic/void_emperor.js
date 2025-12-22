@@ -37,6 +37,7 @@
     tertiaryColor: '#660099',
     icon: 'void_emperor',
     imageId: 'weapon_void_emperor',
+    areaImageId: 'void_emperor_area',
 
     // Permanent growth system
     permanentGrowth: {

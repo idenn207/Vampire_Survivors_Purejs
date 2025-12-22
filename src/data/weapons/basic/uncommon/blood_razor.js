@@ -31,6 +31,7 @@
     color: '#CC0000',
     icon: 'blood_razor',
     imageId: 'weapon_blood_razor',
+    meleeImageId: 'blood_razor_melee',
 
     lifesteal: {
       enabled: true,

@@ -32,6 +32,7 @@
     size: 14,
     icon: 'stones',
     imageId: 'weapon_orbiting_stones',
+    bladeImageId: 'orbiting_stones_blade',
 
     particles: {
       enabled: true,

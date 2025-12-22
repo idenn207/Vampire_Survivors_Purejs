@@ -35,6 +35,7 @@
     secondaryColor: '#FFFFFF',
     icon: 'sunbeam',
     imageId: 'weapon_sunbeam',
+    laserImageId: 'sunbeam_laser',
 
     // Status effect
     statusEffect: {

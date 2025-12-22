@@ -88,6 +88,7 @@
     lifetime: 2.5,
     icon: 'storm_emperor',
     imageId: 'weapon_storm_emperor',
+    projectileImageId: 'storm_emperor_projectile',
 
     // Level upgrades
     upgrades: {

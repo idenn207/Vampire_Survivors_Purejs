@@ -32,6 +32,7 @@
     color: '#CCCCCC',
     icon: 'claw',
     imageId: 'weapon_claw_strike',
+    meleeImageId: 'claw_strike_melee',
 
     statusEffect: {
       type: 'bleed',

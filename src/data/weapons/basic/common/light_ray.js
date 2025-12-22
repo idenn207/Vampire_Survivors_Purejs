@@ -32,7 +32,7 @@
     color: '#FFFF00',
     icon: 'light_ray',
     imageId: 'weapon_light_ray',
-    laserImageId: 'test_laser',
+    laserImageId: 'light_ray_laser',
 
     laserVisual: {
       type: 'beam',

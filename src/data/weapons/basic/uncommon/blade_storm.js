@@ -35,6 +35,7 @@
     // Visual
     icon: 'blade_storm',
     imageId: 'weapon_blade_storm',
+    meleeImageId: 'blade_storm_melee',
 
     // Level upgrades
     upgrades: {

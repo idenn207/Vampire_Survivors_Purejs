@@ -34,6 +34,7 @@
     secondaryColor: '#FFCC00',
     icon: 'phoenix',
     imageId: 'weapon_phoenix_guardian',
+    summonImageId: 'phoenix_guardian_summon',
 
     // Phoenix summon stats
     summonStats: {

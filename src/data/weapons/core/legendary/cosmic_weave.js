@@ -93,6 +93,7 @@
     lifetime: 3.0,
     icon: 'cosmic_weave',
     imageId: 'weapon_cosmic_weave',
+    projectileImageId: 'cosmic_weave_projectile',
 
     // Level upgrades
     upgrades: {

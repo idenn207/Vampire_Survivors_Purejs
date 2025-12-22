@@ -36,6 +36,7 @@
     // Visual
     icon: 'toxic_inferno',
     imageId: 'weapon_toxic_inferno',
+    areaImageId: 'toxic_inferno_area',
 
     // Level upgrades
     upgrades: {

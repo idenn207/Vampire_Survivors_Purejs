@@ -81,6 +81,7 @@
     lifetime: 0.2,
     icon: 'nightmare_slash',
     imageId: 'weapon_nightmare_slash',
+    meleeImageId: 'nightmare_slash_melee',
 
     // Level upgrades
     upgrades: {

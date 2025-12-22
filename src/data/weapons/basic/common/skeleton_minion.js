@@ -30,6 +30,7 @@
     color: '#DDDDAA',
     icon: 'skeleton',
     imageId: 'weapon_skeleton_minion',
+    summonImageId: 'skeleton_minion_summon',
 
     summonStats: {
       health: 60,

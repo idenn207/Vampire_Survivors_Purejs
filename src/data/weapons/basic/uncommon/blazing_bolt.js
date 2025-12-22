@@ -43,6 +43,7 @@
     // Visual
     icon: 'blazing_bolt',
     imageId: 'weapon_blazing_bolt',
+    projectileImageId: 'blazing_bolt_projectile',
 
     // Level upgrades
     upgrades: {

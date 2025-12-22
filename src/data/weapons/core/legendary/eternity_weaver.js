@@ -97,6 +97,7 @@
     lifetime: 0.6,
     icon: 'eternity_weaver',
     imageId: 'weapon_eternity_weaver',
+    laserImageId: 'eternity_weaver_laser',
 
     // Level upgrades
     upgrades: {

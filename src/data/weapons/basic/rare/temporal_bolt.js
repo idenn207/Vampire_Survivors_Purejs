@@ -40,6 +40,7 @@
     lifetime: 3.5,
     icon: 'temporal',
     imageId: 'weapon_temporal_bolt',
+    projectileImageId: 'temporal_bolt_projectile',
 
     // Temporal effects
     temporal: {

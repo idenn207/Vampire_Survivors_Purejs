@@ -32,7 +32,7 @@
     color: '#66FF44',
     icon: 'poison_pool',
     imageId: 'weapon_poison_puddle',
-    areaImageId: 'test_area',
+    areaImageId: 'poison_puddle_area',
 
     statusEffect: {
       type: 'poison',

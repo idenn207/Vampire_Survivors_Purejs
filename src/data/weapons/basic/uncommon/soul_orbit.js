@@ -32,6 +32,7 @@
     color: '#00FFCC',
     icon: 'soul_orbit',
     imageId: 'weapon_soul_orbit',
+    bladeImageId: 'soul_orbit_blade',
 
     soulGain: {
       enabled: true,

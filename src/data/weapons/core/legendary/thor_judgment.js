@@ -89,6 +89,7 @@
     lifetime: 3.0,
     icon: 'thor_judgment',
     imageId: 'weapon_thor_judgment',
+    projectileImageId: 'thor_judgment_projectile',
 
     // Level upgrades
     upgrades: {

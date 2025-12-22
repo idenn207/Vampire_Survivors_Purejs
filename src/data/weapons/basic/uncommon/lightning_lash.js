@@ -44,6 +44,7 @@
     // Visual
     icon: 'lightning_lash',
     imageId: 'weapon_lightning_lash',
+    meleeImageId: 'lightning_lash_melee',
 
     // Level upgrades
     upgrades: {

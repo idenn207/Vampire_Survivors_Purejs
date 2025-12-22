@@ -36,6 +36,7 @@
     lifetime: 2.0,
     icon: 'venom',
     imageId: 'weapon_venom_fang',
+    projectileImageId: 'venom_fang_projectile',
 
     statusEffect: {
       type: 'poison',

@@ -83,6 +83,7 @@
     lifetime: 3.0,
     icon: 'omega_protocol',
     imageId: 'weapon_omega_protocol',
+    projectileImageId: 'omega_protocol_projectile',
 
     // Level upgrades
     upgrades: {

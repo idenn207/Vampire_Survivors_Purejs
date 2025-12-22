@@ -35,6 +35,7 @@
     // Visual
     icon: 'storm_blades',
     imageId: 'weapon_storm_blades',
+    bladeImageId: 'storm_blades_projectile',
 
     // Level upgrades
     upgrades: {

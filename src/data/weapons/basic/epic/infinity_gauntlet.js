@@ -36,6 +36,7 @@
     secondaryColor: '#AA8800',
     icon: 'infinity_gauntlet',
     imageId: 'weapon_infinity_gauntlet',
+    meleeImageId: 'infinity_gauntlet_melee',
 
     // Infinity Stones system
     infinityStones: {

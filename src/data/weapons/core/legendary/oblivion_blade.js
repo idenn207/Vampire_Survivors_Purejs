@@ -96,6 +96,7 @@
     lifetime: 0.25,
     icon: 'oblivion_blade',
     imageId: 'weapon_oblivion_blade',
+    meleeImageId: 'oblivion_blade_melee',
 
     // Level upgrades
     upgrades: {

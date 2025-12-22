@@ -82,6 +82,7 @@
     lifetime: 2.5,
     icon: 'lightning_god',
     imageId: 'weapon_lightning_god',
+    projectileImageId: 'lightning_god_projectile',
 
     // Level upgrades
     upgrades: {

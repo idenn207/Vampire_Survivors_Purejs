@@ -93,6 +93,7 @@
     lifetime: 3.0,
     icon: 'god_light',
     imageId: 'weapon_god_light',
+    projectileImageId: 'god_light_projectile',
 
     // Level upgrades
     upgrades: {

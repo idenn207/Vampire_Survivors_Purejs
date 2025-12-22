@@ -36,6 +36,7 @@
     color: '#708090',
     icon: 'steel_hammer',
     imageId: 'weapon_steel_hammer',
+    meleeImageId: 'steel_hammer_melee',
 
     upgrades: {
       2: { damage: 72, knockback: 380 },

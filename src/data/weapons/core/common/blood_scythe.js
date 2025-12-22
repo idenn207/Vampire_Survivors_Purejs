@@ -46,6 +46,7 @@
     color: '#8B0000',
     icon: 'blood_scythe',
     imageId: 'weapon_blood_scythe',
+    meleeImageId: 'blood_scythe_melee',
 
     upgrades: {
       2: { damage: 40, lifesteal: 0.18 },

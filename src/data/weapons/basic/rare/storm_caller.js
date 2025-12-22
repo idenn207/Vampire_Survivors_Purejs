@@ -36,6 +36,7 @@
     secondaryColor: '#FFFFFF',
     icon: 'storm_hammer',
     imageId: 'weapon_storm_caller',
+    meleeImageId: 'storm_caller_melee',
 
     // Status effect
     statusEffect: {

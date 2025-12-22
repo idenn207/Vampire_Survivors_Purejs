@@ -49,6 +49,7 @@
     // Visual
     icon: 'explosive_trap',
     imageId: 'weapon_explosive_trap',
+    mineImageId: 'explosive_trap_mine',
 
     // Level upgrades
     upgrades: {

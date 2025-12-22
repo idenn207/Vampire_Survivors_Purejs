@@ -36,6 +36,7 @@
     lifetime: 2.0,
     icon: 'ember',
     imageId: 'weapon_ember_bolt',
+    projectileImageId: 'ember_bolt_projectile',
 
     statusEffect: {
       type: 'burn',

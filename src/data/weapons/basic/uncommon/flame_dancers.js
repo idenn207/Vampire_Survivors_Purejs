@@ -31,6 +31,7 @@
     color: '#FF6600',
     icon: 'flame_dancers',
     imageId: 'weapon_flame_dancers',
+    bladeImageId: 'flame_dancers_blade',
 
     dualOrbit: {
       enabled: true,

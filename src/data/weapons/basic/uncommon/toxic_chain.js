@@ -31,6 +31,7 @@
     color: '#44DD00',
     icon: 'toxic_chain',
     imageId: 'weapon_toxic_chain',
+    bladeImageId: 'toxic_chain_blade',
 
     stackingPoison: {
       enabled: true,

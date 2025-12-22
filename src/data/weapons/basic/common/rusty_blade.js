@@ -32,7 +32,7 @@
     color: '#AA6633',
     icon: 'rusty_blade',
     imageId: 'weapon_rusty_blade',
-    meleeImageId: 'test_melee',
+    meleeImageId: 'rusty_blade_melee',
 
     statusEffect: {
       type: 'bleed',

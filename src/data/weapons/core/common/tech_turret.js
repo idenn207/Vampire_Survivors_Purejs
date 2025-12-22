@@ -43,6 +43,7 @@
     lifetime: 2.0,
     icon: 'tech_turret',
     imageId: 'weapon_tech_turret',
+    projectileImageId: 'tech_turret_projectile',
 
     upgrades: {
       2: { damage: 13, ricochet: { bounces: 2, damageDecay: 0.75, bounceRange: 110 } },

@@ -93,6 +93,7 @@
     lifetime: 4.0,
     icon: 'eternal_winter',
     imageId: 'weapon_eternal_winter',
+    projectileImageId: 'eternal_winter_projectile',
 
     // Level upgrades
     upgrades: {

@@ -92,6 +92,7 @@
     lifetime: 6.0,
     icon: 'nature_wrath',
     imageId: 'weapon_nature_wrath',
+    areaImageId: 'nature_wrath_area',
 
     // Level upgrades
     upgrades: {

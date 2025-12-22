@@ -77,6 +77,7 @@
     lifetime: 0.15,
     icon: 'alpha_predator',
     imageId: 'weapon_alpha_predator',
+    meleeImageId: 'alpha_predator_melee',
 
     // Level upgrades
     upgrades: {

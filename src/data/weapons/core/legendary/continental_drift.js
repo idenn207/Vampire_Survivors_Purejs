@@ -97,6 +97,7 @@
     lifetime: 0.8,
     icon: 'continental_drift',
     imageId: 'weapon_continental_drift',
+    areaImageId: 'continental_drift_area',
 
     // Level upgrades
     upgrades: {

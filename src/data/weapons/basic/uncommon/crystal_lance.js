@@ -32,6 +32,7 @@
     color: '#00FFFF',
     icon: 'crystal_lance',
     imageId: 'weapon_crystal_lance',
+    projectileImageId: 'crystal_lance_projectile',
 
     shatter: {
       enabled: true,

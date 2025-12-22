@@ -40,6 +40,7 @@
     lifetime: 4.0,
     icon: 'phoenix_feather',
     imageId: 'weapon_phoenix_feather',
+    projectileImageId: 'phoenix_feather_projectile',
 
     // Status effect
     statusEffect: {

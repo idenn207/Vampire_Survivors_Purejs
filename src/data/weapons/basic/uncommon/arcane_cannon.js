@@ -36,6 +36,7 @@
     // Visual
     icon: 'arcane_cannon',
     imageId: 'weapon_arcane_cannon',
+    projectileImageId: 'arcane_cannon_projectile',
 
     // Level upgrades
     upgrades: {

@@ -41,6 +41,7 @@
     color: '#FFD700',
     icon: 'holy_lance',
     imageId: 'weapon_holy_lance',
+    laserImageId: 'holy_lance_laser',
 
     upgrades: {
       2: { damage: 52, healOnHit: 3 },

@@ -30,6 +30,7 @@
     color: '#FF6600',
     icon: 'fire_sprite',
     imageId: 'weapon_fire_sprite',
+    summonImageId: 'fire_sprite_summon',
 
     summonStats: {
       health: 40,

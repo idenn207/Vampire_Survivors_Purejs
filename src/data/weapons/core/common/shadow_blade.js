@@ -39,6 +39,7 @@
     color: '#4B0082',
     icon: 'shadow_blade',
     imageId: 'weapon_shadow_blade',
+    meleeImageId: 'shadow_blade_melee',
 
     upgrades: {
       2: { damage: 52, critChance: 0.35 },

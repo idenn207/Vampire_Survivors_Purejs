@@ -86,6 +86,7 @@
     lifetime: 4.0,
     icon: 'solar_annihilation',
     imageId: 'weapon_solar_annihilation',
+    projectileImageId: 'solar_annihilation_projectile',
 
     // Level upgrades
     upgrades: {
