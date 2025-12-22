@@ -41,6 +41,10 @@
     // Buff cycle (for Mage)
     _buffCycleIndex = 0; // 0=attack, 1=speed, 2=aurora
 
+    // Cast cooldown (for Rogue - prevents rapid consecutive casts)
+    _castCooldown = 0;
+    _castCooldownMax = 1.0; // 1 second cooldown after casting
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -94,6 +98,12 @@
         if (this._cooldown < 0) this._cooldown = 0;
       }
 
+      // Update cast cooldown (for Rogue)
+      if (this._castCooldown > 0) {
+        this._castCooldown -= deltaTime;
+        if (this._castCooldown < 0) this._castCooldown = 0;
+      }
+
       // Update charge regeneration (for Rogue)
       if (this._skillType === 'combo_slash' && this._charges < this._maxCharges) {
         this._chargeRegenTimer += deltaTime;
@@ -126,7 +136,7 @@
       if (!this._skillType) return false;
 
       if (this._skillType === 'combo_slash') {
-        return this._charges > 0;
+        return this._charges > 0 && this._castCooldown <= 0;
       }
 
       return this._cooldown <= 0;
@@ -141,6 +151,7 @@
 
       if (this._skillType === 'combo_slash') {
         this._charges--;
+        this._castCooldown = this._castCooldownMax; // Start 1-second cast cooldown
 
         // Handle combo
         if (this._isInCombo) {
@@ -268,6 +279,11 @@
       return this._chargeRegenTimer / this._chargeRegenInterval;
     }
 
+    get chargeRegenRemaining() {
+      if (this._chargeRegenInterval <= 0) return 0;
+      return this._chargeRegenInterval - this._chargeRegenTimer;
+    }
+
     get comboSlashIndex() {
       return this._comboSlashIndex;
     }
@@ -286,6 +302,19 @@
 
     get buffCycleIndex() {
       return this._buffCycleIndex;
+    }
+
+    get castCooldown() {
+      return this._castCooldown;
+    }
+
+    get castCooldownMax() {
+      return this._castCooldownMax;
+    }
+
+    get castCooldownProgress() {
+      if (this._castCooldownMax <= 0) return 1;
+      return 1 - this._castCooldown / this._castCooldownMax;
     }
 
     // ----------------------------------------

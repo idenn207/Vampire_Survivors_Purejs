@@ -128,15 +128,30 @@
       };
 
       if (skillType === 'combo_slash') {
-        // Rogue: charge-based
-        options.isReady = activeSkill.charges > 0;
-        options.charges = activeSkill.charges;
+        // Rogue: charge-based with cast cooldown
+        var castCooldown = activeSkill.castCooldown;
+        var charges = activeSkill.charges;
+        options.isReady = charges > 0 && castCooldown <= 0;
+        options.charges = charges;
         options.maxCharges = activeSkill.maxCharges;
-        options.progress = activeSkill.charges > 0 ? 1 : activeSkill.chargeRegenProgress;
-        options.remaining = activeSkill.chargeRegenProgress;
         options.iconColor = ROGUE_SLASH_COLOR;
         options.comboIndex = activeSkill.comboSlashIndex;
         options.isInCombo = activeSkill.isInCombo;
+        options.castCooldown = castCooldown;
+
+        // Determine what to show in center:
+        // - If charges > 0 and cast cooldown active: show cast cooldown (1s delay)
+        // - If charges = 0: show charge regen remaining time
+        if (charges > 0 && castCooldown > 0) {
+          options.progress = activeSkill.castCooldownProgress;
+          options.remaining = castCooldown;
+        } else if (charges === 0) {
+          options.progress = activeSkill.chargeRegenProgress;
+          options.remaining = activeSkill.chargeRegenRemaining;
+        } else {
+          options.progress = 1;
+          options.remaining = 0;
+        }
       } else if (skillType === 'shield') {
         // Knight: cooldown-based
         options.isReady = activeSkill.cooldown <= 0;
@@ -204,6 +219,11 @@
       // Draw icon symbol
       this._renderIconSymbol(ctx, centerX, centerY, radius, options);
 
+      // Draw cooldown text in center of icon (when on cooldown)
+      if (!options.isReady && options.remaining > 0) {
+        this._renderCenterCooldownText(ctx, centerX, centerY, options);
+      }
+
       // Draw border
       ctx.strokeStyle = options.isReady ? ICON_BORDER_READY : ICON_BORDER_COOLDOWN;
       ctx.lineWidth = border;
@@ -211,8 +231,10 @@
       ctx.arc(centerX, centerY, radius - border / 2, 0, Math.PI * 2);
       ctx.stroke();
 
-      // Draw cooldown text below icon
-      this._renderCooldownText(ctx, centerX, y + size, options);
+      // Draw charge count below icon for charge-based skills
+      if (options.iconType === 'combo_slash') {
+        this._renderChargeCount(ctx, centerX, y + size, options);
+      }
     }
 
     _renderIconSymbol(ctx, centerX, centerY, radius, options) {
@@ -373,6 +395,40 @@
         ctx.arc(centerX, centerY, radius * 0.15, 0, Math.PI * 2);
         ctx.fill();
       }
+    }
+
+    _renderCenterCooldownText(ctx, centerX, centerY, options) {
+      ctx.font = UIScale.font(14, 'bold');
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+
+      var text = options.remaining.toFixed(1);
+
+      // Draw text shadow
+      ctx.fillStyle = TEXT_SHADOW;
+      ctx.fillText(text, centerX + 1, centerY + 1);
+
+      // Draw main text
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillText(text, centerX, centerY);
+    }
+
+    _renderChargeCount(ctx, centerX, topY, options) {
+      var textY = topY + UIScale.scale(BASE_TEXT_OFFSET_Y);
+
+      ctx.font = UIScale.font(BASE_COOLDOWN_FONT_SIZE, 'bold');
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      var text = options.charges + '/' + options.maxCharges;
+
+      // Draw text shadow
+      ctx.fillStyle = TEXT_SHADOW;
+      ctx.fillText(text, centerX + 1, textY + 1);
+
+      // Draw text - green if charges available, white otherwise
+      ctx.fillStyle = options.charges > 0 ? ICON_BORDER_READY : TEXT_COLOR;
+      ctx.fillText(text, centerX, textY);
     }
 
     _renderCooldownText(ctx, centerX, topY, options) {

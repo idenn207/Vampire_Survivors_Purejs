@@ -219,34 +219,42 @@
         ctx.fillRect(barX + shieldStart, y, shieldBarWidth, barHeight);
       }
 
-      // Text: "120(+240)/120" format
+      // Text: "120(+240)/120" format - centered on HP bar (red portion only)
       ctx.font = UIScale.font(11);
-      ctx.textAlign = 'right';
-      var textX = barX + displayWidth - UIScale.scale(5);
+      ctx.textAlign = 'center';
+      var hpBarWidth = actualBarWidth * hpRatio;
+      var textX = barX + hpBarWidth / 2;
       var textY = y + barHeight / 2;
 
       if (shieldAmount > 0) {
-        // Build text with shield
+        // Build combined text with shield: "120(+240)/120"
         var hpText = Math.floor(current);
         var shieldText = '(+' + Math.floor(shieldAmount) + ')';
         var maxText = '/' + Math.floor(max);
+        var fullText = hpText + shieldText + maxText;
 
-        // Measure widths for positioning
-        ctx.font = UIScale.font(11);
-        var maxTextWidth = ctx.measureText(maxText).width;
-        var shieldTextWidth = ctx.measureText(shieldText).width;
+        // Measure full text width to position segments correctly
+        var fullWidth = ctx.measureText(fullText).width;
+        var hpWidth = ctx.measureText(String(hpText)).width;
+        var shieldWidth = ctx.measureText(shieldText).width;
 
-        // Draw from right to left
+        // Calculate starting position for left-aligned rendering from center
+        var startX = textX - fullWidth / 2;
+
+        // Draw HP value (white)
+        ctx.textAlign = 'left';
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(maxText, textX, textY);
+        ctx.fillText(String(hpText), startX, textY);
 
+        // Draw shield value (blue)
         ctx.fillStyle = SHIELD_BAR_FILL;
-        ctx.fillText(shieldText, textX - maxTextWidth, textY);
+        ctx.fillText(shieldText, startX + hpWidth, textY);
 
+        // Draw max value (white)
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(hpText, textX - maxTextWidth - shieldTextWidth, textY);
+        ctx.fillText(maxText, startX + hpWidth + shieldWidth, textY);
       } else {
-        // No shield - standard format
+        // No shield - standard format centered
         ctx.fillStyle = '#FFFFFF';
         ctx.fillText(Math.floor(current) + ' / ' + Math.floor(max), textX, textY);
       }
