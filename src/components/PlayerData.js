@@ -20,9 +20,9 @@
     _characterId = null;
     _characterData = null;
 
-    // Calculated base stats (from character + any bonuses)
+    // Base stats (fixed values from character data)
     _baseAttack = 10;
-    _baseSpeed = 200;
+    _baseSpeed = 100;
     _baseMaxHealth = 100;
     _baseCritChance = 0.05;
     _baseLuck = 0;
@@ -51,11 +51,11 @@
 
       if (this._characterData) {
         var stats = this._characterData.baseStats;
-        var baseValues = CharacterData.BASE_VALUES;
 
-        this._baseAttack = baseValues.attack * stats.attack;
-        this._baseSpeed = baseValues.speed * stats.speed;
-        this._baseMaxHealth = baseValues.maxHealth * stats.maxHealth;
+        // Direct assignment - stats are now fixed values, not multipliers
+        this._baseAttack = stats.attack;
+        this._baseSpeed = stats.speed;
+        this._baseMaxHealth = stats.maxHealth;
         this._baseCritChance = stats.critChance;
         this._baseLuck = stats.luck;
         this._passive = this._characterData.passive;

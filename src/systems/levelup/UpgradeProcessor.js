@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var Weapon = window.VampireSurvivors.Components.Weapon;
+  var PlayerData = window.VampireSurvivors.Components.PlayerData;
   var events = window.VampireSurvivors.Core.events;
 
   // ============================================
@@ -75,12 +76,13 @@
       if (!player || !player.playerStats) return;
 
       var playerStats = player.playerStats;
+      var playerData = player.getComponent(PlayerData);
 
       switch (statId) {
         case 'maxHealth':
           var health = player.health;
           if (health) {
-            var baseMax = 100;
+            var baseMax = playerData ? playerData.baseMaxHealth : 100;
             var newMax = Math.floor(baseMax * playerStats.getMultiplier('maxHealth'));
             var oldMax = health.maxHealth;
             health.setMaxHealth(newMax, false);
@@ -89,7 +91,7 @@
           break;
 
         case 'moveSpeed':
-          var baseSpeed = 200;
+          var baseSpeed = playerData ? playerData.baseSpeed : 100;
           player.speed = Math.floor(baseSpeed * playerStats.getMultiplier('moveSpeed'));
           break;
       }

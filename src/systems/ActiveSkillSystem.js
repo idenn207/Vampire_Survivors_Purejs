@@ -15,6 +15,7 @@
   var ActiveSkill = window.VampireSurvivors.Components.ActiveSkill;
   var Shield = window.VampireSurvivors.Components.Shield;
   var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+  var PlayerData = window.VampireSurvivors.Components.PlayerData;
   var ActiveSkillData = window.VampireSurvivors.Data.ActiveSkillData;
   var StatusEffectDefaults = window.VampireSurvivors.Data.StatusEffectDefaults;
 
@@ -207,14 +208,16 @@
     _applySlashDamage(slash) {
       if (!this._entityManager) return;
 
-      // Get player's attack power
+      // Get base attack from PlayerData (character's fixed value)
+      var playerData = this._player.getComponent(PlayerData);
       var playerStats = this._player.playerStats;
-      var baseAttack = 10;
-      if (playerStats) {
-        baseAttack = playerStats.getStat('attack') || 10;
-      }
 
-      var damage = Math.floor(baseAttack * slash.damageMultiplier);
+      var baseAttack = playerData ? playerData.baseAttack : 10;
+
+      // Apply damage multiplier from PlayerStats (gold upgrades)
+      var damageMultiplier = playerStats ? playerStats.getMultiplier('damage') : 1;
+
+      var damage = Math.floor(baseAttack * slash.damageMultiplier * damageMultiplier);
       var isCrit = true; // Always critical hit
 
       // Get all enemies
@@ -257,13 +260,17 @@
       if (!transform) return;
 
       var auraRadius = activeBuff.auraRadius;
-      var playerStats = this._player.playerStats;
-      var baseAttack = 10;
-      if (playerStats) {
-        baseAttack = playerStats.getStat('attack') || 10;
-      }
 
-      var auraDamage = Math.floor(baseAttack * activeBuff.auraDamagePercent);
+      // Get base attack from PlayerData (character's fixed value)
+      var playerData = this._player.getComponent(PlayerData);
+      var playerStats = this._player.playerStats;
+
+      var baseAttack = playerData ? playerData.baseAttack : 10;
+
+      // Apply damage multiplier from PlayerStats (gold upgrades)
+      var damageMultiplier = playerStats ? playerStats.getMultiplier('damage') : 1;
+
+      var auraDamage = Math.floor(baseAttack * activeBuff.auraDamagePercent * damageMultiplier);
       var statusEffects = activeBuff.auraStatusEffects;
 
       var playerX = transform.centerX;

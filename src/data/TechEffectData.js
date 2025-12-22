@@ -216,15 +216,17 @@
 
   function _applyStatToPlayer(player, statId, totalBonus) {
     var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
+    var PlayerData = window.VampireSurvivors.Components.PlayerData;
     var Health = window.VampireSurvivors.Components.Health;
 
     var playerStats = player.getComponent(PlayerStats);
+    var playerData = player.getComponent(PlayerData);
     var health = player.getComponent(Health);
 
     switch (statId) {
       case StatId.MAX_HEALTH:
         if (health) {
-          var baseMax = 100;
+          var baseMax = playerData ? playerData.baseMaxHealth : 100;
           var statsBonus = playerStats ? playerStats.getMultiplier('maxHealth') : 1;
           var techBonus = 1 + totalBonus;
           var newMax = Math.floor(baseMax * statsBonus * techBonus);
@@ -237,7 +239,7 @@
         break;
 
       case StatId.MOVE_SPEED:
-        var baseSpeed = 200;
+        var baseSpeed = playerData ? playerData.baseSpeed : 100;
         var statsSpeedBonus = playerStats ? playerStats.getMultiplier('moveSpeed') : 1;
         var techSpeedBonus = 1 + totalBonus;
         player.speed = Math.floor(baseSpeed * statsSpeedBonus * techSpeedBonus);

@@ -9,15 +9,6 @@
   // Character Data
   // ============================================
   var CharacterData = {
-    // Default base values (before character multipliers)
-    BASE_VALUES: {
-      attack: 10,
-      speed: 200,
-      maxHealth: 100,
-      critChance: 0.05,
-      luck: 0
-    },
-
     CHARACTERS: {
       knight: {
         id: 'knight',
@@ -26,11 +17,11 @@
         icon: 'shield',
         color: '#3498DB',
 
-        // Base Stats (multipliers to default values)
+        // Base Stats (fixed values)
         baseStats: {
-          attack: 1.0,        // Normal attack
-          speed: 0.9,         // Slightly slower
-          maxHealth: 1.3,     // 30% more HP
+          attack: 15,         // Fixed attack value
+          speed: 80,          // Fixed speed value
+          maxHealth: 120,     // Fixed health value
           critChance: 0.05,   // 5% base crit
           luck: 0.0           // No base luck
         },
@@ -54,10 +45,11 @@
         icon: 'dagger',
         color: '#9B59B6',
 
+        // Base Stats (fixed values)
         baseStats: {
-          attack: 0.85,       // 15% less base attack
-          speed: 1.2,         // 20% faster
-          maxHealth: 0.8,     // 20% less HP
+          attack: 10,         // Fixed attack value
+          speed: 140,         // Fixed speed value
+          maxHealth: 100,     // Fixed health value
           critChance: 0.15,   // 15% base crit
           luck: 0.1           // 10% base luck
         },
@@ -80,10 +72,11 @@
         icon: 'magic_orb',
         color: '#E74C3C',
 
+        // Base Stats (fixed values)
         baseStats: {
-          attack: 1.25,       // 25% more base attack
-          speed: 1.0,         // Normal speed
-          maxHealth: 0.7,     // 30% less HP
+          attack: 20,         // Fixed attack value
+          speed: 100,         // Fixed speed value
+          maxHealth: 80,      // Fixed health value
           critChance: 0.05,   // 5% base crit
           luck: 0.05          // 5% base luck
         },
@@ -126,7 +119,7 @@
     },
 
     /**
-     * Get calculated base stat for a character
+     * Get base stat for a character (now returns fixed values directly)
      * @param {string} characterId
      * @param {string} statId
      * @returns {number}
@@ -134,18 +127,13 @@
     getCalculatedStat: function (characterId, statId) {
       var character = this.getCharacter(characterId);
       if (!character) {
-        return this.BASE_VALUES[statId] || 0;
+        // Default fallback values
+        var defaults = { attack: 10, speed: 100, maxHealth: 100, critChance: 0.05, luck: 0 };
+        return defaults[statId] || 0;
       }
 
-      var baseValue = this.BASE_VALUES[statId];
-      var multiplier = character.baseStats[statId];
-
-      // For critChance and luck, the value is the actual value, not a multiplier
-      if (statId === 'critChance' || statId === 'luck') {
-        return multiplier;
-      }
-
-      return baseValue * multiplier;
+      // Return fixed value directly from character's baseStats
+      return character.baseStats[statId] || 0;
     }
   };
 

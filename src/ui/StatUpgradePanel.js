@@ -9,6 +9,7 @@
   // Imports
   // ============================================
   var StatUpgradeData = window.VampireSurvivors.Data.StatUpgradeData;
+  var PlayerData = window.VampireSurvivors.Components.PlayerData;
   var i18n = window.VampireSurvivors.Core.i18n;
 
   // ============================================
@@ -296,13 +297,14 @@
       if (!this._player) return;
 
       var playerStats = this._player.playerStats;
+      var playerData = this._player.getComponent(PlayerData);
 
       switch (statId) {
         case 'maxHealth':
           // Increase max health and heal
           var health = this._player.health;
           if (health) {
-            var baseMax = 100;
+            var baseMax = playerData ? playerData.baseMaxHealth : 100;
             var newMax = Math.floor(baseMax * playerStats.getMultiplier('maxHealth'));
             var oldMax = health.maxHealth;
             health.setMaxHealth(newMax, false);
@@ -313,7 +315,7 @@
 
         case 'moveSpeed':
           // Update player speed
-          var baseSpeed = 200;
+          var baseSpeed = playerData ? playerData.baseSpeed : 100;
           this._player.speed = Math.floor(baseSpeed * playerStats.getMultiplier('moveSpeed'));
           break;
       }

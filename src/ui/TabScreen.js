@@ -426,15 +426,23 @@
 
       for (var i = 0; i < stats.length; i++) {
         var stat = stats[i];
-        this._renderStatRow(ctx, stat, section.x, y, section.width);
+        this._renderStatRow(ctx, stat, section.x, y, section.width, i);
         y += STAT_ROW_HEIGHT;
 
         if (y > section.y + section.height - STAT_ROW_HEIGHT) break;
       }
     }
 
-    _renderStatRow(ctx, stat, x, y, width) {
+    _renderStatRow(ctx, stat, x, y, width, rowIndex) {
       var centerY = y + STAT_ROW_HEIGHT / 2;
+
+      // Draw alternating background
+      if (rowIndex % 2 === 0) {
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.05)'; // Light
+      } else {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.15)'; // Dark
+      }
+      ctx.fillRect(x, y, width, STAT_ROW_HEIGHT);
 
       // Draw colored icon circle (stat.icon contains a color code like '#E74C3C')
       var iconColor = stat.icon || '#FFFFFF';
@@ -443,38 +451,25 @@
       ctx.arc(x + 8, centerY, 6, 0, Math.PI * 2);
       ctx.fill();
 
-      // Stat name
+      // Stat name (use icon color)
       ctx.font = '11px Arial';
-      ctx.fillStyle = TEXT_COLOR;
+      ctx.fillStyle = iconColor;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
       ctx.fillText(i18n.tsn(stat.id, stat.name), x + 20, centerY);
 
-      // Stat value display: base (blue) + bonus (purple) = total (orange)
-      // Get character base multiplier from PlayerData
-      var basePercent = 100;
-      var PlayerData = window.VampireSurvivors.Components.PlayerData;
-      if (this._player && PlayerData) {
-        var playerData = this._player.getComponent(PlayerData);
-        if (playerData && playerData.characterData) {
-          var baseStats = playerData.characterData.baseStats;
-          // Map stat id to character base stat
-          var statMap = {
-            damage: 'attack',
-            speed: 'speed',
-            maxHealth: 'maxHealth',
-            critChance: 'critChance',
-            luck: 'luck',
-          };
-          var charStat = statMap[stat.id];
-          if (charStat && baseStats[charStat] !== undefined) {
-            basePercent = Math.round(baseStats[charStat] * 100);
-          }
-        }
-      }
-
+      // Stat value display: base (fixed) + bonus (%) = total (fixed with 2 decimals)
+      // Get character fixed base value from PlayerData
+      var baseValue = this._getBaseStatValue(stat.id);
       var bonusPercent = stat.bonusPercent;
-      var totalPercent = basePercent + bonusPercent;
+      var finalValue = baseValue * (1 + bonusPercent / 100);
+
+      // Check if this stat should be displayed as percentage
+      var isPercent = this._isPercentageStat(stat.id);
+      var suffix = isPercent ? '%' : '';
+
+      // Format bonus text: no '+' for positive, '-' only for negative
+      var bonusText = bonusPercent < 0 ? '(' + bonusPercent + '%)' : '(' + bonusPercent + '%)';
 
       ctx.textAlign = 'right';
       ctx.font = '10px Arial';
@@ -482,24 +477,74 @@
       if (stat.isMaxLevel) {
         // Max level - show total in green
         ctx.fillStyle = '#3498DB'; // Blue for base
-        ctx.fillText(basePercent + '%', x + width - 80, centerY);
+        ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 95, centerY);
         ctx.fillStyle = '#9B59B6'; // Purple for bonus
-        ctx.fillText('+' + bonusPercent + '%', x + width - 45, centerY);
+        ctx.fillText(bonusText, x + width - 50, centerY);
         ctx.fillStyle = '#2ECC71'; // Green for max
-        ctx.fillText('=' + totalPercent + '%', x + width - 5, centerY);
+        ctx.fillText('= ' + finalValue.toFixed(2) + suffix, x + width - 5, centerY);
       } else if (bonusPercent === 0) {
         // No bonus - show base only
         ctx.fillStyle = '#3498DB'; // Blue for base
-        ctx.fillText(basePercent + '%', x + width - 5, centerY);
+        ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 5, centerY);
       } else {
         // Show base + bonus = total
         ctx.fillStyle = '#3498DB'; // Blue for base
-        ctx.fillText(basePercent + '%', x + width - 80, centerY);
+        ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 95, centerY);
         ctx.fillStyle = '#9B59B6'; // Purple for bonus
-        ctx.fillText('+' + bonusPercent + '%', x + width - 45, centerY);
+        ctx.fillText(bonusText, x + width - 50, centerY);
         ctx.fillStyle = '#F39C12'; // Orange for total
-        ctx.fillText('=' + totalPercent + '%', x + width - 5, centerY);
+        ctx.fillText('= ' + finalValue.toFixed(2) + suffix, x + width - 5, centerY);
       }
+    }
+
+    _getBaseStatValue(statId) {
+      var PlayerData = window.VampireSurvivors.Components.PlayerData;
+      if (!this._player || !PlayerData) return 1.0;
+
+      var playerData = this._player.getComponent(PlayerData);
+      if (!playerData) return 1.0;
+
+      // Map stat id to PlayerData property for character base stats
+      switch (statId) {
+        case 'damage':
+          return playerData.baseAttack || 10;
+        case 'maxHealth':
+          return playerData.baseMaxHealth || 100;
+        case 'moveSpeed':
+          return playerData.baseSpeed || 100;
+        case 'critChance':
+          // Convert decimal to percentage display (0.15 -> 15)
+          return (playerData.baseCritChance || 0.05) * 100;
+        case 'luck':
+          // Convert decimal to percentage display (0.1 -> 10)
+          return (playerData.baseLuck || 0) * 100;
+        // Weapon/utility stats without character base - use 1.0 (no base modifier)
+        case 'range':
+        case 'cooldownReduction':
+        case 'duration':
+        case 'pickupRange':
+        case 'xpGain':
+        case 'critDamage':
+        case 'area':
+        case 'projectileCount':
+        case 'pierce':
+          return 1.0;
+        default:
+          return 1.0;
+      }
+    }
+
+    _isPercentageStat(statId) {
+      var percentageStats = [
+        'critChance',
+        'critDamage',
+        'pickupRange',
+        'xpGain',
+        'cooldownReduction',
+        'duration',
+        'luck'
+      ];
+      return percentageStats.indexOf(statId) !== -1;
     }
 
     _renderWeaponsSection(ctx) {
