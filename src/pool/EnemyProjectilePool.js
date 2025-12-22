@@ -73,7 +73,6 @@
     // ----------------------------------------
     _pool = null;
     _player = null;
-    _events = null;
 
     // ----------------------------------------
     // Constructor
@@ -94,16 +93,6 @@
     // ----------------------------------------
     // Public Methods
     // ----------------------------------------
-    /**
-     * Initialize pool with player reference
-     * @param {Entity} player
-     * @param {EventBus} events
-     */
-    initialize(player, events) {
-      this._player = player;
-      this._events = events;
-    }
-
     /**
      * Set player reference
      * @param {Entity} player
@@ -186,22 +175,6 @@
               var playerHealth = this._player.getComponent(Health);
               if (playerHealth) {
                 playerHealth.takeDamage(projectile.damage);
-
-                // Check for player death
-                if (playerHealth.isDead && this._events) {
-                  this._events.emit('player:died', {
-                    player: this._player,
-                    killer: projectile.sourceEnemy,
-                  });
-                }
-              }
-
-              // Emit hit event
-              if (this._events) {
-                this._events.emit('enemy_projectile:hit', {
-                  projectile: projectile,
-                  damage: projectile.damage,
-                });
               }
 
               // Despawn projectile

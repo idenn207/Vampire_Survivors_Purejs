@@ -124,4 +124,7 @@
   Data.EffectTag = EffectTag;
   Data.EffectPriority = EffectPriority;
   Data.EffectColors = EffectColors;
+
+  // Legacy alias for weapon files that use StatusEffectType
+  Data.StatusEffectType = EffectType;
 })(window.VampireSurvivors.Data = window.VampireSurvivors.Data || {});

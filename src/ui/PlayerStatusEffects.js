@@ -39,7 +39,7 @@
 
   // Effect type colors (for icons and borders)
   var EFFECT_COLORS = {
-    // Debuffs (from StatusEffectConfig)
+    // Debuffs
     burn: '#FF6600',
     poison: '#00FF00',
     bleed: '#CC0000',
@@ -49,11 +49,11 @@
     weakness: '#9966FF',
     mark: '#FF00FF',
     pull: '#9933FF',
-    // Buffs (from ActiveBuff - legacy)
+    // Buffs (from ActiveBuff)
     attack: '#E74C3C',
     speed: '#2ECC71',
     aurora: '#9B59B6',
-    // Buffs (from BuffDebuff - new unified system)
+    // Buffs (from BuffDebuff)
     attack_boost: '#E74C3C',
     speed_boost: '#2ECC71',
     defense_boost: '#3498DB',

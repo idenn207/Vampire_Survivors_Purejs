@@ -505,18 +505,6 @@
   }
 
   /**
-   * Generate a consistent key from two weapon IDs (sorted alphabetically)
-   * @deprecated Use getOrderedEvolutionKey for recipe lookups
-   * @param {string} weaponId1
-   * @param {string} weaponId2
-   * @returns {string}
-   */
-  function getEvolutionKey(weaponId1, weaponId2) {
-    var sorted = [weaponId1, weaponId2].sort();
-    return sorted[0] + '+' + sorted[1];
-  }
-
-  /**
    * Find an evolution recipe for two weapons (order matters!)
    * @param {string} mainWeaponId - The main weapon ID
    * @param {string} materialWeaponId - The material weapon ID
@@ -892,7 +880,6 @@
     getRandomUnownedWeaponOfTier: getRandomUnownedWeaponOfTier,
     getAllWeaponsOfTier: getAllWeaponsOfTier,
     getEvolvedWeaponData: getEvolvedWeaponData,
-    getEvolutionKey: getEvolutionKey,
     getOrderedEvolutionKey: getOrderedEvolutionKey,
     getAllEvolutionRecipes: getAllEvolutionRecipes,
     getAllEvolvedWeapons: getAllEvolvedWeapons,
