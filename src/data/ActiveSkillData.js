@@ -51,12 +51,12 @@
       rogue: {
         id: 'combo_slash',
         name: 'Combo Slash',
-        description: 'Screen-wide slash attack with 100% crit chance. Chain within 3s for stronger combos.',
+        description: 'Screen-wide slash attack with 100% crit chance. Chain within 5s for stronger combos.',
         icon: 'slash_skill',
         type: ActiveSkillType.COMBO_SLASH,
         maxCharges: 3,
         chargeRegenTime: 15, // seconds per charge
-        comboWindow: 3.0, // seconds to chain next slash
+        comboWindow: 5.0, // seconds to chain next slash
         forceCrit: true, // 100% critical hit chance
         slashes: [
           {

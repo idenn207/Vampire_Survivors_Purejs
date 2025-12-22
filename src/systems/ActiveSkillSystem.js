@@ -110,10 +110,15 @@
 
       var skillType = activeSkill.skillType;
 
+      if (skillType === 'combo_slash') {
+        // Use first to advance combo index, then execute
+        activeSkill.use();
+        this._executeRogueSlash(activeSkill);
+        return;
+      }
+
       if (skillType === 'shield') {
         this._executeKnightShield(activeSkill);
-      } else if (skillType === 'combo_slash') {
-        this._executeRogueSlash(activeSkill);
       } else if (skillType === 'rotating_buff') {
         this._executeMageBuff(activeSkill);
       }

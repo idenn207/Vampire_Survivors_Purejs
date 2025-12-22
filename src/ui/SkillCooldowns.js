@@ -135,7 +135,15 @@
         options.charges = charges;
         options.maxCharges = activeSkill.maxCharges;
         options.iconColor = ROGUE_SLASH_COLOR;
-        options.comboIndex = activeSkill.comboSlashIndex;
+        // Show next slash that will execute (preview)
+        var currentIndex = activeSkill.comboSlashIndex;
+        if (activeSkill.isInCombo) {
+          // In combo: next press will advance index, show that
+          options.comboIndex = (currentIndex + 1) % 3;
+        } else {
+          // Not in combo: next press will start at 0
+          options.comboIndex = 0;
+        }
         options.isInCombo = activeSkill.isInCombo;
         options.castCooldown = castCooldown;
 

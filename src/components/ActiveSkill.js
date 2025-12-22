@@ -43,7 +43,7 @@
 
     // Cast cooldown (for Rogue - prevents rapid consecutive casts)
     _castCooldown = 0;
-    _castCooldownMax = 1.0; // 1 second cooldown after casting
+    _castCooldownMax = 0.5; // 0.5 second cooldown after casting
 
     // ----------------------------------------
     // Constructor
