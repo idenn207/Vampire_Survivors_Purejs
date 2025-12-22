@@ -69,6 +69,9 @@
           var speed = velocity.speed || 400;
           velocity.vx = (dx / distance) * speed;
           velocity.vy = (dy / distance) * speed;
+
+          // Update rotation to match new velocity direction (for directional sprites)
+          hitboxTransform.rotation = Math.atan2(velocity.vy, velocity.vx);
         }
       }
 

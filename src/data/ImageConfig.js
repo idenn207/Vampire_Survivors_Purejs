@@ -220,6 +220,14 @@
     summon_wolf: { path: 'summons/wolf.png' },
     summon_golem: { path: 'summons/golem.png' },
     summon_fairy: { path: 'summons/fairy.png' },
+
+    // ------------- TEST IMAGES (Sprite System Verification) -------------
+    test_projectile: { path: 'test/test_projectile.png' },
+    test_area: { path: 'test/test_area.png' },
+    test_melee: { path: 'test/test_melee.png' },
+    test_laser: { path: 'test/test_laser.png' },
+    test_mine: { path: 'test/test_mine.png' },
+    test_particle: { path: 'test/test_particle.png' },
   };
 
   // ============================================

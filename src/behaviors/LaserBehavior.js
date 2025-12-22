@@ -50,6 +50,10 @@
       var baseDuration = weapon.getStat('duration', 0.5);
       var color = weapon.getStat('color', '#00FFFF');
 
+      // Get image config for sprite rendering
+      var laserImageId = weapon.getStat('laserImageId', null) ||
+                         weapon.getStat('imageId', null);
+
       // Apply player stat bonuses
       var range = this.getEffectiveRange(baseRange);
       var width = Math.round(baseWidth * this.getSizeMultiplier());
@@ -106,6 +110,7 @@
         duration: duration,
         elapsed: 0,
         alpha: 1,
+        imageId: laserImageId, // Store image ID for rendering
       };
 
       this._activeLasers.push(laserData);
@@ -148,25 +153,55 @@
     render(ctx, camera) {
       var cameraX = camera ? camera.x : 0;
       var cameraY = camera ? camera.y : 0;
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
 
       for (var i = 0; i < this._activeLasers.length; i++) {
         var laser = this._activeLasers[i];
+        var screenStartX = laser.startX - cameraX;
+        var screenStartY = laser.startY - cameraY;
+        var screenEndX = laser.endX - cameraX;
+        var screenEndY = laser.endY - cameraY;
+
+        // Check if we have an image to render
+        var image = null;
+        if (laser.imageId && assetLoader && assetLoader.hasImage(laser.imageId)) {
+          image = assetLoader.getImage(laser.imageId);
+        }
 
         ctx.save();
         ctx.globalAlpha = laser.alpha;
-        ctx.strokeStyle = laser.color;
-        ctx.lineWidth = laser.width;
-        ctx.lineCap = 'round';
 
-        ctx.beginPath();
-        ctx.moveTo(laser.startX - cameraX, laser.startY - cameraY);
-        ctx.lineTo(laser.endX - cameraX, laser.endY - cameraY);
-        ctx.stroke();
+        if (image) {
+          // Image rendering: stretch image along laser path
+          var dx = screenEndX - screenStartX;
+          var dy = screenEndY - screenStartY;
+          var angle = Math.atan2(dy, dx);
+          var length = Math.sqrt(dx * dx + dy * dy);
 
-        // Glow effect
-        ctx.globalAlpha = laser.alpha * 0.3;
-        ctx.lineWidth = laser.width * 3;
-        ctx.stroke();
+          ctx.translate(screenStartX, screenStartY);
+          ctx.rotate(angle);
+          // Draw image stretched along laser length
+          ctx.drawImage(image, 0, -laser.width / 2, length, laser.width);
+
+          // Glow effect with additional alpha
+          ctx.globalAlpha = laser.alpha * 0.3;
+          ctx.drawImage(image, 0, -laser.width * 1.5, length, laser.width * 3);
+        } else {
+          // Fallback: standard line rendering
+          ctx.strokeStyle = laser.color;
+          ctx.lineWidth = laser.width;
+          ctx.lineCap = 'round';
+
+          ctx.beginPath();
+          ctx.moveTo(screenStartX, screenStartY);
+          ctx.lineTo(screenEndX, screenEndY);
+          ctx.stroke();
+
+          // Glow effect
+          ctx.globalAlpha = laser.alpha * 0.3;
+          ctx.lineWidth = laser.width * 3;
+          ctx.stroke();
+        }
 
         ctx.restore();
       }

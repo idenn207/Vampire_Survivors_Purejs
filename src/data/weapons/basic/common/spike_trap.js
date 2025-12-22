@@ -32,6 +32,7 @@
     color: '#888888',
     icon: 'spike_trap',
     imageId: 'weapon_spike_trap',
+    mineImageId: 'test_mine',
 
     mineVisual: {
       type: 'metal_spikes',

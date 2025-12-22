@@ -58,6 +58,11 @@
       // Get ricochet config if present
       var ricochet = weapon.getStat('ricochet', null);
 
+      // Get image config for sprite rendering
+      var projectileImageId = weapon.getStat('projectileImageId', null) ||
+                              weapon.getStat('imageId', null);
+      var visualScale = weapon.getStat('visualScale', 1);
+
       var targetingMode = weapon.targetingMode;
 
       // For auto-targeting modes with no spread, target multiple enemies
@@ -81,7 +86,9 @@
           lifetime,
           range,
           ricochet,
-          isCrit
+          isCrit,
+          projectileImageId,
+          visualScale
         );
       }
 
@@ -111,7 +118,9 @@
           lifetime,
           weapon.id,
           ricochet,
-          isCrit
+          isCrit,
+          projectileImageId,
+          visualScale
         );
 
         if (projectile) {
@@ -185,6 +194,8 @@
      * @param {number} range
      * @param {Object} [ricochet]
      * @param {boolean} [isCrit]
+     * @param {string} [imageId] - Image ID for sprite rendering
+     * @param {number} [visualScale] - Visual scale multiplier
      * @returns {Array<Projectile>}
      */
     _spawnMultiTargetProjectiles(
@@ -200,7 +211,9 @@
       lifetime,
       range,
       ricochet,
-      isCrit
+      isCrit,
+      imageId,
+      visualScale
     ) {
       var projectiles = [];
       var targetingMode = weapon.targetingMode;
@@ -232,7 +245,9 @@
           lifetime,
           weapon.id,
           ricochet,
-          isCrit
+          isCrit,
+          imageId,
+          visualScale
         );
 
         if (projectile) {

@@ -76,14 +76,24 @@
      * @param {string} [sourceWeaponId]
      * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
      * @param {boolean} [isCrit] - Whether this projectile is a critical hit
+     * @param {number} [rotation] - Rotation angle in radians (for directional sprites)
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
+     * @param {number} [visualScale] - Visual scale multiplier (default 1.0, hitbox unchanged)
      */
-    reset(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit) {
+    reset(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit, rotation, imageId, visualScale) {
       // Reset transform
       var transform = this.transform;
       transform.x = x;
       transform.y = y;
-      transform.width = size;
-      transform.height = size;
+
+      // Visual size uses visualScale, hitbox uses original size
+      var effectiveVisualScale = visualScale || 1;
+      var visualSize = size * effectiveVisualScale;
+      transform.width = visualSize;
+      transform.height = visualSize;
+
+      // Apply rotation for directional sprites
+      transform.rotation = rotation || 0;
 
       // Reset velocity
       var velocity = this.velocity;
@@ -96,7 +106,14 @@
       sprite.isVisible = true;
       sprite.alpha = 1;
 
-      // Reset collider
+      // Apply image or clear for shape fallback
+      if (imageId) {
+        sprite.setImageId(imageId);
+      } else {
+        sprite.clearImage();
+      }
+
+      // Reset collider (hitbox uses original size, not visual size)
       var collider = this.collider;
       collider.radius = size / 2;
 

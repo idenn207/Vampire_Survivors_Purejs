@@ -66,8 +66,9 @@
      * @param {number} duration
      * @param {number} tickRate
      * @param {string} [sourceWeaponId]
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
      */
-    reset(x, y, radius, color, damage, duration, tickRate, sourceWeaponId) {
+    reset(x, y, radius, color, damage, duration, tickRate, sourceWeaponId, imageId) {
       var size = radius * 2;
 
       // Reset transform
@@ -82,6 +83,13 @@
       sprite.color = color;
       sprite.isVisible = true;
       sprite.alpha = 0.4;
+
+      // Apply image or clear for shape fallback
+      if (imageId) {
+        sprite.setImageId(imageId);
+      } else {
+        sprite.clearImage();
+      }
 
       // Reset area effect component
       var areaEffect = this.areaEffect;

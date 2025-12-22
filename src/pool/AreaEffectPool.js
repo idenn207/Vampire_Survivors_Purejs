@@ -64,16 +64,17 @@
      * @param {number} duration - Total duration
      * @param {number} tickRate - Damage ticks per second
      * @param {string} [sourceWeaponId] - ID of weapon that created this
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
      * @returns {AreaEffect|null}
      */
-    spawn(x, y, radius, color, damage, duration, tickRate, sourceWeaponId) {
+    spawn(x, y, radius, color, damage, duration, tickRate, sourceWeaponId, imageId) {
       var areaEffect = this._pool.get();
       if (!areaEffect) {
         console.warn('[AreaEffectPool] Pool exhausted');
         return null;
       }
 
-      areaEffect.reset(x, y, radius, color, damage, duration, tickRate, sourceWeaponId);
+      areaEffect.reset(x, y, radius, color, damage, duration, tickRate, sourceWeaponId, imageId);
 
       if (this._entityManager) {
         this._entityManager.add(areaEffect);

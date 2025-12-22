@@ -45,6 +45,10 @@
       var baseSpawnRange = weapon.getStat('spawnRange', 200);
       var color = weapon.getStat('color', '#00FF00');
 
+      // Get image config for sprite rendering
+      var areaImageId = weapon.getStat('areaImageId', null) ||
+                        weapon.getStat('imageId', null);
+
       // Apply player stat bonuses
       var radius = this.getEffectiveRange(baseRadius);
       var spawnRange = this.getEffectiveRange(baseSpawnRange);
@@ -64,7 +68,8 @@
           damage,
           duration,
           tickRate,
-          weapon.id
+          weapon.id,
+          areaImageId
         );
 
         if (areaEffect) {

@@ -44,6 +44,10 @@
       var baseSpawnRange = weapon.getStat('spawnRange', 150);
       var color = weapon.getStat('color', '#FF4444');
 
+      // Get image config for sprite rendering
+      var mineImageId = weapon.getStat('mineImageId', null) ||
+                        weapon.getStat('imageId', null);
+
       // Apply player stat bonuses
       var damageResult = this.calculateDamage(weapon);
       var damage = damageResult.damage;
@@ -64,7 +68,8 @@
           triggerRadius,
           duration,
           color,
-          weapon.id
+          weapon.id,
+          mineImageId
         );
 
         if (mine) {

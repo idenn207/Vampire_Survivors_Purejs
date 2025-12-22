@@ -50,6 +50,10 @@
       var color = weapon.getStat('color', '#CCCCCC');
       var doubleSwing = weapon.getStat('doubleSwing', false);
 
+      // Get image config for sprite rendering
+      var meleeImageId = weapon.getStat('meleeImageId', null) ||
+                         weapon.getStat('imageId', null);
+
       // Apply player stat bonuses
       var range = this.getEffectiveRange(baseRange);
       var damageResult = this.calculateDamage(weapon);
@@ -66,7 +70,7 @@
       // Perform forward swing
       var swings = [];
       var forwardSwing = this._performSwing(
-        weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, 0
+        weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, 0, meleeImageId
       );
       swings.push(forwardSwing);
 
@@ -75,7 +79,7 @@
         var backAngle = centerAngle + Math.PI; // Opposite direction
         var backDelay = swingDuration * 0.5; // Slight delay before back swing
         var backSwing = this._performSwing(
-          weapon, playerPos, range, backAngle, arcRad, swingDuration, damage, isCrit, color, backDelay
+          weapon, playerPos, range, backAngle, arcRad, swingDuration, damage, isCrit, color, backDelay, meleeImageId
         );
         swings.push(backSwing);
       }
@@ -95,9 +99,10 @@
      * @param {boolean} isCrit
      * @param {string} color
      * @param {number} delay - Delay before swing starts (for back swing)
+     * @param {string} [imageId] - Image ID for sprite rendering
      * @returns {Object} Swing data
      */
-    _performSwing(weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, delay) {
+    _performSwing(weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, delay, imageId) {
       var startAngle = centerAngle - arcRad / 2;
       var endAngle = centerAngle + arcRad / 2;
 
@@ -108,11 +113,13 @@
         range: range,
         startAngle: startAngle,
         endAngle: endAngle,
+        centerAngle: centerAngle,
         duration: swingDuration,
         elapsed: -delay, // Negative elapsed acts as delay
         color: color,
         alpha: 0.6,
         progress: 0,
+        imageId: imageId, // Store image ID for rendering
         // Store damage info for delayed swings
         weapon: weapon,
         damage: damage,
@@ -222,32 +229,55 @@
     render(ctx, camera) {
       var cameraX = camera ? camera.x : 0;
       var cameraY = camera ? camera.y : 0;
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
 
       for (var i = 0; i < this._activeSwings.length; i++) {
         var swing = this._activeSwings[i];
-
-        ctx.save();
-        ctx.globalAlpha = swing.alpha;
-        ctx.fillStyle = swing.color;
-        ctx.strokeStyle = swing.color;
-        ctx.lineWidth = 3;
-
-        // Draw arc (pie slice)
         var screenX = swing.x - cameraX;
         var screenY = swing.y - cameraY;
 
         // Animate the arc drawing based on progress
         var currentEndAngle = swing.startAngle + (swing.endAngle - swing.startAngle) * Math.min(swing.progress * 2, 1);
 
-        ctx.beginPath();
-        ctx.moveTo(screenX, screenY);
-        ctx.arc(screenX, screenY, swing.range, swing.startAngle, currentEndAngle);
-        ctx.closePath();
-        ctx.fill();
+        // Check if we have an image to render
+        var image = null;
+        if (swing.imageId && assetLoader && assetLoader.hasImage(swing.imageId)) {
+          image = assetLoader.getImage(swing.imageId);
+        }
 
-        // Draw arc outline
-        ctx.globalAlpha = swing.alpha * 1.5;
-        ctx.stroke();
+        ctx.save();
+        ctx.globalAlpha = swing.alpha;
+
+        if (image) {
+          // Image rendering: use clipping path for arc shape
+          ctx.beginPath();
+          ctx.moveTo(screenX, screenY);
+          ctx.arc(screenX, screenY, swing.range, swing.startAngle, currentEndAngle);
+          ctx.closePath();
+          ctx.clip();
+
+          // Draw rotated image centered at swing position
+          ctx.translate(screenX, screenY);
+          ctx.rotate(swing.centerAngle);
+          // Draw image covering the arc area
+          var imgSize = swing.range * 2;
+          ctx.drawImage(image, -swing.range, -swing.range, imgSize, imgSize);
+        } else {
+          // Fallback: standard arc rendering
+          ctx.fillStyle = swing.color;
+          ctx.strokeStyle = swing.color;
+          ctx.lineWidth = 3;
+
+          ctx.beginPath();
+          ctx.moveTo(screenX, screenY);
+          ctx.arc(screenX, screenY, swing.range, swing.startAngle, currentEndAngle);
+          ctx.closePath();
+          ctx.fill();
+
+          // Draw arc outline
+          ctx.globalAlpha = swing.alpha * 1.5;
+          ctx.stroke();
+        }
 
         ctx.restore();
       }

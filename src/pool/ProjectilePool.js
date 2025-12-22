@@ -68,9 +68,11 @@
      * @param {string} [sourceWeaponId] - ID of weapon that fired this
      * @param {Object} [ricochet] - Ricochet config { bounces, damageDecay, bounceRange }
      * @param {boolean} [isCrit] - Whether this projectile is a critical hit
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
+     * @param {number} [visualScale] - Visual scale multiplier (default 1.0, hitbox unchanged)
      * @returns {Projectile|null}
      */
-    spawn(x, y, angle, speed, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit) {
+    spawn(x, y, angle, speed, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit, imageId, visualScale) {
       var projectile = this._pool.get();
       if (!projectile) {
         console.warn('[ProjectilePool] Pool exhausted');
@@ -81,7 +83,7 @@
       var vx = Math.cos(angle) * speed;
       var vy = Math.sin(angle) * speed;
 
-      // Reset projectile with new values
+      // Reset projectile with new values (angle used for rotation)
       projectile.reset(
         x,
         y,
@@ -94,7 +96,10 @@
         lifetime || 3.0,
         sourceWeaponId,
         ricochet,
-        isCrit
+        isCrit,
+        angle,
+        imageId,
+        visualScale
       );
 
       // Add to entity manager if available
@@ -119,16 +124,21 @@
      * @param {string} [sourceWeaponId]
      * @param {Object} [ricochet]
      * @param {boolean} [isCrit]
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
+     * @param {number} [visualScale] - Visual scale multiplier (default 1.0, hitbox unchanged)
      * @returns {Projectile|null}
      */
-    spawnWithVelocity(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit) {
+    spawnWithVelocity(x, y, vx, vy, damage, pierce, color, size, lifetime, sourceWeaponId, ricochet, isCrit, imageId, visualScale) {
       var projectile = this._pool.get();
       if (!projectile) {
         console.warn('[ProjectilePool] Pool exhausted');
         return null;
       }
 
-      projectile.reset(x, y, vx, vy, damage, pierce, color, size, lifetime || 3.0, sourceWeaponId, ricochet, isCrit);
+      // Calculate rotation from velocity
+      var rotation = Math.atan2(vy, vx);
+
+      projectile.reset(x, y, vx, vy, damage, pierce, color, size, lifetime || 3.0, sourceWeaponId, ricochet, isCrit, rotation, imageId, visualScale);
 
       if (this._entityManager) {
         this._entityManager.add(projectile);

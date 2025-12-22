@@ -64,9 +64,10 @@
      * @param {number} duration - How long the mine lasts
      * @param {string} color - Mine color
      * @param {string} sourceWeaponId - ID of weapon that deployed this
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
      * @returns {Mine|null}
      */
-    spawn(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId) {
+    spawn(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId, imageId) {
       var mine = this._pool.get();
       if (!mine) {
         console.warn('[MinePool] Pool exhausted');
@@ -74,7 +75,7 @@
       }
 
       // Reset mine with new values
-      mine.reset(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId);
+      mine.reset(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId, imageId);
 
       // Add to entity manager if available
       if (this._entityManager) {

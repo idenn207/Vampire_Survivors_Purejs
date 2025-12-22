@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Test Sprite Images</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a2e; color: #eee; }
+    h1 { color: #00d4ff; }
+    .image-row { display: flex; gap: 20px; flex-wrap: wrap; margin: 20px 0; }
+    .image-item { text-align: center; background: #16213e; padding: 15px; border-radius: 8px; }
+    .image-item canvas { border: 2px solid #333; margin-bottom: 10px; }
+    .image-item p { margin: 5px 0; font-size: 12px; }
+    button { background: #00d4ff; color: #000; border: none; padding: 10px 20px; cursor: pointer; border-radius: 4px; font-weight: bold; }
+    button:hover { background: #00a8cc; }
+    #status { margin-top: 20px; padding: 10px; background: #0f3460; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Test Sprite Image Generator</h1>
+  <p>Click the button below to download all test images to your Downloads folder.</p>
+  <p>Then move them to: <code>styles/imgs/test/</code></p>
+
+  <button onclick="downloadAll()">Download All Test Images</button>
+
+  <div class="image-row" id="preview"></div>
+  <div id="status"></div>
+
+  <script>
+    var images = [
+      { id: 'test_projectile', color: '#9966FF', shape: 'circle', label: 'Projectile (Purple)' },
+      { id: 'test_area', color: '#33CC33', shape: 'circle', label: 'Area Effect (Green)' },
+      { id: 'test_melee', color: '#AAAAAA', shape: 'slash', label: 'Melee Swing (Gray)' },
+      { id: 'test_laser', color: '#00FFFF', shape: 'beam', label: 'Laser Beam (Cyan)' },
+      { id: 'test_mine', color: '#FF4444', shape: 'circle', label: 'Mine (Red)' },
+      { id: 'test_particle', color: '#FF8800', shape: 'diamond', label: 'Particle (Orange)' }
+    ];
+
+    var previewDiv = document.getElementById('preview');
+    var canvases = [];
+
+    // Create preview canvases
+    images.forEach(function(img) {
+      var item = document.createElement('div');
+      item.className = 'image-item';
+
+      var canvas = document.createElement('canvas');
+      canvas.width = 32;
+      canvas.height = 32;
+      canvas.style.width = '64px';
+      canvas.style.height = '64px';
+      canvas.style.imageRendering = 'pixelated';
+
+      drawShape(canvas, img.color, img.shape);
+      canvases.push({ canvas: canvas, id: img.id });
+
+      var label = document.createElement('p');
+      label.textContent = img.label;
+
+      var filename = document.createElement('p');
+      filename.textContent = img.id + '.png';
+      filename.style.color = '#888';
+
+      item.appendChild(canvas);
+      item.appendChild(label);
+      item.appendChild(filename);
+      previewDiv.appendChild(item);
+    });
+
+    function drawShape(canvas, color, shape) {
+      var ctx = canvas.getContext('2d');
+      var size = 32;
+      var center = size / 2;
+
+      // Clear with transparency
+      ctx.clearRect(0, 0, size, size);
+
+      ctx.fillStyle = color;
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2;
+
+      switch (shape) {
+        case 'circle':
+          ctx.beginPath();
+          ctx.arc(center, center, 12, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.stroke();
+          // Add inner highlight
+          ctx.fillStyle = 'rgba(255,255,255,0.3)';
+          ctx.beginPath();
+          ctx.arc(center - 3, center - 3, 4, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+
+        case 'diamond':
+          ctx.beginPath();
+          ctx.moveTo(center, 4);
+          ctx.lineTo(size - 4, center);
+          ctx.lineTo(center, size - 4);
+          ctx.lineTo(4, center);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+          break;
+
+        case 'slash':
+          ctx.lineWidth = 6;
+          ctx.lineCap = 'round';
+          ctx.strokeStyle = color;
+          ctx.beginPath();
+          ctx.moveTo(6, size - 6);
+          ctx.lineTo(size - 6, 6);
+          ctx.stroke();
+          // White edge
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.stroke();
+          break;
+
+        case 'beam':
+          // Horizontal beam
+          ctx.fillRect(0, center - 6, size, 12);
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 1;
+          ctx.strokeRect(0, center - 6, size, 12);
+          // Glow effect
+          ctx.fillStyle = 'rgba(255,255,255,0.4)';
+          ctx.fillRect(0, center - 2, size, 4);
+          break;
+      }
+    }
+
+    function downloadAll() {
+      var status = document.getElementById('status');
+      status.innerHTML = 'Downloading images...';
+
+      var delay = 0;
+      canvases.forEach(function(item) {
+        setTimeout(function() {
+          var link = document.createElement('a');
+          link.download = item.id + '.png';
+          link.href = item.canvas.toDataURL('image/png');
+          link.click();
+        }, delay);
+        delay += 300; // Stagger downloads
+      });
+
+      setTimeout(function() {
+        status.innerHTML = '<span style="color:#33CC33">All images downloaded!</span><br>' +
+          'Move them from your Downloads folder to:<br>' +
+          '<code>styles/imgs/test/</code>';
+      }, delay + 500);
+    }
+  </script>
+</body>
+</html>

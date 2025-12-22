@@ -64,8 +64,9 @@
      * @param {number} duration
      * @param {string} color
      * @param {string} sourceWeaponId
+     * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
      */
-    reset(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId) {
+    reset(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId, imageId) {
       // Reset transform
       var transform = this.transform;
       transform.x = x - DEFAULT_SIZE / 2; // Center the mine
@@ -78,6 +79,13 @@
       sprite.color = color || DEFAULT_COLOR;
       sprite.isVisible = true;
       sprite.alpha = 1;
+
+      // Apply image or clear for shape fallback
+      if (imageId) {
+        sprite.setImageId(imageId);
+      } else {
+        sprite.clearImage();
+      }
 
       // Reset mine properties
       this._damage = damage;

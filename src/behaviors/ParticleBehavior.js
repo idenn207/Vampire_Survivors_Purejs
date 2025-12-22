@@ -168,6 +168,9 @@
         var blade = this._rotatingBlades[i];
         var angle = this._currentAngle + blade.angleOffset;
 
+        // Store the current angle for rendering (FIXES blade angle bug)
+        blade.currentAngle = angle;
+
         blade.x = playerPos.x + Math.cos(angle) * orbitRadius;
         blade.y = playerPos.y + Math.sin(angle) * orbitRadius;
 
@@ -221,26 +224,47 @@
     _renderRotatingBlades(ctx, cameraX, cameraY, weapon) {
       var color = weapon.getStat('color', '#CCCCCC');
       var size = weapon.getStat('size', 12);
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+
+      // Get image config for sprite rendering
+      var bladeImageId = weapon.getStat('bladeImageId', null) ||
+                         weapon.getStat('imageId', null);
+
+      // Check if we have an image to render
+      var image = null;
+      if (bladeImageId && assetLoader && assetLoader.hasImage(bladeImageId)) {
+        image = assetLoader.getImage(bladeImageId);
+      }
 
       ctx.save();
-      ctx.fillStyle = color;
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 2;
 
       for (var i = 0; i < this._rotatingBlades.length; i++) {
         var blade = this._rotatingBlades[i];
         var screenX = blade.x - cameraX;
         var screenY = blade.y - cameraY;
 
-        // Draw blade as a diamond/rhombus
-        ctx.beginPath();
-        ctx.moveTo(screenX, screenY - size);
-        ctx.lineTo(screenX + size * 0.6, screenY);
-        ctx.lineTo(screenX, screenY + size);
-        ctx.lineTo(screenX - size * 0.6, screenY);
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
+        if (image) {
+          // Image rendering: draw rotated blade image
+          ctx.save();
+          ctx.translate(screenX, screenY);
+          ctx.rotate(blade.currentAngle || 0);
+          ctx.drawImage(image, -size, -size, size * 2, size * 2);
+          ctx.restore();
+        } else {
+          // Fallback: draw blade as a diamond/rhombus
+          ctx.fillStyle = color;
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.lineWidth = 2;
+
+          ctx.beginPath();
+          ctx.moveTo(screenX, screenY - size);
+          ctx.lineTo(screenX + size * 0.6, screenY);
+          ctx.lineTo(screenX, screenY + size);
+          ctx.lineTo(screenX - size * 0.6, screenY);
+          ctx.closePath();
+          ctx.fill();
+          ctx.stroke();
+        }
       }
 
       ctx.restore();
