@@ -54,12 +54,28 @@
         return false;
       }
 
-      this._currentHealth = Math.max(0, this._currentHealth - amount);
+      // Check for Shield component and absorb damage through it first
+      var remainingDamage = amount;
+      if (this._entity) {
+        var Shield = window.VampireSurvivors.Components.Shield;
+        if (Shield) {
+          var shield = this._entity.getComponent(Shield);
+          if (shield && shield.hasShield()) {
+            remainingDamage = shield.absorbDamage(amount);
+            if (remainingDamage <= 0) {
+              // All damage absorbed by shield
+              return true;
+            }
+          }
+        }
+      }
+
+      this._currentHealth = Math.max(0, this._currentHealth - remainingDamage);
 
       // Emit damage event
       events.emit('entity:damaged', {
         entity: this._entity,
-        amount: amount,
+        amount: remainingDamage,
         currentHealth: this._currentHealth,
         maxHealth: this._maxHealth,
         isCrit: isCrit || false,

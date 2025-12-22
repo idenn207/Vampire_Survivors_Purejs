@@ -153,6 +153,11 @@
         e.preventDefault();
       }
 
+      // Prevent browser default for Space key (used for active skill)
+      if (e.code === 'Space') {
+        e.preventDefault();
+      }
+
       if (!this._keys.get(e.code)) {
         this._keysPressed.add(e.code);
       }

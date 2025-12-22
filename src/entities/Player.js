@@ -20,6 +20,7 @@
   var Gold = window.VampireSurvivors.Components.Gold;
   var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
   // TechTree imported lazily in getter (loaded after Player.js)
+  // ActiveSkill, Shield, ActiveBuff imported lazily (loaded after Player.js)
 
   // ============================================
   // Constants
@@ -232,6 +233,52 @@
     get techTree() {
       var TechTree = window.VampireSurvivors.Components.TechTree;
       return TechTree ? this.getComponent(TechTree) : null;
+    }
+
+    get activeSkill() {
+      var ActiveSkill = window.VampireSurvivors.Components.ActiveSkill;
+      return ActiveSkill ? this.getComponent(ActiveSkill) : null;
+    }
+
+    get shield() {
+      var Shield = window.VampireSurvivors.Components.Shield;
+      return Shield ? this.getComponent(Shield) : null;
+    }
+
+    get activeBuff() {
+      var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+      return ActiveBuff ? this.getComponent(ActiveBuff) : null;
+    }
+
+    /**
+     * Initialize active skill components based on character
+     * @param {string} characterId - Character ID (knight, rogue, mage)
+     */
+    initializeActiveSkill(characterId) {
+      var ActiveSkill = window.VampireSurvivors.Components.ActiveSkill;
+      var Shield = window.VampireSurvivors.Components.Shield;
+      var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+      var ActiveSkillData = window.VampireSurvivors.Data.ActiveSkillData;
+
+      if (!ActiveSkill || !ActiveSkillData) return;
+
+      // Add ActiveSkill component
+      var activeSkillComp = new ActiveSkill();
+      var skillData = ActiveSkillData.getSkillForCharacter(characterId);
+      if (skillData) {
+        activeSkillComp.initialize(skillData);
+      }
+      this.addComponent(activeSkillComp);
+
+      // Add Shield component (for Knight, but available for all)
+      if (Shield) {
+        this.addComponent(new Shield());
+      }
+
+      // Add ActiveBuff component (for Mage, but available for all)
+      if (ActiveBuff) {
+        this.addComponent(new ActiveBuff());
+      }
     }
 
     /**

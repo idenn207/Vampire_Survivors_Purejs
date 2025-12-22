@@ -65,6 +65,8 @@
   <!-- Phase 4.7: Additional Components (depend on data) -->
   <script src="src/components/PlayerStats.js"></script>
   <script src="src/components/PlayerData.js"></script>
+  <script src="src/components/Shield.js"></script>
+  <script src="src/components/ActiveBuff.js"></script>
 
   <!-- Phase 4.5: Data (needed by some entities) -->
   <script src="src/data/PickupConfig.js"></script>
@@ -293,6 +295,9 @@
   <!-- Character Data (3 playable characters) -->
   <script src="src/data/CharacterData.js"></script>
 
+  <!-- Active Skill Data (character skills) -->
+  <script src="src/data/ActiveSkillData.js"></script>
+
   <!-- Base Core Weapon Files (15 weapons, Tier 1) -->
   <script src="src/data/weapons/core/common/inferno_bolt.js"></script>
   <script src="src/data/weapons/core/common/frost_shard.js"></script>
@@ -393,6 +398,7 @@
 
   <!-- Phase 5.78: StatusEffect Component (depends on StatusEffectConfig) -->
   <script src="src/components/StatusEffect.js"></script>
+  <script src="src/components/ActiveSkill.js"></script>
 
   <!-- Phase 5.8: Boss Entity (depends on BossData) -->
   <script src="src/entities/Boss.js"></script>
@@ -406,6 +412,7 @@
   <script src="src/systems/BackgroundSystem.js"></script>
   <script src="src/systems/WaveSystem.js"></script>
   <script src="src/systems/PlayerSystem.js"></script>
+  <script src="src/systems/ActiveSkillSystem.js"></script>
   <script src="src/systems/EnemySystem.js"></script>
   <script src="src/systems/TraversalEnemySystem.js"></script>
   <script src="src/systems/BossSystem.js"></script>
@@ -460,6 +467,7 @@
   <script src="src/ui/WaveAnnouncement.js"></script>
   <script src="src/ui/BossHealthBar.js"></script>
   <script src="src/ui/SkillCooldowns.js"></script>
+  <script src="src/ui/ShieldBar.js"></script>
   <script src="src/ui/Minimap.js"></script>
   <script src="src/ui/HUD.js"></script>
   <script src="src/systems/HUDSystem.js"></script>

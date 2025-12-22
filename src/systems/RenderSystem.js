@@ -22,6 +22,7 @@
     // ----------------------------------------
     _priority = 100; // Render last
     _camera = null;
+    _activeSkillSystem = null;
 
     // ----------------------------------------
     // Constructor
@@ -35,6 +36,10 @@
     // ----------------------------------------
     setCamera(camera) {
       this._camera = camera;
+    }
+
+    setActiveSkillSystem(activeSkillSystem) {
+      this._activeSkillSystem = activeSkillSystem;
     }
 
     render(ctx) {
@@ -126,6 +131,11 @@
       var Pool = window.VampireSurvivors.Pool;
       if (Pool && Pool.enemyProjectilePool) {
         Pool.enemyProjectilePool.render(ctx, this._camera);
+      }
+
+      // Render active skill effects (slashes, auras)
+      if (this._activeSkillSystem) {
+        this._activeSkillSystem.renderSkillEffects(ctx, cameraX, cameraY);
       }
     }
 

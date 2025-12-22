@@ -52,6 +52,7 @@
   var SummonSystem = Systems.SummonSystem;
   var TabScreenSystem = Systems.TabScreenSystem;
   var PauseMenuSystem = Systems.PauseMenuSystem;
+  var ActiveSkillSystem = Systems.ActiveSkillSystem;
 
   var i18n = Core.i18n;
 
@@ -128,6 +129,11 @@
       playerSystem.initialize(game, entityManager);
       game.addSystem(playerSystem);
 
+      var activeSkillSystem = new ActiveSkillSystem();
+      activeSkillSystem.initialize(game, entityManager);
+      activeSkillSystem.setEntityManager(entityManager);
+      game.addSystem(activeSkillSystem);
+
       var enemySystem = new EnemySystem();
       enemySystem.initialize(game, entityManager);
       game.addSystem(enemySystem);
@@ -195,6 +201,7 @@
       var renderSystem = new RenderSystem();
       renderSystem.initialize(game, entityManager);
       renderSystem.setCamera(camera);
+      renderSystem.setActiveSkillSystem(activeSkillSystem);
       game.addSystem(renderSystem);
 
       var hudSystem = new HUDSystem();
@@ -284,11 +291,15 @@
 
         console.log('[App] Player setup with character: ' + selectedCharacterId + ', stats: attack=' + playerDataComp.baseAttack + ', speed=' + playerDataComp.baseSpeed + ', hp=' + playerDataComp.baseMaxHealth);
 
+        // Initialize active skill components based on character
+        player.initializeActiveSkill(selectedCharacterId);
+
         // Setup player with selected core (adds TechTree component and starting weapon)
         coreSelectionSystem.setupPlayerWithCore(player, coreId);
 
         // Set player reference in systems
         playerSystem.setPlayer(player);
+        activeSkillSystem.setPlayer(player);
         enemySystem.setPlayer(player);
         enemyProjectilePool.setPlayer(player);
         traversalEnemySystem.setPlayer(player);
@@ -429,6 +440,7 @@
       game.debugManager.register(mineSystem);
       game.debugManager.register(summonSystem);
       game.debugManager.register(enemyProjectilePool);
+      game.debugManager.register(activeSkillSystem);
 
       // Register summary providers for high-priority debug info
       game.debugManager.registerSummary(game);
