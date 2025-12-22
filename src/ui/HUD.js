@@ -16,6 +16,7 @@
   var WaveAnnouncement = UI.WaveAnnouncement;
   var BossHealthBar = UI.BossHealthBar;
   var SkillCooldowns = UI.SkillCooldowns;
+  var Minimap = UI.Minimap;
   var events = window.VampireSurvivors.Core.events;
   var UIScale = window.VampireSurvivors.Core.UIScale;
   var i18n = window.VampireSurvivors.Core.i18n;
@@ -61,6 +62,7 @@
     _waveAnnouncement = null;
     _bossHealthBar = null;
     _skillCooldowns = null;
+    _minimap = null;
 
     // Event handlers
     _boundOnWaveAnnouncing = null;
@@ -78,6 +80,7 @@
       this._waveAnnouncement = new WaveAnnouncement();
       this._bossHealthBar = new BossHealthBar();
       this._skillCooldowns = new SkillCooldowns();
+      this._minimap = new Minimap();
 
       // Bind event handlers
       this._boundOnWaveAnnouncing = this._onWaveAnnouncing.bind(this);
@@ -104,6 +107,7 @@
       this._entityHealthBars.setCamera(camera);
       this._damageNumbers.setCamera(camera);
       this._skillCooldowns.setPlayer(player);
+      this._minimap.setPlayer(player);
     }
 
     setPlayer(player) {
@@ -112,6 +116,7 @@
       this._weaponSlots.setPlayer(player);
       this._playerOverhead.setPlayer(player);
       this._skillCooldowns.setPlayer(player);
+      this._minimap.setPlayer(player);
     }
 
     setGame(game) {
@@ -140,6 +145,7 @@
       this._damageNumbers.update(deltaTime);
       this._waveAnnouncement.update(deltaTime);
       this._bossHealthBar.update(deltaTime);
+      this._minimap.update(deltaTime);
     }
 
     setBoss(boss) {
@@ -178,6 +184,7 @@
       this._statusPanel.render(ctx);
       this._weaponSlots.render(ctx);
       this._skillCooldowns.render(ctx, canvasWidth, canvasHeight);
+      this._minimap.render(ctx, canvasWidth, canvasHeight);
 
       // Render wave announcement on top
       this._waveAnnouncement.render(ctx, canvasWidth, canvasHeight);
@@ -329,6 +336,10 @@
       if (this._skillCooldowns) {
         this._skillCooldowns.dispose();
         this._skillCooldowns = null;
+      }
+      if (this._minimap) {
+        this._minimap.dispose();
+        this._minimap = null;
       }
 
       this._player = null;
