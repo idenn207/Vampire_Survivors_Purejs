@@ -17,6 +17,7 @@
   var BossHealthBar = UI.BossHealthBar;
   var SkillCooldowns = UI.SkillCooldowns;
   var Minimap = UI.Minimap;
+  var PlayerStatusEffects = UI.PlayerStatusEffects;
   var events = window.VampireSurvivors.Core.events;
   var UIScale = window.VampireSurvivors.Core.UIScale;
   var i18n = window.VampireSurvivors.Core.i18n;
@@ -63,6 +64,7 @@
     _bossHealthBar = null;
     _skillCooldowns = null;
     _minimap = null;
+    _playerStatusEffects = null;
 
     // Event handlers
     _boundOnWaveAnnouncing = null;
@@ -81,6 +83,7 @@
       this._bossHealthBar = new BossHealthBar();
       this._skillCooldowns = new SkillCooldowns();
       this._minimap = new Minimap();
+      this._playerStatusEffects = new PlayerStatusEffects();
 
       // Bind event handlers
       this._boundOnWaveAnnouncing = this._onWaveAnnouncing.bind(this);
@@ -108,6 +111,7 @@
       this._damageNumbers.setCamera(camera);
       this._skillCooldowns.setPlayer(player);
       this._minimap.setPlayer(player);
+      this._playerStatusEffects.setPlayer(player);
     }
 
     setPlayer(player) {
@@ -117,6 +121,7 @@
       this._playerOverhead.setPlayer(player);
       this._skillCooldowns.setPlayer(player);
       this._minimap.setPlayer(player);
+      this._playerStatusEffects.setPlayer(player);
     }
 
     setGame(game) {
@@ -146,6 +151,7 @@
       this._waveAnnouncement.update(deltaTime);
       this._bossHealthBar.update(deltaTime);
       this._minimap.update(deltaTime);
+      this._playerStatusEffects.update(deltaTime);
     }
 
     setBoss(boss) {
@@ -179,6 +185,9 @@
 
       // Render info bar at top right (timer, wave, kills on same line)
       this._renderInfoBar(ctx, canvasWidth);
+
+      // Render player status effects (below wave indicator)
+      this._playerStatusEffects.render(ctx, canvasWidth, canvasHeight);
 
       // Render sub-components (screen space)
       this._statusPanel.render(ctx);
@@ -340,6 +349,10 @@
       if (this._minimap) {
         this._minimap.dispose();
         this._minimap = null;
+      }
+      if (this._playerStatusEffects) {
+        this._playerStatusEffects.dispose();
+        this._playerStatusEffects = null;
       }
 
       this._player = null;
