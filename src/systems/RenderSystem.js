@@ -127,6 +127,9 @@
         ctx.restore();
       }
 
+      // Render jumping enemy shadows
+      this._renderJumpingShadows(ctx, cameraX, cameraY);
+
       // Render enemy projectiles
       var Pool = window.VampireSurvivors.Pool;
       if (Pool && Pool.enemyProjectilePool) {
@@ -136,6 +139,56 @@
       // Render active skill effects (slashes, auras)
       if (this._activeSkillSystem) {
         this._activeSkillSystem.renderSkillEffects(ctx, cameraX, cameraY);
+      }
+    }
+
+    /**
+     * Render shadows for jumping enemies
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {number} cameraX
+     * @param {number} cameraY
+     * @private
+     */
+    _renderJumpingShadows(ctx, cameraX, cameraY) {
+      if (!this._entityManager) return;
+
+      var enemies = this._entityManager.getByTag('enemy');
+
+      for (var i = 0; i < enemies.length; i++) {
+        var enemy = enemies[i];
+        if (!enemy.isActive) continue;
+
+        var state = enemy.behaviorState;
+        if (!state || !state.showShadow) continue;
+
+        // Calculate shadow screen position
+        var shadowX = state.shadowX - cameraX;
+        var shadowY = state.shadowY - cameraY;
+        var shadowSize = state.shadowSize || 24;
+
+        // Shadow scale based on jump progress (larger shadow as enemy descends)
+        var progress = state.jumpProgress || 0;
+        var scale = 0.5 + progress * 0.5; // 50% at start, 100% at landing
+        var currentSize = shadowSize * scale;
+
+        // Shadow alpha based on jump progress (more opaque as landing approaches)
+        var alpha = 0.3 + progress * 0.4; // 0.3 at start, 0.7 at landing
+
+        ctx.save();
+        ctx.globalAlpha = alpha;
+        ctx.fillStyle = '#000000';
+        ctx.beginPath();
+        ctx.ellipse(
+          shadowX,
+          shadowY,
+          currentSize,
+          currentSize * 0.5, // Flatten for perspective
+          0,
+          0,
+          Math.PI * 2
+        );
+        ctx.fill();
+        ctx.restore();
       }
     }
 

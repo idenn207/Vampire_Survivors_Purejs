@@ -37,18 +37,18 @@
 
     /**
      * Enemy health multiplier per wave
-     * Starts at 1.0, increases by 20% each wave (no cap)
+     * Starts at 1.0, increases by 40% each wave (no cap)
      */
     enemyHealthMultiplier: function (waveNumber) {
-      return 1.0 + (waveNumber - 1) * 0.2;
+      return 1.0 + (waveNumber - 1) * 0.4;
     },
 
     /**
      * Enemy damage multiplier per wave
-     * Starts at 1.0, increases by 15% each wave (no cap)
+     * Starts at 1.0, increases by 5% each wave (no cap)
      */
     enemyDamageMultiplier: function (waveNumber) {
-      return 1.0 + (waveNumber - 1) * 0.15;
+      return 1.0 + (waveNumber - 1) * 0.05;
     },
   };
 
@@ -56,7 +56,7 @@
   // Special Wave Definitions
   // ============================================
   var SpecialWaves = {
-    5: {
+    2: {
       name: 'First Challenge',
       isBossWave: true,
       bossType: 'elite',
@@ -64,7 +64,7 @@
       announcement: 'ELITE INCOMING!',
       announcementColor: '#FFD700',
     },
-    10: {
+    3: {
       name: 'Swarm',
       isBossWave: true,
       bossType: 'miniboss',
@@ -72,11 +72,27 @@
       announcement: 'MINIBOSS APPROACHES!',
       announcementColor: '#FF4500',
     },
-    15: {
+    5: {
       name: 'Boss Fight',
       isBossWave: true,
       bossType: 'boss',
       bossCount: 1,
+      announcement: 'BOSS BATTLE!',
+      announcementColor: '#FF0000',
+    },
+    7: {
+      name: 'Second Challenge',
+      isBossWave: true,
+      bossType: 'elite',
+      bossCount: 3,
+      announcement: 'ELITE INCOMING!',
+      announcementColor: '#FFD700',
+    },
+    10: {
+      name: 'Special Boss Fight',
+      isBossWave: true,
+      bossType: 'boss',
+      bossCount: 2,
       announcement: 'BOSS BATTLE!',
       announcementColor: '#FF0000',
     },

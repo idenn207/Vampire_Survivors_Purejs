@@ -10,13 +10,13 @@
   Data.EnemyRegistry.normal = {
     name: 'Normal',
     baseHealth: 30,
-    baseSpeed: 100,
+    baseSpeed: 50,
     baseDamage: 10,
     size: 24,
     color: '#FF0000',
     behavior: 'chase',
     spawnWeight: 50,
-    startWave: 1,
+    startWave: 2,
     imageId: 'enemy_normal',
   };
 })(window.VampireSurvivors.Data);

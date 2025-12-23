@@ -57,7 +57,7 @@
     default: [
       { type: 'exp', minValue: 1, maxValue: 5, chance: 1.0 }, // Always drop XP
       { type: 'gold', minValue: 1, maxValue: 5, chance: 0.3 }, // 30% gold
-      { type: 'health', minValue: 10, maxValue: 20, chance: 0.05 }, // 5% health
+      { type: 'health', minValue: 10, maxValue: 20, chance: 0.01 }, // 1% health
     ],
     elite: [
       { type: 'exp', minValue: 15, maxValue: 30, chance: 1.0 }, // Tier 2-3 XP
@@ -88,12 +88,12 @@
     traversal_circular: [
       { type: 'exp', minValue: 3, maxValue: 8, chance: 0.8 }, // 80% XP
       { type: 'gold', minValue: 2, maxValue: 5, chance: 0.4 }, // 40% gold
-      { type: 'health', minValue: 10, maxValue: 15, chance: 0.05 }, // 5% health
+      { type: 'health', minValue: 10, maxValue: 15, chance: 0.01 }, // 1% health
     ],
     traversal_dash: [
       { type: 'exp', minValue: 2, maxValue: 6, chance: 0.7 }, // 70% XP
       { type: 'gold', minValue: 3, maxValue: 8, chance: 0.5 }, // 50% gold
-      { type: 'health', minValue: 10, maxValue: 20, chance: 0.08 }, // 8% health
+      { type: 'health', minValue: 10, maxValue: 20, chance: 0.01 }, // 1% health
     ],
     traversal_laser: [
       { type: 'exp', minValue: 4, maxValue: 10, chance: 0.9 }, // 90% XP
@@ -146,9 +146,7 @@
       // Roll chance
       if (Math.random() < entry.chance) {
         // Calculate random value in range
-        var baseValue = Math.floor(
-          Math.random() * (entry.maxValue - entry.minValue + 1) + entry.minValue
-        );
+        var baseValue = Math.floor(Math.random() * (entry.maxValue - entry.minValue + 1) + entry.minValue);
 
         // Apply multipliers based on type
         var finalValue = baseValue;

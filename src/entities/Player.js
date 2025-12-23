@@ -79,7 +79,7 @@
       );
       this.addComponent(new Health(DEFAULT_MAX_HEALTH));
       this.addComponent(new WeaponSlot());
-      this.addComponent(new Experience(100, 1.2)); // 100 base XP, 1.2x scaling
+      this.addComponent(new Experience(100, 1.08)); // 100 base XP, 1.08x scaling
       this.addComponent(new Gold(0)); // Start with 0 gold
       this.addComponent(new PlayerStats()); // Stat upgrades tracking
 

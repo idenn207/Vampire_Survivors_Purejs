@@ -26,6 +26,9 @@
   var BASE_MAX_ENEMIES = 100;
   var AI_UPDATE_INTERVAL = 0.2; // seconds
 
+  // Behaviors that need per-frame updates (for smooth animation)
+  var ANIMATING_BEHAVIORS = ['jump_drop'];
+
   // ============================================
   // Class Definition
   // ============================================
@@ -135,6 +138,9 @@
         this._spawnEnemy();
       }
 
+      // Update animating enemies every frame (for smooth animation)
+      this._updateAnimatingEnemies(deltaTime);
+
       // Update AI timer
       this._aiUpdateTimer += deltaTime;
       if (this._aiUpdateTimer >= AI_UPDATE_INTERVAL) {
@@ -212,6 +218,35 @@
       console.log('[EnemySystem] Wave ' + data.wave + ' started, modifiers:', data.modifiers);
     }
 
+    /**
+     * Update enemies with behaviors that need per-frame animation
+     * @param {number} deltaTime
+     * @private
+     */
+    _updateAnimatingEnemies(deltaTime) {
+      var enemies = this._entityManager.getByTag('enemy');
+      if (!enemies || enemies.length === 0) return;
+
+      for (var i = 0; i < enemies.length; i++) {
+        var enemy = enemies[i];
+        if (!enemy.isActive) continue;
+
+        // Skip traversal enemies - they have their own movement patterns
+        if (enemy.hasTag('traversal')) continue;
+
+        var config = enemy.config;
+        var behaviorType = config ? config.behavior : null;
+
+        // Only update behaviors that need per-frame animation
+        if (ANIMATING_BEHAVIORS.indexOf(behaviorType) === -1) continue;
+
+        var behavior = this.getBehavior(behaviorType);
+        if (behavior) {
+          behavior.update(enemy, deltaTime);
+        }
+      }
+    }
+
     _updateEnemyAI() {
       var enemies = this._entityManager.getByTag('enemy');
       if (!enemies || enemies.length === 0) return;
@@ -229,6 +264,10 @@
         // Get the behavior for this enemy type
         var config = enemy.config;
         var behaviorType = config ? config.behavior : 'chase';
+
+        // Skip behaviors that are updated per-frame (avoid double update)
+        if (ANIMATING_BEHAVIORS.indexOf(behaviorType) !== -1) continue;
+
         var behavior = this.getBehavior(behaviorType);
 
         if (behavior) {

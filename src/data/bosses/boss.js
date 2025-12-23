@@ -9,7 +9,7 @@
 
   Data.BossRegistry.boss = {
     name: 'Boss',
-    health: 1000,
+    health: 10000,
     speed: 50,
     damage: 25,
     size: 72,
@@ -17,7 +17,7 @@
     imageId: 'boss_main',
     phases: [
       { threshold: 0.75, speedMultiplier: 1.0, attacks: ['projectile'], cooldownMultiplier: 1.0 },
-      { threshold: 0.50, speedMultiplier: 1.1, attacks: ['projectile', 'dash'], cooldownMultiplier: 0.9 },
+      { threshold: 0.5, speedMultiplier: 1.1, attacks: ['projectile', 'dash'], cooldownMultiplier: 0.9 },
       { threshold: 0.25, speedMultiplier: 1.3, attacks: ['projectile', 'dash', 'ring'], cooldownMultiplier: 0.8 },
       { threshold: 0.0, speedMultiplier: 1.6, attacks: ['projectile', 'dash', 'ring'], cooldownMultiplier: 0.6 },
     ],

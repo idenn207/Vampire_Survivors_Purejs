@@ -9,7 +9,7 @@
 
   Data.BossRegistry.miniboss = {
     name: 'Miniboss',
-    health: 500,
+    health: 5000,
     speed: 60,
     damage: 20,
     size: 56,
