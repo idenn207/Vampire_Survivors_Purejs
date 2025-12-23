@@ -13,7 +13,7 @@
     id: 'flame_scythe',
     name: 'Flame Scythe',
     description: 'A burning scythe that leaves a trail of fire with each wide sweep',
-    attackType: AttackType.MELEE_SWING,
+    attackType: AttackType.MELEE_THRUST,
     targetingMode: TargetingMode.NEAREST,
     isAuto: true,
     rarity: Rarity.UNCOMMON,
@@ -24,9 +24,17 @@
 
     damage: 32,
     cooldown: 1.2,
-    range: 100,
-    arc: 180,
+    range: 110,
     knockback: 60,
+
+    // Thrust parameters (scythe style)
+    thrustStyle: 'scythe',
+    thrustDuration: 0.35,
+    extendTime: 0.3,
+    holdTime: 0.25,
+    retractTime: 0.45,
+    thrustWidth: 20,
+    coneExpansion: 3.5,
 
     color: '#FF6600',
     icon: 'flame_scythe',
@@ -84,8 +92,8 @@
 
     upgrades: {
       2: { damage: 42, statusEffect: { damage: 7 }, fireTrail: { duration: 2.0 } },
-      3: { damage: 55, cooldown: 1.1, range: 110 },
-      4: { damage: 72, fireTrail: { tickDamage: 12 }, arc: 200 },
+      3: { damage: 55, cooldown: 1.1, range: 120 },
+      4: { damage: 72, fireTrail: { tickDamage: 12 }, coneExpansion: 4.0 },
       5: { damage: 94, cooldown: 1.0, statusEffect: { damage: 10 } },
     },
     maxLevel: 5,

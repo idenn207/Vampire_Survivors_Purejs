@@ -30,6 +30,7 @@
     _projectileBehavior = null;
     _laserBehavior = null;
     _meleeBehavior = null;
+    _thrustBehavior = null;
     _areaBehavior = null;
     _particleBehavior = null;
     _mineBehavior = null;
@@ -84,6 +85,7 @@
       this._projectileBehavior = new Behaviors.ProjectileBehavior();
       this._laserBehavior = new Behaviors.LaserBehavior();
       this._meleeBehavior = new Behaviors.MeleeBehavior();
+      this._thrustBehavior = new Behaviors.ThrustBehavior();
       this._areaBehavior = new Behaviors.AreaBehavior();
       this._particleBehavior = new Behaviors.ParticleBehavior();
       this._mineBehavior = new Behaviors.MineBehavior();
@@ -94,6 +96,7 @@
         this._projectileBehavior,
         this._laserBehavior,
         this._meleeBehavior,
+        this._thrustBehavior,
         this._areaBehavior,
         this._particleBehavior,
         this._mineBehavior,
@@ -114,6 +117,7 @@
         this._projectileBehavior,
         this._laserBehavior,
         this._meleeBehavior,
+        this._thrustBehavior,
         this._areaBehavior,
         this._particleBehavior,
         this._mineBehavior,
@@ -176,6 +180,11 @@
         this._meleeBehavior.render(ctx, this._camera);
       }
 
+      // Render thrust attacks
+      if (this._thrustBehavior) {
+        this._thrustBehavior.render(ctx, this._camera);
+      }
+
       // Render particle effects
       if (this._particleBehavior) {
         var particleWeapons = weaponSlot.getWeaponsByType(AttackType.PARTICLE);
@@ -230,6 +239,8 @@
           return this._laserBehavior;
         case AttackType.MELEE_SWING:
           return this._meleeBehavior;
+        case AttackType.MELEE_THRUST:
+          return this._thrustBehavior;
         case AttackType.AREA_DAMAGE:
           return this._areaBehavior;
         case AttackType.PARTICLE:
@@ -253,6 +264,11 @@
       // Update melee swing visuals
       if (this._meleeBehavior) {
         this._meleeBehavior.update(deltaTime);
+      }
+
+      // Update thrust visuals
+      if (this._thrustBehavior) {
+        this._thrustBehavior.update(deltaTime);
       }
 
       // Update particle behaviors (rotating blades, chain lightning visuals)
@@ -306,6 +322,10 @@
       if (this._meleeBehavior) {
         this._meleeBehavior.dispose();
         this._meleeBehavior = null;
+      }
+      if (this._thrustBehavior) {
+        this._thrustBehavior.dispose();
+        this._thrustBehavior = null;
       }
       if (this._areaBehavior) {
         this._areaBehavior.dispose();

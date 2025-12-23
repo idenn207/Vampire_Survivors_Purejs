@@ -12,6 +12,7 @@
     PROJECTILE: 'projectile',
     LASER: 'laser',
     MELEE_SWING: 'melee_swing',
+    MELEE_THRUST: 'melee_thrust',
     AREA_DAMAGE: 'area_damage',
     PARTICLE: 'particle',
     MINE: 'mine',

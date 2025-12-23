@@ -28,16 +28,24 @@
     maxTier: 5,
 
     // Attack properties
-    attackType: AttackType.MELEE_SWING,
+    attackType: AttackType.MELEE_THRUST,
     targetingMode: TargetingMode.NEAREST,
     isAuto: true,
 
     // Stats (4.0x base multiplier)
     damage: 50,
     cooldown: 0.75,
-    range: 165,
-    arc: 200,
+    range: 130,
     pierce: 999,
+
+    // Thrust parameters (scythe style)
+    thrustStyle: 'scythe',
+    thrustDuration: 0.35,
+    extendTime: 0.3,
+    holdTime: 0.25,
+    retractTime: 0.45,
+    thrustWidth: 20,
+    coneExpansion: 4.0,
 
     // Enhanced status effect
     statusEffects: [
@@ -88,8 +96,8 @@
     // Level upgrades
     upgrades: {
       2: { damage: 63, statusEffects: [{ type: StatusEffectType.BLEED, chance: 0.65, duration: 6.5, tickRate: 2, damagePerTick: 15 }] },
-      3: { damage: 78, arc: 220, specialAbility: { bloodExplosion: { explosionRadius: 100, explosionDamage: 55 } } },
-      4: { damage: 98, cooldown: 0.65, range: 180 },
+      3: { damage: 78, coneExpansion: 4.5, specialAbility: { bloodExplosion: { explosionRadius: 100, explosionDamage: 55 } } },
+      4: { damage: 98, cooldown: 0.65, range: 145 },
       5: { damage: 122, specialAbility: { bloodExplosion: { explosionRadius: 120, explosionDamage: 75, bleedChance: 0.7 }, soulReap: { damageBoost: 0.3, maxStacks: 10 } } },
     },
     maxLevel: 5,

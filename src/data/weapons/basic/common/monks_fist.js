@@ -13,7 +13,7 @@
     id: 'monks_fist',
     name: "Monk's Fist",
     description: 'Rapid punches in a 3-hit combo. The third hit deals 50% bonus damage',
-    attackType: AttackType.MELEE_SWING,
+    attackType: AttackType.MELEE_THRUST,
     targetingMode: TargetingMode.NEAREST,
     isAuto: true,
     rarity: Rarity.COMMON,
@@ -24,10 +24,16 @@
 
     damage: 15,
     cooldown: 0.3,
-    range: 40,
-    arcAngle: 70,
-    swingDuration: 0.1,
-    hitsPerSwing: 1,
+    range: 45,
+
+    // Thrust parameters (punch style)
+    thrustStyle: 'punch',
+    thrustDuration: 0.12,
+    extendTime: 0.4,
+    holdTime: 0,
+    retractTime: 0.6,
+    thrustWidth: 28,
+    coneExpansion: 1.0,
 
     color: '#FFFFFF',
     icon: 'fist',
@@ -59,9 +65,9 @@
 
     upgrades: {
       2: { damage: 20, cooldown: 0.27, thirdHitBonus: 0.6 },
-      3: { damage: 26, range: 45, arcAngle: 80 },
+      3: { damage: 26, range: 50, thrustWidth: 32 },
       4: { damage: 34, cooldown: 0.24, thirdHitBonus: 0.75 },
-      5: { damage: 45, range: 50, hitsPerSwing: 2 },
+      5: { damage: 45, range: 55, thrustWidth: 36 },
     },
     maxLevel: 5,
   };

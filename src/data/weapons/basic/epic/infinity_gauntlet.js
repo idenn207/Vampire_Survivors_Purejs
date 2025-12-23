@@ -13,7 +13,7 @@
     id: 'infinity_gauntlet',
     name: 'Infinity Gauntlet',
     description: 'Collect all 6 Infinity Stones. With all stones... SNAP... and half of all life ceases to exist',
-    attackType: AttackType.MELEE_SWING,
+    attackType: AttackType.MELEE_THRUST,
     targetingMode: TargetingMode.NEAREST,
     isAuto: true,
     rarity: Rarity.EPIC,
@@ -27,9 +27,15 @@
     damage: 60,
     cooldown: 0.9,
     range: 70,
-    arcAngle: 140,
-    swingDuration: 0.22,
-    hitsPerSwing: 2,
+
+    // Thrust parameters (punch style - gauntlet fist)
+    thrustStyle: 'punch',
+    thrustDuration: 0.2,
+    extendTime: 0.4,
+    holdTime: 0,
+    retractTime: 0.6,
+    thrustWidth: 40,
+    coneExpansion: 1.0,
 
     // Visual
     color: '#FFD700',
@@ -204,7 +210,7 @@
 
     upgrades: {
       2: { damage: 78, killsPerStone: 25, explosionOnHit: { damage: 55 } },
-      3: { damage: 98, cooldown: 0.8, theSnap: { cooldown: 50.0 }, hitsPerSwing: 3 },
+      3: { damage: 98, cooldown: 0.8, theSnap: { cooldown: 50.0 }, thrustWidth: 45 },
       4: { damage: 120, lifesteal: 0.2, timeSlowAura: { radius: 180 } },
       5: { damage: 150, killsPerStone: 20, theSnap: { deletePercent: 0.6 } },
     },

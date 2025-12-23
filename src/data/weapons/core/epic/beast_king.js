@@ -28,16 +28,24 @@
     maxTier: 5,
 
     // Attack properties
-    attackType: AttackType.MELEE_SWING,
+    attackType: AttackType.MELEE_THRUST,
     targetingMode: TargetingMode.NEAREST,
     isAuto: true,
 
     // Stats (4.0x base multiplier)
     damage: 32,
     cooldown: 0.3,
-    range: 110,
-    arc: 150,
+    range: 80,
     pierce: 999,
+
+    // Thrust parameters (punch/claw style)
+    thrustStyle: 'punch',
+    thrustDuration: 0.1,
+    extendTime: 0.35,
+    holdTime: 0,
+    retractTime: 0.65,
+    thrustWidth: 46,
+    coneExpansion: 1.2,
 
     // Enhanced status effect
     statusEffects: [
@@ -91,8 +99,8 @@
     // Level upgrades
     upgrades: {
       2: { damage: 40, statusEffects: [{ type: StatusEffectType.BLEED, chance: 0.6, duration: 5.5, tickRate: 3, damagePerTick: 11 }] },
-      3: { damage: 50, arc: 170, specialAbility: { savageRoar: { roarRadius: 240, damageBoost: 0.4 } } },
-      4: { damage: 63, cooldown: 0.25, range: 120 },
+      3: { damage: 50, thrustWidth: 50, specialAbility: { savageRoar: { roarRadius: 240, damageBoost: 0.4 } } },
+      4: { damage: 63, cooldown: 0.25, range: 85 },
       5: { damage: 78, specialAbility: { savageRoar: { interval: 10, roarRadius: 280, fearDuration: 3, damageBoost: 0.5 } } },
     },
     maxLevel: 5,
