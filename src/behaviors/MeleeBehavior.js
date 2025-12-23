@@ -51,8 +51,8 @@
       var doubleSwing = weapon.getStat('doubleSwing', false);
 
       // Get image config for sprite rendering
-      var meleeImageId = weapon.getStat('meleeImageId', null) ||
-                         weapon.getStat('imageId', null);
+      var meleeImageId = weapon.getStat('meleeImageId', null) || weapon.getStat('imageId', null);
+      var meleeFrameCount = weapon.getStat('meleeFrameCount', 1);
 
       // Apply player stat bonuses
       var range = this.getEffectiveRange(baseRange);
@@ -70,7 +70,18 @@
       // Perform forward swing
       var swings = [];
       var forwardSwing = this._performSwing(
-        weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, 0, meleeImageId
+        weapon,
+        playerPos,
+        range,
+        centerAngle,
+        arcRad,
+        swingDuration,
+        damage,
+        isCrit,
+        color,
+        0,
+        meleeImageId,
+        meleeFrameCount
       );
       swings.push(forwardSwing);
 
@@ -79,7 +90,18 @@
         var backAngle = centerAngle + Math.PI; // Opposite direction
         var backDelay = swingDuration * 0.5; // Slight delay before back swing
         var backSwing = this._performSwing(
-          weapon, playerPos, range, backAngle, arcRad, swingDuration, damage, isCrit, color, backDelay, meleeImageId
+          weapon,
+          playerPos,
+          range,
+          backAngle,
+          arcRad,
+          swingDuration,
+          damage,
+          isCrit,
+          color,
+          backDelay,
+          meleeImageId,
+          meleeFrameCount
         );
         swings.push(backSwing);
       }
@@ -100,9 +122,10 @@
      * @param {string} color
      * @param {number} delay - Delay before swing starts (for back swing)
      * @param {string} [imageId] - Image ID for sprite rendering
+     * @param {number} [frameCount] - Number of animation frames (default: 1)
      * @returns {Object} Swing data
      */
-    _performSwing(weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, delay, imageId) {
+    _performSwing(weapon, playerPos, range, centerAngle, arcRad, swingDuration, damage, isCrit, color, delay, imageId, frameCount) {
       var startAngle = centerAngle - arcRad / 2;
       var endAngle = centerAngle + arcRad / 2;
 
@@ -120,6 +143,7 @@
         alpha: 0.6,
         progress: 0,
         imageId: imageId, // Store image ID for rendering
+        frameCount: frameCount || 1, // Number of animation frames
         // Store damage info for delayed swings
         weapon: weapon,
         damage: damage,
@@ -184,15 +208,7 @@
         if (wasDelayed && swing.elapsed >= 0 && !swing.damageApplied) {
           swing.damageApplied = true;
           // Apply damage for the delayed swing
-          this._applySwingDamage(
-            { x: swing.x, y: swing.y },
-            swing.range,
-            swing.startAngle,
-            swing.endAngle,
-            swing.weapon,
-            swing.damage,
-            swing.isCrit
-          );
+          this._applySwingDamage({ x: swing.x, y: swing.y }, swing.range, swing.startAngle, swing.endAngle, swing.weapon, swing.damage, swing.isCrit);
         }
 
         // Calculate progress only for active (non-delayed) swings
@@ -236,47 +252,62 @@
         var screenX = swing.x - cameraX;
         var screenY = swing.y - cameraY;
 
-        // Animate the arc drawing based on progress
-        var currentEndAngle = swing.startAngle + (swing.endAngle - swing.startAngle) * Math.min(swing.progress * 2, 1);
-
-        // Check if we have an image to render
-        var image = null;
-        if (swing.imageId && assetLoader && assetLoader.hasImage(swing.imageId)) {
-          image = assetLoader.getImage(swing.imageId);
-        }
+        // Skip rendering during delay phase
+        if (swing.alpha <= 0) continue;
 
         ctx.save();
         ctx.globalAlpha = swing.alpha;
 
-        if (image) {
-          // Image rendering: use clipping path for arc shape
-          ctx.beginPath();
-          ctx.moveTo(screenX, screenY);
-          ctx.arc(screenX, screenY, swing.range, swing.startAngle, currentEndAngle);
-          ctx.closePath();
-          ctx.clip();
+        // Try sprite sheet frame animation first
+        var frameData = null;
+        if (swing.imageId && swing.frameCount > 1 && assetLoader) {
+          var frameIndex = Math.floor(swing.progress * swing.frameCount);
+          frameIndex = Math.min(frameIndex, swing.frameCount - 1);
+          frameData = assetLoader.getSpriteFrame(swing.imageId, 'frame_' + frameIndex);
+        }
 
-          // Draw rotated image centered at swing position
+        if (frameData) {
+          // Frame-based sprite sheet animation with swing rotation
+          var currentAngle = swing.startAngle + (swing.endAngle - swing.startAngle) * swing.progress;
           ctx.translate(screenX, screenY);
-          ctx.rotate(swing.centerAngle);
-          // Draw image covering the arc area
-          var imgSize = swing.range * 2;
-          ctx.drawImage(image, -swing.range, -swing.range, imgSize, imgSize);
+          ctx.rotate(currentAngle + Math.PI / 2);
+          // Draw extending outward from player center toward swing direction
+          ctx.drawImage(frameData.image, frameData.x, frameData.y, frameData.width, frameData.height, 0, -swing.range, swing.range, swing.range * 2);
         } else {
-          // Fallback: standard arc rendering
-          ctx.fillStyle = swing.color;
-          ctx.strokeStyle = swing.color;
-          ctx.lineWidth = 3;
+          // Check for single image fallback
+          var image = null;
+          if (swing.imageId && assetLoader && assetLoader.hasImage(swing.imageId)) {
+            image = assetLoader.getImage(swing.imageId);
+          }
 
-          ctx.beginPath();
-          ctx.moveTo(screenX, screenY);
-          ctx.arc(screenX, screenY, swing.range, swing.startAngle, currentEndAngle);
-          ctx.closePath();
-          ctx.fill();
+          if (image) {
+            // Fallback: single image with swing rotation animation
+            // Scale pulse: starts small, grows to full, then shrinks slightly
+            var scale = 0.7 + 0.5 * Math.sin(swing.progress * Math.PI);
+            var currentAngle = swing.startAngle + (swing.endAngle - swing.startAngle) * swing.progress;
 
-          // Draw arc outline
-          ctx.globalAlpha = swing.alpha * 1.5;
-          ctx.stroke();
+            ctx.translate(screenX, screenY);
+            ctx.rotate(currentAngle + Math.PI / 2);
+            ctx.scale(scale, scale);
+            // Draw extending outward from player center toward swing direction
+            ctx.drawImage(image, 0, -swing.range, swing.range, swing.range * 2);
+          } else {
+            // Final fallback: colored arc rendering
+            ctx.fillStyle = swing.color;
+            ctx.strokeStyle = swing.color;
+            ctx.lineWidth = 3;
+
+            // Draw full arc immediately (no progressive reveal)
+            ctx.beginPath();
+            ctx.moveTo(screenX, screenY);
+            ctx.arc(screenX, screenY, swing.range, swing.startAngle, swing.endAngle);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw arc outline
+            ctx.globalAlpha = swing.alpha * 1.5;
+            ctx.stroke();
+          }
         }
 
         ctx.restore();
