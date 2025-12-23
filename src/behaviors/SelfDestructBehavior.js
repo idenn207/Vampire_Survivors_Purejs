@@ -192,7 +192,7 @@
 
         if (distance < state.explosionRadius) {
           // Damage player
-          this.damagePlayer(state.explosionDamage);
+          this.damagePlayer(state.explosionDamage, enemy);
         }
       }
 

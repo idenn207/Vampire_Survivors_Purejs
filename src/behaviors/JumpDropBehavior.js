@@ -252,7 +252,7 @@
 
         if (distance < state.landingRadius) {
           // Damage player
-          this.damagePlayer(enemy.damage);
+          this.damagePlayer(enemy.damage, enemy);
         }
       }
 

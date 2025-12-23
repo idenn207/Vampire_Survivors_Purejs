@@ -215,15 +215,37 @@
     /**
      * Damage the player
      * @param {number} amount - Damage amount
+     * @param {Entity} [enemy] - Enemy that caused the damage (for event data)
      * @returns {boolean} True if damage was applied
      */
-    damagePlayer(amount) {
+    damagePlayer(amount, enemy) {
       if (!this._player || !this._player.isActive) return false;
 
       var health = this._player.getComponent(Health);
       if (!health) return false;
 
-      return health.takeDamage(amount);
+      var damageApplied = health.takeDamage(amount);
+
+      if (damageApplied) {
+        // Emit player:damaged event
+        this.emit('player:damaged', {
+          player: this._player,
+          enemy: enemy || null,
+          amount: amount,
+          currentHealth: health.currentHealth,
+          maxHealth: health.maxHealth,
+        });
+
+        // Check for player death
+        if (health.isDead) {
+          this.emit('player:died', {
+            player: this._player,
+            killer: enemy || null,
+          });
+        }
+      }
+
+      return damageApplied;
     }
 
     /**
