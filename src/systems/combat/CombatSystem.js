@@ -54,6 +54,9 @@
     // Event handler for entity death
     _boundOnEntityDeath = null;
 
+    // Event handler for weapon hits (special effects)
+    _boundOnWeaponHit = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -61,6 +64,10 @@
       super();
       this._boundOnEntityDeath = this._handleEntityDeath.bind(this);
       events.on('entity:died', this._boundOnEntityDeath);
+
+      // Listen for weapon hits to process special effects (lifesteal, healOnHit, etc.)
+      this._boundOnWeaponHit = this._handleWeaponHit.bind(this);
+      events.on('weapon:hit', this._boundOnWeaponHit);
     }
 
     // ----------------------------------------
@@ -237,9 +244,10 @@
           EffectHandlers.applyKnockback(hitbox, enemy, weaponConfig.knockback);
         }
 
-        // Process lifesteal
-        if (weaponConfig && weaponConfig.lifesteal && weaponConfig.lifesteal > 0) {
-          EffectHandlers.processLifesteal(this._player, finalDamage, weaponConfig.lifesteal, this);
+        // Process lifesteal (use normalized value to support both formats)
+        var lifestealPercent = this._normalizeLifesteal(weaponConfig ? weaponConfig.lifesteal : null);
+        if (lifestealPercent > 0) {
+          EffectHandlers.processLifesteal(this._player, finalDamage, lifestealPercent, this);
         }
 
         // Process heal on hit
@@ -309,6 +317,60 @@
       var weapon = weaponSlot.getWeapon(weaponId);
       if (weapon && weapon.addDamageDealt) {
         weapon.addDamageDealt(damage);
+      }
+    }
+
+    /**
+     * Normalize lifesteal value from various formats
+     * @param {number|Object} lifesteal - Number (0.15) or object ({enabled, percent})
+     * @returns {number} Lifesteal as decimal (0-1)
+     */
+    _normalizeLifesteal(lifesteal) {
+      if (!lifesteal) return 0;
+
+      // Object format: { enabled: true, percent: 15 }
+      if (typeof lifesteal === 'object') {
+        if (!lifesteal.enabled) return 0;
+        return (lifesteal.percent || 0) / 100;
+      }
+
+      // Numeric format: 0.15
+      return lifesteal > 0 ? lifesteal : 0;
+    }
+
+    /**
+     * Handle weapon hit events for non-projectile weapons
+     * Processes lifesteal, healOnHit, and other special effects
+     * @param {Object} data - Hit event data { weapon?, weaponId?, enemy, damage, type }
+     */
+    _handleWeaponHit(data) {
+      // Skip projectile hits (already handled in _processProjectileCollisions)
+      if (data.type === 'projectile') return;
+
+      // Skip system-generated hits without weapon info (explosions, etc.)
+      if (data.type === 'enemy_explosion') return;
+
+      // Get weapon config from weapon object or weaponId
+      var weaponConfig = null;
+      if (data.weapon) {
+        weaponConfig = data.weapon.data || data.weapon.getAllStats();
+      } else if (data.weaponId) {
+        weaponConfig = this._getWeaponConfig(data.weaponId);
+      }
+
+      if (!weaponConfig) return;
+
+      var damage = data.damage || 0;
+
+      // Process lifesteal
+      var lifestealPercent = this._normalizeLifesteal(weaponConfig.lifesteal);
+      if (lifestealPercent > 0) {
+        EffectHandlers.processLifesteal(this._player, damage, lifestealPercent, this);
+      }
+
+      // Process healOnHit
+      if (weaponConfig.healOnHit && weaponConfig.healOnHit > 0) {
+        EffectHandlers.processHealOnHit(this._player, weaponConfig.healOnHit);
       }
     }
 
@@ -461,6 +523,10 @@
       if (this._boundOnEntityDeath) {
         events.off('entity:died', this._boundOnEntityDeath);
         this._boundOnEntityDeath = null;
+      }
+      if (this._boundOnWeaponHit) {
+        events.off('weapon:hit', this._boundOnWeaponHit);
+        this._boundOnWeaponHit = null;
       }
       this._collisionSystem = null;
       this._player = null;
