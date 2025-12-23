@@ -54,6 +54,11 @@
         return false;
       }
 
+      // Check for invulnerable tag (used by jump_drop enemies during jump)
+      if (this._entity && this._entity.hasTag && this._entity.hasTag('invulnerable')) {
+        return false;
+      }
+
       // Check for Shield component and absorb damage through it first
       var remainingDamage = amount;
       if (this._entity) {

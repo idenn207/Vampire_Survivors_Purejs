@@ -9,7 +9,7 @@
 
   Data.EnemyRegistry.self_destruct = {
     name: 'Bomber',
-    baseHealth: 40,
+    baseHealth: 400,
     baseSpeed: 80,
     baseDamage: 5,
     size: 28,

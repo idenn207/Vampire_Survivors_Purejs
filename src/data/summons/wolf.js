@@ -21,6 +21,7 @@
     damage: 25,
     attackCooldown: 0.6,
     attackRange: 40,
+    attackWindup: 0.15, // Fast attacker - quick wind-up
     critChance: 0.15,
     critMultiplier: 1.5,
 

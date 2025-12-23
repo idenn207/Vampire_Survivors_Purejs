@@ -775,12 +775,21 @@
           var resultData = this._evolutionResult;
           var tierConfig = WeaponTierData.getTierConfig(resultData.tier);
 
-          // Icon
-          var color = resultData.color || tierConfig.color;
-          ctx.fillStyle = color;
-          ctx.beginPath();
-          ctx.arc(centerX, centerY - 12, 20, 0, Math.PI * 2);
-          ctx.fill();
+          // Icon - try to load image first
+          var assetLoader = window.VampireSurvivors.Core.assetLoader;
+          var imageId = resultData.imageId;
+          if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+            var img = assetLoader.getImage(imageId);
+            var imgSize = 40; // Match the circle diameter (radius 20 * 2)
+            ctx.drawImage(img, centerX - imgSize / 2, centerY - 12 - imgSize / 2, imgSize, imgSize);
+          } else {
+            // Fallback to colored circle
+            var color = resultData.color || tierConfig.color;
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY - 12, 20, 0, Math.PI * 2);
+            ctx.fill();
+          }
 
           // Weapon name
           ctx.font = 'bold 10px Arial';

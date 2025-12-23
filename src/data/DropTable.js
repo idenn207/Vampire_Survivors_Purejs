@@ -14,16 +14,16 @@
       goldMultiplier: 1.0,
     },
     elite: {
-      xpMultiplier: 3.0,
-      goldMultiplier: 2.5,
+      xpMultiplier: 1.6,
+      goldMultiplier: 1.2,
     },
     miniboss: {
-      xpMultiplier: 10.0,
-      goldMultiplier: 5.0,
+      xpMultiplier: 2.0,
+      goldMultiplier: 1.5,
     },
     boss: {
-      xpMultiplier: 15.0,
-      goldMultiplier: 20.0,
+      xpMultiplier: 3.0,
+      goldMultiplier: 2.0,
     },
     swarm: {
       // Small fast enemies - less drops
@@ -32,7 +32,7 @@
     },
     tank: {
       // High HP enemies - more drops
-      xpMultiplier: 2.0,
+      xpMultiplier: 1.2,
       goldMultiplier: 1.5,
     },
     // Traversal enemies - reduced multipliers (more enemies now)
@@ -56,12 +56,12 @@
   var DROP_TABLES = {
     default: [
       { type: 'exp', minValue: 1, maxValue: 5, chance: 1.0 }, // Always drop XP
-      { type: 'gold', minValue: 1, maxValue: 5, chance: 0.3 }, // 30% gold
+      { type: 'gold', minValue: 1, maxValue: 5, chance: 0.05 }, // 5% gold
       { type: 'health', minValue: 10, maxValue: 20, chance: 0.01 }, // 1% health
     ],
     elite: [
       { type: 'exp', minValue: 15, maxValue: 30, chance: 1.0 }, // Tier 2-3 XP
-      { type: 'gold', minValue: 10, maxValue: 25, chance: 0.8 }, // 80% gold
+      { type: 'gold', minValue: 10, maxValue: 25, chance: 1.0 }, // 100% gold
       { type: 'health', minValue: 20, maxValue: 30, chance: 0.15 }, // 15% health
     ],
     miniboss: [
@@ -81,7 +81,7 @@
     ],
     tank: [
       { type: 'exp', minValue: 5, maxValue: 15, chance: 1.0 }, // Tier 1-2 XP
-      { type: 'gold', minValue: 5, maxValue: 15, chance: 0.5 }, // 50% gold
+      { type: 'gold', minValue: 5, maxValue: 15, chance: 0.3 }, // 30% gold
       { type: 'health', minValue: 15, maxValue: 25, chance: 0.1 }, // 10% health
     ],
     // Traversal enemies - reduced per-enemy rewards (more enemies now)

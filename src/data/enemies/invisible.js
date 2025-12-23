@@ -9,7 +9,7 @@
 
   Data.EnemyRegistry.invisible = {
     name: 'Shade',
-    baseHealth: 20,
+    baseHealth: 60,
     baseSpeed: 90,
     baseDamage: 18,
     size: 24,

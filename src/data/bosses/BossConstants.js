@@ -9,8 +9,8 @@
   // Scaling Configuration
   // ============================================
   var ScalingConfig = {
-    HEALTH_PER_WAVE: 0.2, // +20% health per wave after first boss wave
-    DAMAGE_PER_WAVE: 0.15, // +15% damage per wave
+    HEALTH_PER_WAVE: 0.6, // +60% health per wave (matches enemy scaling)
+    DAMAGE_PER_WAVE: 0.05, // +5% damage per wave (matches enemy scaling)
   };
 
   // ============================================
@@ -22,9 +22,9 @@
   // First Appearance Waves
   // ============================================
   var FirstWaves = {
-    elite: 5,
-    miniboss: 10,
-    boss: 15,
+    elite: 2, // Every 2 waves (2, 4, 8...)
+    miniboss: 3, // Every 3 waves (3, 6, 9...)
+    boss: 5, // Every 5 waves (5, 10, 15...)
   };
 
   // ============================================

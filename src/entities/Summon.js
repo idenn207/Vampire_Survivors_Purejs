@@ -19,6 +19,7 @@
   // ============================================
   var DEFAULT_SIZE = 20;
   var DEFAULT_COLOR = '#88CCFF';
+  var DEFAULT_ATTACK_WINDUP = 0.2;
 
   // ============================================
   // Class Definition
@@ -37,6 +38,12 @@
     _target = null;
     _sourceWeaponId = null;
     _owner = null; // Reference to player
+
+    // Wind-up attack properties
+    _attackWindup = DEFAULT_ATTACK_WINDUP;
+    _windupTimer = 0;
+    _isWindingUp = false;
+    _attackTarget = null; // Target stored during wind-up
 
     // ----------------------------------------
     // Constructor
@@ -73,8 +80,9 @@
      * @param {Entity} owner
      * @param {string} [imageId] - Optional image ID for sprite
      * @param {number} [size] - Optional custom size
+     * @param {number} [attackWindup] - Optional attack wind-up delay
      */
-    reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size) {
+    reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup) {
       var actualSize = size || DEFAULT_SIZE;
 
       // Reset transform
@@ -117,6 +125,12 @@
       this._sourceWeaponId = sourceWeaponId;
       this._owner = owner;
 
+      // Reset wind-up properties
+      this._attackWindup = attackWindup || DEFAULT_ATTACK_WINDUP;
+      this._windupTimer = 0;
+      this._isWindingUp = false;
+      this._attackTarget = null;
+
       // Ensure active
       this.isActive = true;
     }
@@ -124,21 +138,21 @@
     /**
      * Update summon behavior
      * @param {number} deltaTime
-     * @returns {string} State: 'active', 'expired', 'dead'
+     * @returns {Object} State object: { state: 'active'|'expired'|'dead'|'windup_complete', target?: Entity }
      */
     update(deltaTime) {
-      if (!this.isActive) return 'expired';
+      if (!this.isActive) return { state: 'expired' };
 
       // Check if dead
       var healthComp = this.health;
       if (healthComp.isDead) {
-        return 'dead';
+        return { state: 'dead' };
       }
 
       // Update lifetime
       this._lifetime -= deltaTime;
       if (this._lifetime <= 0) {
-        return 'expired';
+        return { state: 'expired' };
       }
 
       // Update attack cooldown
@@ -146,12 +160,24 @@
         this._attackTimer -= deltaTime;
       }
 
+      // Update wind-up timer
+      if (this._isWindingUp) {
+        this._windupTimer -= deltaTime;
+        if (this._windupTimer <= 0) {
+          // Wind-up complete, ready to attack
+          var target = this._attackTarget;
+          this._isWindingUp = false;
+          this._attackTarget = null;
+          return { state: 'windup_complete', target: target };
+        }
+      }
+
       // Fade effect when nearing expiration
       if (this._lifetime < 3) {
         this.sprite.alpha = 0.5 + (this._lifetime / 3) * 0.5;
       }
 
-      return 'active';
+      return { state: 'active' };
     }
 
     /**
@@ -163,18 +189,37 @@
     }
 
     /**
-     * Check if summon can attack
+     * Check if summon can attack (cooldown ready and not winding up)
      * @returns {boolean}
      */
     canAttack() {
-      return this._attackTimer <= 0;
+      return this._attackTimer <= 0 && !this._isWindingUp;
     }
 
     /**
-     * Perform attack (resets cooldown)
+     * Start attack wind-up on target
+     * @param {Entity} target - The target to attack after wind-up
+     */
+    startAttack(target) {
+      this._isWindingUp = true;
+      this._windupTimer = this._attackWindup;
+      this._attackTarget = target;
+    }
+
+    /**
+     * Perform attack (resets cooldown) - called after wind-up completes
      */
     attack() {
       this._attackTimer = this._attackCooldown;
+    }
+
+    /**
+     * Cancel ongoing wind-up attack
+     */
+    cancelAttack() {
+      this._isWindingUp = false;
+      this._windupTimer = 0;
+      this._attackTarget = null;
     }
 
     /**
@@ -249,6 +294,14 @@
 
     get owner() {
       return this._owner;
+    }
+
+    get isWindingUp() {
+      return this._isWindingUp;
+    }
+
+    get attackTarget() {
+      return this._attackTarget;
     }
 
     get centerX() {

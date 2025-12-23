@@ -21,6 +21,7 @@
   var PRIORITY = 112; // Between HUDSystem (110) and LevelUpSystem (115)
   var MIN_UNLOCK_CHOICES = 2;
   var MAX_UNLOCK_CHOICES = 3;
+  var MAX_TECH_SKILLS = 5; // Maximum tech skills including base tech
 
   // ============================================
   // Class Definition
@@ -159,13 +160,20 @@
     _onBossDeath(data) {
       if (!data || !data.entity) return;
 
-      // Check if it's a boss
-      if (!data.entity.hasTag || !data.entity.hasTag('boss')) return;
+      // Only trigger for actual bosses (not elite or miniboss)
+      if (!data.entity.hasTag || !data.entity.hasTag('boss_boss')) return;
 
       if (!this._player) return;
 
       var techTree = this._player.getComponent(TechTree);
       if (!techTree) return;
+
+      // Check if already at max tech skills
+      var unlockedCount = techTree.getAllUnlockedTechs().length;
+      if (unlockedCount >= MAX_TECH_SKILLS) {
+        console.log('[TechTreeSystem] Max tech skills reached (' + MAX_TECH_SKILLS + ')');
+        return;
+      }
 
       // Generate unlock choices
       var choices = this._generateUnlockChoices(techTree);

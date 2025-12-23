@@ -231,10 +231,8 @@
    * @returns {boolean}
    */
   function isMaxLevel(statId, level) {
-    var config = STAT_CONFIGS[statId];
-    if (!config) return true;
-
-    return level >= config.maxLevel;
+    // Removed max level restriction - stats can be upgraded infinitely
+    return false;
   }
 
   // ============================================

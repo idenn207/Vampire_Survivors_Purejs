@@ -21,6 +21,7 @@
     damage: 5,
     attackCooldown: 2.0,
     attackRange: 30,
+    attackWindup: 0.25, // Support - moderate wind-up
 
     // Support stats
     healAmount: 2,

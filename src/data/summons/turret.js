@@ -21,6 +21,7 @@
     damage: 15,
     attackCooldown: 0.5,
     attackRange: 200,
+    attackWindup: 0.1, // Rapid fire - minimal wind-up
     projectileSpeed: 400,
     projectileSize: 6,
     projectileColor: '#FFDD00',

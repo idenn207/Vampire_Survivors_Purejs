@@ -12,6 +12,8 @@
     BASE_WAVE_DURATION: 30, // Seconds per wave
     WAVE_DURATION_INCREMENT: 5, // Each wave is 5s longer (caps at max)
     MAX_WAVE_DURATION: 60, // Maximum wave duration
+    ELITE_WAVE_INTERVAL: 2, // Elite spawns every 2 waves (2, 4, 8...)
+    MINIBOSS_WAVE_INTERVAL: 3, // Miniboss spawns every 3 waves (3, 6, 9...)
     BOSS_WAVE_INTERVAL: 5, // Boss spawns every 5 waves (5, 10, 15...)
   };
 
@@ -40,7 +42,7 @@
      * Starts at 1.0, increases by 40% each wave (no cap)
      */
     enemyHealthMultiplier: function (waveNumber) {
-      return 1.0 + (waveNumber - 1) * 0.4;
+      return 1.0 + (waveNumber - 1) * 0.6;
     },
 
     /**
@@ -49,52 +51,6 @@
      */
     enemyDamageMultiplier: function (waveNumber) {
       return 1.0 + (waveNumber - 1) * 0.05;
-    },
-  };
-
-  // ============================================
-  // Special Wave Definitions
-  // ============================================
-  var SpecialWaves = {
-    2: {
-      name: 'First Challenge',
-      isBossWave: true,
-      bossType: 'elite',
-      bossCount: 1,
-      announcement: 'ELITE INCOMING!',
-      announcementColor: '#FFD700',
-    },
-    3: {
-      name: 'Swarm',
-      isBossWave: true,
-      bossType: 'miniboss',
-      bossCount: 1,
-      announcement: 'MINIBOSS APPROACHES!',
-      announcementColor: '#FF4500',
-    },
-    5: {
-      name: 'Boss Fight',
-      isBossWave: true,
-      bossType: 'boss',
-      bossCount: 1,
-      announcement: 'BOSS BATTLE!',
-      announcementColor: '#FF0000',
-    },
-    7: {
-      name: 'Second Challenge',
-      isBossWave: true,
-      bossType: 'elite',
-      bossCount: 3,
-      announcement: 'ELITE INCOMING!',
-      announcementColor: '#FFD700',
-    },
-    10: {
-      name: 'Special Boss Fight',
-      isBossWave: true,
-      bossType: 'boss',
-      bossCount: 2,
-      announcement: 'BOSS BATTLE!',
-      announcementColor: '#FF0000',
     },
   };
 
@@ -126,37 +82,50 @@
 
   /**
    * Get special wave info if this is a special wave
+   * Priority: Boss > Miniboss > Elite
    * @param {number} waveNumber
    * @returns {Object|null}
    */
   function getSpecialWave(waveNumber) {
-    // Check for exact match first
-    if (SpecialWaves[waveNumber]) {
-      return SpecialWaves[waveNumber];
+    // Check intervals - Priority: Boss > Miniboss > Elite
+    var isBossWave = waveNumber % WaveConfig.BOSS_WAVE_INTERVAL === 0;
+    var isMinibossWave = waveNumber % WaveConfig.MINIBOSS_WAVE_INTERVAL === 0;
+    var isEliteWave = waveNumber % WaveConfig.ELITE_WAVE_INTERVAL === 0;
+
+    var bossType = null;
+    var announcement = '';
+    var color = '';
+    var bossCount = 1;
+
+    if (isBossWave) {
+      // Boss waves: 5, 10, 15, 20...
+      bossType = 'boss';
+      announcement = 'BOSS BATTLE!';
+      color = '#FF0000';
+      // Boss count: 1 at wave 5, increases every 25 waves (max 3)
+      bossCount = Math.min(3, Math.floor(waveNumber / 25) + 1);
+    } else if (isMinibossWave) {
+      // Miniboss waves: 3, 6, 9, 12... (except when boss wave)
+      bossType = 'miniboss';
+      announcement = 'MINIBOSS APPROACHES!';
+      color = '#FF4500';
+      // Miniboss count: 1 at wave 3, increases every 15 waves (max 2)
+      bossCount = Math.min(4, Math.floor(waveNumber / 15) + 1);
+    } else if (isEliteWave) {
+      // Elite waves: 2, 4, 8, 14... (except when boss or miniboss wave)
+      bossType = 'elite';
+      announcement = 'ELITE INCOMING!';
+      color = '#FFD700';
+      // Elite count: 1 at wave 2, increases every 10 waves (max 3)
+      bossCount = Math.min(5, Math.floor(waveNumber / 10) + 1);
     }
 
-    // Generate boss waves for waves beyond defined ones (every 5)
-    if (waveNumber % WaveConfig.BOSS_WAVE_INTERVAL === 0) {
-      var bossLevel = Math.floor(waveNumber / WaveConfig.BOSS_WAVE_INTERVAL);
-      var bossType = 'elite';
-      var announcement = 'ELITE INCOMING!';
-      var color = '#FFD700';
-
-      if (bossLevel % 3 === 0) {
-        bossType = 'boss';
-        announcement = 'BOSS BATTLE!';
-        color = '#FF0000';
-      } else if (bossLevel % 2 === 0) {
-        bossType = 'miniboss';
-        announcement = 'MINIBOSS APPROACHES!';
-        color = '#FF4500';
-      }
-
+    if (bossType) {
       return {
-        name: 'Boss Wave ' + bossLevel,
+        name: bossType.charAt(0).toUpperCase() + bossType.slice(1) + ' Wave ' + waveNumber,
         isBossWave: true,
         bossType: bossType,
-        bossCount: Math.min(3, Math.floor(bossLevel / 3) + 1),
+        bossCount: bossCount,
         announcement: announcement,
         announcementColor: color,
       };
@@ -181,7 +150,6 @@
   Data.WaveData = {
     WaveConfig: WaveConfig,
     DifficultyScaling: DifficultyScaling,
-    SpecialWaves: SpecialWaves,
     getWaveConfig: getWaveConfig,
     getDifficultyModifiers: getDifficultyModifiers,
     getSpecialWave: getSpecialWave,

@@ -47,6 +47,15 @@
   });
 
   // ============================================
+  // Summon Combat Constants
+  // ============================================
+  var SummonCombatConstants = Object.freeze({
+    DEFAULT_ATTACK_WINDUP: 0.2,   // Default wind-up delay before attacks (seconds)
+    ENEMY_ATTACK_RANGE: 30,       // Range at which enemies attack summons (pixels)
+    ENEMY_ATTACK_COOLDOWN: 0.5,   // Cooldown between enemy attacks on same summon (seconds)
+  });
+
+  // ============================================
   // Initialize Registry
   // ============================================
   Data.SummonRegistry = Data.SummonRegistry || {};
@@ -58,4 +67,5 @@
   Data.SummonBehaviorType = BehaviorType;
   Data.SummonAttackPattern = AttackPattern;
   Data.SummonTargetingMode = SummonTargetingMode;
+  Data.SummonCombatConstants = SummonCombatConstants;
 })(window.VampireSurvivors.Data);

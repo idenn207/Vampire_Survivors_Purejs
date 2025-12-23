@@ -115,6 +115,9 @@
     setPlayer(player) {
       this._player = player;
 
+      // Log available behaviors for debugging
+      console.log('[EnemySystem] setPlayer called, behaviors:', Object.keys(this._behaviors));
+
       // Initialize all behaviors with player reference
       for (var behaviorType in this._behaviors) {
         var behavior = this._behaviors[behaviorType];

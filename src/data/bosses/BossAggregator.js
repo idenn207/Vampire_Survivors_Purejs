@@ -38,26 +38,26 @@
 
   /**
    * Get health multiplier based on wave
+   * Uses wave-based scaling similar to regular enemies
    * @param {number} wave - Current wave number
-   * @param {string} bossType - Boss type
+   * @param {string} bossType - Boss type (unused, kept for API compatibility)
    * @returns {number}
    */
   function getWaveHealthMultiplier(wave, bossType) {
-    var baseWave = FirstWaves[bossType] || 5;
-    var wavesPastFirst = Math.max(0, wave - baseWave);
-    return 1.0 + wavesPastFirst * ScalingConfig.HEALTH_PER_WAVE;
+    // Wave-based scaling: +60% per wave (matches enemy scaling)
+    return 1.0 + (wave - 1) * ScalingConfig.HEALTH_PER_WAVE;
   }
 
   /**
    * Get damage multiplier based on wave
+   * Uses wave-based scaling similar to regular enemies
    * @param {number} wave - Current wave number
-   * @param {string} bossType - Boss type
+   * @param {string} bossType - Boss type (unused, kept for API compatibility)
    * @returns {number}
    */
   function getWaveDamageMultiplier(wave, bossType) {
-    var baseWave = FirstWaves[bossType] || 5;
-    var wavesPastFirst = Math.max(0, wave - baseWave);
-    return 1.0 + wavesPastFirst * ScalingConfig.DAMAGE_PER_WAVE;
+    // Wave-based scaling: +5% per wave (matches enemy scaling)
+    return 1.0 + (wave - 1) * ScalingConfig.DAMAGE_PER_WAVE;
   }
 
   /**

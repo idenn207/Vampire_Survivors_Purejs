@@ -206,63 +206,46 @@
       ctx.arc(x + ICON_SIZE / 2, y + ROW_HEIGHT / 2, ICON_SIZE / 2 - 2, 0, Math.PI * 2);
       ctx.fill();
 
-      // Stat name
+      // Stat name with level
       ctx.font = '13px Arial';
       ctx.fillStyle = TEXT_COLOR;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(i18n.tsn(stat.id, stat.name), x + ICON_SIZE + 6, y + ROW_HEIGHT / 2);
+      ctx.fillText(i18n.tsn(stat.id, stat.name) + ' Lv.' + stat.level, x + ICON_SIZE + 6, y + ROW_HEIGHT / 2);
 
       // Upgrade button (right side)
       var buttonX = this._x + this._width - BUTTON_MARGIN - BUTTON_SIZE;
       var buttonY = y + (ROW_HEIGHT - BUTTON_SIZE) / 2;
 
-      if (stat.isMaxLevel) {
-        // Current value (before MAX)
-        ctx.font = 'bold 12px Arial';
-        ctx.fillStyle = VALUE_COLOR;
-        ctx.textAlign = 'right';
-        ctx.fillText('+' + stat.bonusPercent + '%', buttonX - 8, y + ROW_HEIGHT / 2);
+      // Cost (left of button)
+      ctx.font = 'bold 11px Arial';
+      ctx.fillStyle = canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(stat.cost + 'g', buttonX - 6, y + ROW_HEIGHT / 2);
 
-        // Max level indicator
+      // Current value (further left)
+      ctx.font = 'bold 12px Arial';
+      ctx.fillStyle = VALUE_COLOR;
+      ctx.textAlign = 'right';
+      ctx.fillText('+' + stat.bonusPercent + '%', buttonX - 50, y + ROW_HEIGHT / 2);
+
+      // Upgrade button
+      ctx.fillStyle = isHovered ? BUTTON_HOVER_COLOR : BUTTON_COLOR;
+      if (!canAfford) {
         ctx.fillStyle = BUTTON_DISABLED_COLOR;
-        ctx.fillRect(buttonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
-        ctx.font = 'bold 10px Arial';
-        ctx.fillStyle = '#FFFFFF';
-        ctx.textAlign = 'center';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(i18n.t('stats.max'), buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE / 2);
-      } else {
-        // Cost (left of button)
-        ctx.font = 'bold 11px Arial';
-        ctx.fillStyle = canAfford ? COST_COLOR : CANNOT_AFFORD_COLOR;
-        ctx.textAlign = 'right';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(stat.cost + 'g', buttonX - 6, y + ROW_HEIGHT / 2);
-
-        // Current value (further left)
-        ctx.font = 'bold 12px Arial';
-        ctx.fillStyle = VALUE_COLOR;
-        ctx.textAlign = 'right';
-        ctx.fillText('+' + stat.bonusPercent + '%', buttonX - 50, y + ROW_HEIGHT / 2);
-
-        // Upgrade button
-        ctx.fillStyle = isHovered ? BUTTON_HOVER_COLOR : BUTTON_COLOR;
-        if (!canAfford) {
-          ctx.fillStyle = BUTTON_DISABLED_COLOR;
-        }
-        ctx.fillRect(buttonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
-
-        // Plus sign
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(buttonX + BUTTON_SIZE / 2, buttonY + 6);
-        ctx.lineTo(buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE - 6);
-        ctx.moveTo(buttonX + 6, buttonY + BUTTON_SIZE / 2);
-        ctx.lineTo(buttonX + BUTTON_SIZE - 6, buttonY + BUTTON_SIZE / 2);
-        ctx.stroke();
       }
+      ctx.fillRect(buttonX, buttonY, BUTTON_SIZE, BUTTON_SIZE);
+
+      // Plus sign
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(buttonX + BUTTON_SIZE / 2, buttonY + 6);
+      ctx.lineTo(buttonX + BUTTON_SIZE / 2, buttonY + BUTTON_SIZE - 6);
+      ctx.moveTo(buttonX + 6, buttonY + BUTTON_SIZE / 2);
+      ctx.lineTo(buttonX + BUTTON_SIZE - 6, buttonY + BUTTON_SIZE / 2);
+      ctx.stroke();
     }
 
     _attemptUpgrade(statId) {

@@ -9,7 +9,7 @@
 
   Data.EnemyRegistry.projectile = {
     name: 'Spitter',
-    baseHealth: 30,
+    baseHealth: 150,
     baseSpeed: 50,
     baseDamage: 5,
     size: 26,

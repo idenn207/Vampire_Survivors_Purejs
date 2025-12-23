@@ -451,12 +451,12 @@
       ctx.arc(x + 8, centerY, 6, 0, Math.PI * 2);
       ctx.fill();
 
-      // Stat name (use icon color)
+      // Stat name with level (use icon color)
       ctx.font = '11px Arial';
       ctx.fillStyle = iconColor;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(i18n.tsn(stat.id, stat.name), x + 20, centerY);
+      ctx.fillText(i18n.tsn(stat.id, stat.name) + ' Lv.' + stat.level, x + 20, centerY);
 
       // Stat value display: base (fixed) + bonus (%) = total (fixed with 2 decimals)
       // Get character fixed base value from PlayerData
@@ -474,15 +474,7 @@
       ctx.textAlign = 'right';
       ctx.font = '10px Arial';
 
-      if (stat.isMaxLevel) {
-        // Max level - show total in green
-        ctx.fillStyle = '#3498DB'; // Blue for base
-        ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 95, centerY);
-        ctx.fillStyle = '#9B59B6'; // Purple for bonus
-        ctx.fillText(bonusText, x + width - 50, centerY);
-        ctx.fillStyle = '#2ECC71'; // Green for max
-        ctx.fillText('= ' + finalValue.toFixed(2) + suffix, x + width - 5, centerY);
-      } else if (bonusPercent === 0) {
+      if (bonusPercent === 0) {
         // No bonus - show base only
         ctx.fillStyle = '#3498DB'; // Blue for base
         ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 5, centerY);

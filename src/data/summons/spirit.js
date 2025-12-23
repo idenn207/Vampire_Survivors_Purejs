@@ -21,6 +21,7 @@
     damage: 20,
     attackCooldown: 1.0,
     attackRange: 50,
+    attackWindup: 0.2, // Balanced wind-up delay
 
     // Movement stats
     chaseSpeed: 150,

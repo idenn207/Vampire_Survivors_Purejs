@@ -97,6 +97,12 @@
       var state = enemy.behaviorState;
       if (!state) return;
 
+      // Check player reference
+      if (!this._player) {
+        console.warn('[ProjectileEnemyBehavior] Player reference is null');
+        return;
+      }
+
       // Update fire cooldown
       if (state.fireCooldown > 0) {
         state.fireCooldown -= deltaTime;
@@ -219,7 +225,10 @@
       var enemyPos = this.getEnemyPosition(enemy);
       var playerPos = this.getPlayerPosition();
 
-      if (!enemyPos || !playerPos) return;
+      if (!enemyPos || !playerPos) {
+        console.warn('[ProjectileEnemyBehavior] Cannot fire: enemyPos=' + !!enemyPos + ', playerPos=' + !!playerPos + ', player=' + !!this._player);
+        return;
+      }
 
       // Calculate direction to player
       var dx = playerPos.x - enemyPos.x;
@@ -227,7 +236,7 @@
       var angle = Math.atan2(dy, dx);
 
       // Spawn projectile
-      this._projectilePool.spawn(
+      var projectile = this._projectilePool.spawn(
         enemyPos.x,
         enemyPos.y,
         angle,
@@ -238,6 +247,8 @@
         PROJECTILE_LIFETIME,
         enemy
       );
+
+      console.log('[ProjectileEnemyBehavior] Fired projectile:', !!projectile);
 
       // Emit fire event
       this.emit('enemy:fired', {

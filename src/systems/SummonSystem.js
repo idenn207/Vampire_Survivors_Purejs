@@ -14,6 +14,10 @@
   var summonPool = window.VampireSurvivors.Pool.summonPool;
   var events = window.VampireSurvivors.Core.events;
 
+  // Constants for enemy attacks on summons
+  var ENEMY_ATTACK_RANGE = 30;
+  var ENEMY_ATTACK_COOLDOWN = 0.5;
+
   // ============================================
   // Class Definition
   // ============================================
@@ -22,6 +26,9 @@
     // Instance Properties
     // ----------------------------------------
     _priority = 12; // Before AreaEffect (13)
+
+    // Track enemy attack cooldowns per enemy-summon pair
+    _enemyAttackCooldowns = new Map();
 
     // ----------------------------------------
     // Constructor
@@ -40,6 +47,9 @@
     update(deltaTime) {
       if (!this._entityManager) return;
 
+      // Update enemy attack cooldowns
+      this._updateEnemyCooldowns(deltaTime);
+
       var activeSummons = summonPool.getActiveSummons();
       var enemies = this._entityManager.getByTag('enemy');
 
@@ -47,18 +57,32 @@
         var summon = activeSummons[i];
         if (!summon.isActive) continue;
 
-        // Update summon state
-        var state = summon.update(deltaTime);
+        // Update summon state (returns { state: string, target?: Entity })
+        var result = summon.update(deltaTime);
 
-        switch (state) {
+        switch (result.state) {
           case 'active':
             // AI behavior: chase and attack
             this._updateSummonAI(summon, enemies, deltaTime);
+            // Check for enemy attacks on this summon
+            this._updateEnemyAttacks(summon, enemies);
+            break;
+
+          case 'windup_complete':
+            // Wind-up finished, perform the attack
+            if (result.target && result.target.isActive) {
+              this._performAttack(summon, result.target);
+              summon.attack(); // Reset cooldown
+            }
+            // Continue with AI updates
+            this._updateSummonAI(summon, enemies, deltaTime);
+            this._updateEnemyAttacks(summon, enemies);
             break;
 
           case 'dead':
           case 'expired':
-            // Remove summon
+            // Remove summon and cleanup cooldowns
+            this._cleanupSummonCooldowns(summon.id);
             summonPool.despawn(summon);
             break;
         }
@@ -133,6 +157,12 @@
      * @param {number} deltaTime
      */
     _updateSummonAI(summon, enemies, deltaTime) {
+      // If winding up, stop moving and wait
+      if (summon.isWindingUp) {
+        summon.stopMoving();
+        return;
+      }
+
       // Find nearest enemy
       var target = this._findNearestEnemy(summon, enemies);
 
@@ -166,13 +196,13 @@
       var dy = targetTransform.centerY - summon.centerY;
       var distance = Math.sqrt(dx * dx + dy * dy);
 
-      // If in attack range, attack
+      // If in attack range, try to attack
       if (distance <= summon.attackRange) {
         summon.stopMoving();
 
         if (summon.canAttack()) {
-          this._performAttack(summon, target);
-          summon.attack();
+          // Start wind-up attack
+          summon.startAttack(target);
         }
       } else {
         // Chase target
@@ -200,6 +230,9 @@
 
         var health = enemy.getComponent(Health);
         if (!health || health.isDead) continue;
+
+        // Skip invulnerable enemies (e.g., jump_drop during jump)
+        if (enemy.hasTag('invulnerable')) continue;
 
         var transform = enemy.getComponent(Transform);
         if (!transform) continue;
@@ -238,6 +271,93 @@
       });
     }
 
+    /**
+     * Update enemy attack cooldowns
+     * @param {number} deltaTime
+     */
+    _updateEnemyCooldowns(deltaTime) {
+      var toRemove = [];
+      this._enemyAttackCooldowns.forEach(function (cooldown, key) {
+        var newCooldown = cooldown - deltaTime;
+        if (newCooldown <= 0) {
+          toRemove.push(key);
+        } else {
+          this._enemyAttackCooldowns.set(key, newCooldown);
+        }
+      }, this);
+
+      for (var i = 0; i < toRemove.length; i++) {
+        this._enemyAttackCooldowns.delete(toRemove[i]);
+      }
+    }
+
+    /**
+     * Check for enemy attacks on a summon
+     * @param {Summon} summon
+     * @param {Array<Entity>} enemies
+     */
+    _updateEnemyAttacks(summon, enemies) {
+      var summonX = summon.centerX;
+      var summonY = summon.centerY;
+      var summonHealth = summon.health;
+
+      if (!summonHealth || summonHealth.isDead) return;
+
+      for (var i = 0; i < enemies.length; i++) {
+        var enemy = enemies[i];
+        if (!enemy.isActive) continue;
+
+        var enemyHealth = enemy.getComponent(Health);
+        if (!enemyHealth || enemyHealth.isDead) continue;
+
+        var enemyTransform = enemy.getComponent(Transform);
+        if (!enemyTransform) continue;
+
+        // Check distance
+        var dx = enemyTransform.centerX - summonX;
+        var dy = enemyTransform.centerY - summonY;
+        var distSq = dx * dx + dy * dy;
+
+        if (distSq <= ENEMY_ATTACK_RANGE * ENEMY_ATTACK_RANGE) {
+          // Enemy is in range to attack summon
+          var cooldownKey = enemy.id + '-' + summon.id;
+
+          if (!this._enemyAttackCooldowns.has(cooldownKey)) {
+            // Enemy can attack this summon
+            var enemyDamage = enemy.damage !== undefined ? enemy.damage : 10;
+            summonHealth.takeDamage(enemyDamage);
+
+            // Set cooldown for this enemy-summon pair
+            this._enemyAttackCooldowns.set(cooldownKey, ENEMY_ATTACK_COOLDOWN);
+
+            // Emit event for damage effects
+            events.emit('summon:damaged', {
+              summon: summon,
+              enemy: enemy,
+              damage: enemyDamage,
+            });
+          }
+        }
+      }
+    }
+
+    /**
+     * Cleanup cooldowns related to a specific summon
+     * @param {string} summonId
+     */
+    _cleanupSummonCooldowns(summonId) {
+      var toRemove = [];
+      this._enemyAttackCooldowns.forEach(function (cooldown, key) {
+        if (key.endsWith('-' + summonId)) {
+          toRemove.push(key);
+        }
+      });
+
+      for (var i = 0; i < toRemove.length; i++) {
+        this._enemyAttackCooldowns.delete(toRemove[i]);
+      }
+    }
+
     // ----------------------------------------
     // Debug Interface
     // ----------------------------------------
@@ -252,6 +372,7 @@
     // Lifecycle
     // ----------------------------------------
     dispose() {
+      this._enemyAttackCooldowns.clear();
       summonPool.releaseAll();
       super.dispose();
     }

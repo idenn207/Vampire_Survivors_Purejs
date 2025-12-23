@@ -9,7 +9,7 @@
 
   Data.BossRegistry.elite = {
     name: 'Elite',
-    health: 2000,
+    health: 500,
     speed: 80,
     damage: 15,
     size: 40,

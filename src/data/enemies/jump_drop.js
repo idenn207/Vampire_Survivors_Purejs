@@ -9,7 +9,7 @@
 
   Data.EnemyRegistry.jump_drop = {
     name: 'Jumper',
-    baseHealth: 45,
+    baseHealth: 80,
     baseSpeed: 0,
     baseDamage: 25,
     size: 30,

@@ -69,9 +69,10 @@
      * @param {Entity} owner - The player who owns this summon
      * @param {string} [imageId] - Optional image ID for sprite
      * @param {number} [size] - Optional custom size
+     * @param {number} [attackWindup] - Optional attack wind-up delay
      * @returns {Summon|null}
      */
-    spawn(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size) {
+    spawn(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup) {
       var summon = this._pool.get();
       if (!summon) {
         console.warn('[SummonPool] Pool exhausted');
@@ -79,7 +80,7 @@
       }
 
       // Reset summon with new values
-      summon.reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size);
+      summon.reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup);
 
       // Add to entity manager if available
       if (this._entityManager) {

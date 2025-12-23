@@ -21,6 +21,7 @@
     damage: 45,
     attackCooldown: 1.8,
     attackRange: 60,
+    attackWindup: 0.3, // Slow but heavy - longer wind-up
     knockback: 150,
     stunChance: 0.2,
     stunDuration: 0.5,

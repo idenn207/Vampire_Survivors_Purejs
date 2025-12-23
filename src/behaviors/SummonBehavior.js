@@ -46,6 +46,7 @@
       var color = weapon.getStat('color', '#88CCFF');
       var summonImageId = weapon.getStat('summonImageId', null);
       var summonSize = weapon.getStat('summonSize', null);
+      var attackWindup = weapon.getStat('attackWindup', 0.2);
 
       // Apply player stat bonuses
       var damageResult = this.calculateDamage(weapon);
@@ -70,7 +71,8 @@
           weapon.id,
           player,
           summonImageId,
-          summonSize
+          summonSize,
+          attackWindup
         );
 
         if (summon) {
