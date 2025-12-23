@@ -39,7 +39,7 @@
       var summonCount = weapon.getStat('summonCount', 1);
       var baseDamage = weapon.getStat('damage', 20);
       var summonHealth = weapon.getStat('summonHealth', 50);
-      var attackCooldown = weapon.getStat('attackCooldown', 1.0);
+      var attackCooldown = weapon.getStat('cooldown', 1.0);
       var baseAttackRange = weapon.getStat('attackRange', 50);
       var summonSpeed = weapon.getStat('summonSpeed', 150);
       var baseDuration = weapon.getStat('duration', 15);
@@ -47,6 +47,10 @@
       var summonImageId = weapon.getStat('summonImageId', null);
       var summonSize = weapon.getStat('summonSize', null);
       var attackWindup = weapon.getStat('attackWindup', 0.2);
+      var attackPattern = weapon.getStat('attackPattern', 'melee');
+      var projectileSpeed = weapon.getStat('projectileSpeed', 400);
+      var projectileSize = weapon.getStat('projectileSize', 6);
+      var projectileColor = weapon.getStat('projectileColor', '#FFDD00');
 
       // Apply player stat bonuses
       var damageResult = this.calculateDamage(weapon);
@@ -72,7 +76,11 @@
           player,
           summonImageId,
           summonSize,
-          attackWindup
+          attackWindup,
+          attackPattern,
+          projectileSpeed,
+          projectileSize,
+          projectileColor
         );
 
         if (summon) {

@@ -72,6 +72,9 @@
     _evolveButtonRect = null;
     _isEvolveButtonHovered = false;
 
+    // Pending level-ups count
+    _pendingLevelUps = 0;
+
     // Combined upgrade area bounds
     _combinedAreaRect = null;
     _dividerY = 0;
@@ -103,8 +106,9 @@
      * @param {number} canvasHeight
      * @param {Object} [evolutionInfo] - Optional evolution state info
      * @param {Object} [evolutionEligibility] - Optional { canEvolve: boolean, eligibleTiers: {} }
+     * @param {number} [pendingLevelUps] - Optional pending level-ups count
      */
-    show(player, weaponOptions, canvasWidth, canvasHeight, evolutionInfo, evolutionEligibility) {
+    show(player, weaponOptions, canvasWidth, canvasHeight, evolutionInfo, evolutionEligibility, pendingLevelUps) {
       this._isVisible = true;
       this._player = player;
       this._weaponOptions = weaponOptions || [];
@@ -123,6 +127,9 @@
       // Set evolution eligibility
       this._evolutionEligibility = evolutionEligibility || null;
 
+      // Set pending level-ups count
+      this._pendingLevelUps = pendingLevelUps || 0;
+
       // Lazy initialization of TechUpgradePanel (in case it wasn't available at constructor time)
       if (!this._techUpgradePanel) {
         var TechUpgradePanelClass = TechUpgradePanel || window.VampireSurvivors.UI.TechUpgradePanel;
@@ -139,7 +146,7 @@
       this._weaponGridPanel.setPlayer(player);
 
       // Set weapon options with evolution state
-      this._weaponCardPanel.setOptions(this._weaponOptions, this._evolutionState, this._selectedMainWeapon);
+      this._weaponCardPanel.setOptions(this._weaponOptions, this._evolutionState, this._selectedMainWeapon, this._pendingLevelUps);
 
       // Calculate and set panel bounds
       this._calculatePanelBounds();

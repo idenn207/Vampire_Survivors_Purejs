@@ -263,7 +263,8 @@
           evolutionState: this._evolutionState,
           selectedMainWeapon: this._selectedMainWeapon,
         },
-        this._evolutionEligibility
+        this._evolutionEligibility,
+        this._pendingLevelUps
       );
     }
 
@@ -425,7 +426,8 @@
           evolutionState: this._evolutionState,
           selectedMainWeapon: this._selectedMainWeapon,
         },
-        this._evolutionEligibility
+        this._evolutionEligibility,
+        this._pendingLevelUps
       );
     }
 
@@ -506,7 +508,8 @@
           evolutionState: this._evolutionState,
           selectedMainWeapon: this._selectedMainWeapon,
         },
-        this._evolutionEligibility
+        this._evolutionEligibility,
+        this._pendingLevelUps
       );
     }
 

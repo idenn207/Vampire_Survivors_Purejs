@@ -12,6 +12,7 @@
   var Transform = window.VampireSurvivors.Components.Transform;
   var Health = window.VampireSurvivors.Components.Health;
   var summonPool = window.VampireSurvivors.Pool.summonPool;
+  var projectilePool = window.VampireSurvivors.Pool.projectilePool;
   var events = window.VampireSurvivors.Core.events;
 
   // Constants for enemy attacks on summons
@@ -126,9 +127,9 @@
         ctx.arc(screenX, screenY, transform.width / 2 + 4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw health bar above summon
+        // Draw health bar above summon (always visible, green for allies)
         var healthComp = summon.health;
-        if (healthComp && healthComp.healthRatio < 1) {
+        if (healthComp) {
           var barWidth = transform.width;
           var barHeight = 3;
           var barX = screenX - barWidth / 2;
@@ -163,6 +164,70 @@
         return;
       }
 
+      // Ranged summons use different AI - stay near player
+      if (summon.attackPattern === 'ranged') {
+        this._updateRangedSummonAI(summon, enemies);
+        return;
+      }
+
+      // Melee summons chase enemies
+      this._updateMeleeSummonAI(summon, enemies);
+    }
+
+    /**
+     * Update AI for ranged summons - stay near player, fire at enemies
+     * @param {Summon} summon
+     * @param {Array<Entity>} enemies
+     */
+    _updateRangedSummonAI(summon, enemies) {
+      var owner = summon.owner;
+      if (!owner || !owner.isActive) {
+        summon.stopMoving();
+        return;
+      }
+
+      var ownerTransform = owner.getComponent(Transform);
+      if (!ownerTransform) {
+        summon.stopMoving();
+        return;
+      }
+
+      // Check distance to owner
+      var dx = ownerTransform.centerX - summon.centerX;
+      var dy = ownerTransform.centerY - summon.centerY;
+      var distToOwner = Math.sqrt(dx * dx + dy * dy);
+
+      // If too far from owner, move back toward them
+      if (distToOwner > 100) {
+        summon.moveToward(ownerTransform.centerX, ownerTransform.centerY);
+      } else {
+        summon.stopMoving();
+      }
+
+      // Find nearest enemy within attack range (from summon's position)
+      var target = this._findNearestEnemy(summon, enemies);
+
+      if (target && summon.canAttack()) {
+        var targetTransform = target.getComponent(Transform);
+        if (targetTransform) {
+          var tdx = targetTransform.centerX - summon.centerX;
+          var tdy = targetTransform.centerY - summon.centerY;
+          var distance = Math.sqrt(tdx * tdx + tdy * tdy);
+
+          // If target is in attack range, start attack
+          if (distance <= summon.attackRange) {
+            summon.startAttack(target);
+          }
+        }
+      }
+    }
+
+    /**
+     * Update AI for melee summons - chase and attack enemies
+     * @param {Summon} summon
+     * @param {Array<Entity>} enemies
+     */
+    _updateMeleeSummonAI(summon, enemies) {
       // Find nearest enemy
       var target = this._findNearestEnemy(summon, enemies);
 
@@ -259,16 +324,60 @@
       var health = target.getComponent(Health);
       if (!health || health.isDead) return;
 
-      // Deal damage
-      health.takeDamage(summon.damage);
+      var targetTransform = target.getComponent(Transform);
+      if (!targetTransform) return;
 
-      // Emit hit event
-      events.emit('weapon:hit', {
-        enemy: target,
-        damage: summon.damage,
-        type: 'summon',
-        weaponId: summon.sourceWeaponId,
-      });
+      // Check attack pattern
+      if (summon.attackPattern === 'ranged') {
+        // Spawn projectile toward target
+        this._spawnProjectile(summon, targetTransform);
+      } else {
+        // Melee: Deal direct damage
+        health.takeDamage(summon.damage);
+
+        // Emit hit event
+        events.emit('weapon:hit', {
+          enemy: target,
+          damage: summon.damage,
+          type: 'summon',
+          weaponId: summon.sourceWeaponId,
+        });
+      }
+    }
+
+    /**
+     * Spawn a projectile from a ranged summon
+     * @param {Summon} summon
+     * @param {Transform} targetTransform
+     */
+    _spawnProjectile(summon, targetTransform) {
+      var summonX = summon.centerX;
+      var summonY = summon.centerY;
+      var targetX = targetTransform.centerX;
+      var targetY = targetTransform.centerY;
+
+      // Calculate angle to target
+      var dx = targetX - summonX;
+      var dy = targetY - summonY;
+      var angle = Math.atan2(dy, dx);
+
+      // Spawn projectile using projectilePool
+      projectilePool.spawn(
+        summonX,
+        summonY,
+        angle,
+        summon.projectileSpeed,
+        summon.damage,
+        1,  // pierce
+        summon.projectileColor,
+        summon.projectileSize,
+        3.0,  // lifetime
+        summon.sourceWeaponId,
+        null,  // ricochet
+        false,  // isCrit
+        null,  // imageId
+        1.0  // visualScale
+      );
     }
 
     /**

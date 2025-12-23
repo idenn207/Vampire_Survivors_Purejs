@@ -45,6 +45,12 @@
     _isWindingUp = false;
     _attackTarget = null; // Target stored during wind-up
 
+    // Attack pattern and projectile properties (for ranged summons)
+    _attackPattern = 'melee';
+    _projectileSpeed = 400;
+    _projectileSize = 6;
+    _projectileColor = '#FFDD00';
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -81,8 +87,12 @@
      * @param {string} [imageId] - Optional image ID for sprite
      * @param {number} [size] - Optional custom size
      * @param {number} [attackWindup] - Optional attack wind-up delay
+     * @param {string} [attackPattern] - Attack pattern ('melee' or 'ranged')
+     * @param {number} [projectileSpeed] - Projectile speed for ranged attacks
+     * @param {number} [projectileSize] - Projectile size for ranged attacks
+     * @param {string} [projectileColor] - Projectile color for ranged attacks
      */
-    reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup) {
+    reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup, attackPattern, projectileSpeed, projectileSize, projectileColor) {
       var actualSize = size || DEFAULT_SIZE;
 
       // Reset transform
@@ -130,6 +140,12 @@
       this._windupTimer = 0;
       this._isWindingUp = false;
       this._attackTarget = null;
+
+      // Reset attack pattern and projectile properties
+      this._attackPattern = attackPattern || 'melee';
+      this._projectileSpeed = projectileSpeed || 400;
+      this._projectileSize = projectileSize || 6;
+      this._projectileColor = projectileColor || '#FFDD00';
 
       // Ensure active
       this.isActive = true;
@@ -302,6 +318,22 @@
 
     get attackTarget() {
       return this._attackTarget;
+    }
+
+    get attackPattern() {
+      return this._attackPattern;
+    }
+
+    get projectileSpeed() {
+      return this._projectileSpeed;
+    }
+
+    get projectileSize() {
+      return this._projectileSize;
+    }
+
+    get projectileColor() {
+      return this._projectileColor;
     }
 
     get centerX() {

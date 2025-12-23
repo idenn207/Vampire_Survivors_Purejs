@@ -75,6 +75,9 @@
     _evolutionState = 'normal';
     _selectedMainWeapon = null;
 
+    // Pending level-ups count
+    _pendingLevelUps = 0;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -101,10 +104,11 @@
      *   evolutionResult: Object (for evolution)
      * }
      */
-    setOptions(options, evolutionState, selectedMainWeapon) {
+    setOptions(options, evolutionState, selectedMainWeapon, pendingLevelUps) {
       this._options = options || [];
       this._evolutionState = evolutionState || 'normal';
       this._selectedMainWeapon = selectedMainWeapon || null;
+      this._pendingLevelUps = pendingLevelUps || 0;
       this._calculateCardRects();
     }
 
@@ -173,6 +177,10 @@
 
       // Title - changes based on evolution state
       var title = i18n.t('levelUp.selectOne');
+      // Show remaining count if more than 1 pending
+      if (this._pendingLevelUps > 1) {
+        title += ' (+' + (this._pendingLevelUps - 1) + ')';
+      }
       var subtitle = '';
 
       if (this._evolutionState === 'selecting_material') {

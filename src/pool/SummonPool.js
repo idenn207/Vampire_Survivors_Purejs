@@ -70,9 +70,13 @@
      * @param {string} [imageId] - Optional image ID for sprite
      * @param {number} [size] - Optional custom size
      * @param {number} [attackWindup] - Optional attack wind-up delay
+     * @param {string} [attackPattern] - Attack pattern ('melee' or 'ranged')
+     * @param {number} [projectileSpeed] - Projectile speed for ranged attacks
+     * @param {number} [projectileSize] - Projectile size for ranged attacks
+     * @param {string} [projectileColor] - Projectile color for ranged attacks
      * @returns {Summon|null}
      */
-    spawn(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup) {
+    spawn(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup, attackPattern, projectileSpeed, projectileSize, projectileColor) {
       var summon = this._pool.get();
       if (!summon) {
         console.warn('[SummonPool] Pool exhausted');
@@ -80,7 +84,7 @@
       }
 
       // Reset summon with new values
-      summon.reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup);
+      summon.reset(x, y, damage, health, attackCooldown, attackRange, chaseSpeed, duration, color, sourceWeaponId, owner, imageId, size, attackWindup, attackPattern, projectileSpeed, projectileSize, projectileColor);
 
       // Add to entity manager if available
       if (this._entityManager) {
