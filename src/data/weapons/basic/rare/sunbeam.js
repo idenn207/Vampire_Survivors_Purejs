@@ -33,6 +33,7 @@
     // Visual
     color: '#FFFF00',
     secondaryColor: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'sunbeam',
     imageId: 'weapon_sunbeam',
     laserImageId: 'sunbeam_laser',

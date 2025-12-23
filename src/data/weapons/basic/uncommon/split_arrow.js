@@ -30,6 +30,7 @@
     pierce: 1,
 
     color: '#44AA44',
+    visualScale: 1.2,
     icon: 'split_arrow',
     imageId: 'weapon_split_arrow',
     projectileImageId: 'split_arrow_projectile',

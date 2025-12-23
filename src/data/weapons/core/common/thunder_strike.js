@@ -40,6 +40,7 @@
     ],
 
     color: '#FFD700',
+    visualScale: 1.2,
     size: 8,
     icon: 'thunder_strike',
     imageId: 'weapon_thunder_strike',

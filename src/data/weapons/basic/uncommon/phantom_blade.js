@@ -29,6 +29,7 @@
     knockback: 80,
 
     color: '#6688FF',
+    visualScale: 1.2,
     icon: 'phantom_blade',
     imageId: 'weapon_phantom_blade',
     meleeImageId: 'phantom_blade_melee',

@@ -29,6 +29,7 @@
     damageDecay: 0.9,
 
     color: '#FFFF00',
+    visualScale: 1.2,
     icon: 'arc_lightning',
     imageId: 'weapon_arc_lightning',
     bladeImageId: 'arc_lightning_blade',

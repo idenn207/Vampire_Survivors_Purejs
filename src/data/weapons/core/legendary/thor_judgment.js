@@ -84,6 +84,7 @@
 
     // Visual properties
     color: '#FFFFFF',
+    visualScale: 1.2,
     size: 14,
     shape: 'bolt',
     lifetime: 3.0,

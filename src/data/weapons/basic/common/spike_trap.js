@@ -30,6 +30,7 @@
     duration: 20.0,
 
     color: '#888888',
+    visualScale: 1.2,
     icon: 'spike_trap',
     imageId: 'weapon_spike_trap',
     mineImageId: 'spike_trap_mine',

@@ -33,6 +33,7 @@
     color: '#006600',
     secondaryColor: '#00AA00',
     tertiaryColor: '#003300',
+    visualScale: 1.2,
     icon: 'world_serpent',
     imageId: 'weapon_world_serpent',
     summonImageId: 'world_serpent_summon',

@@ -35,6 +35,7 @@
     color: '#9933FF',
     secondaryColor: '#FF33FF',
     tertiaryColor: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'cosmic_beam',
     imageId: 'weapon_cosmic_annihilator',
     laserImageId: 'cosmic_annihilator_laser',

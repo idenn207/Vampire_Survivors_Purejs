@@ -62,6 +62,7 @@
 
     // Visual properties
     color: '#8B4513',
+    visualScale: 1.2,
     size: 55,
     shape: 'spike',
     lifetime: 0.5,

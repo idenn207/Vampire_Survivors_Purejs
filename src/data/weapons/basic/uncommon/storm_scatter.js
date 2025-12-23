@@ -35,6 +35,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'storm_scatter',
     imageId: 'weapon_storm_scatter',
     projectileImageId: 'storm_scatter_projectile',

@@ -41,6 +41,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'blazing_bolt',
     imageId: 'weapon_blazing_bolt',
     projectileImageId: 'blazing_bolt_projectile',

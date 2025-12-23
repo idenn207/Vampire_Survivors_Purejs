@@ -30,6 +30,7 @@
 
     color: '#FF6600',
     size: 6,
+    visualScale: 1.2,
     icon: 'fire_motes',
     imageId: 'weapon_fire_motes',
     bladeImageId: 'fire_motes_blade',

@@ -30,6 +30,7 @@
     hitsPerSwing: 2,
 
     color: '#666666',
+    visualScale: 1.2,
     icon: 'axe',
     imageId: 'weapon_battle_axe',
     meleeImageId: 'battle_axe_melee',

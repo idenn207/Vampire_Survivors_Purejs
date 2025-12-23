@@ -30,6 +30,7 @@
     particleSize: 12,
 
     color: '#00FFCC',
+    visualScale: 1.2,
     icon: 'soul_orbit',
     imageId: 'weapon_soul_orbit',
     bladeImageId: 'soul_orbit_blade',

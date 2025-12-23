@@ -46,6 +46,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'elemental_clash',
     imageId: 'weapon_elemental_clash',
     areaImageId: 'elemental_clash_area',

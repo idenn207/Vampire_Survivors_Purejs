@@ -34,6 +34,7 @@
     // Visual
     color: '#FFFFFF',
     secondaryColor: '#AADDFF',
+    visualScale: 1.2,
     icon: 'mirror_blade',
     imageId: 'weapon_mirrorblade',
     meleeImageId: 'mirrorblade_melee',

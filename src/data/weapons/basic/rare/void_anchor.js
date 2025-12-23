@@ -34,6 +34,7 @@
     // Visual
     color: '#330066',
     secondaryColor: '#000000',
+    visualScale: 1.2,
     icon: 'void_anchor',
     imageId: 'weapon_void_anchor',
     mineImageId: 'void_anchor_mine',

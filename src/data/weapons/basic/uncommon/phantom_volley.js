@@ -42,6 +42,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'phantom_volley',
     imageId: 'weapon_phantom_volley',
     projectileImageId: 'phantom_volley_projectile',

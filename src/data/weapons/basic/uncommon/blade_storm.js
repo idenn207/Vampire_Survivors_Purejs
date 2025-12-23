@@ -33,6 +33,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'blade_storm',
     imageId: 'weapon_blade_storm',
     meleeImageId: 'blade_storm_melee',

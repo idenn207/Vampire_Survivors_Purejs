@@ -64,6 +64,7 @@
 
     // Visual properties
     color: '#4169E1',
+    visualScale: 1.2,
     size: 12,
     shape: 'beam',
     lifetime: 0.4,

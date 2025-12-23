@@ -35,6 +35,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'spread_seeker',
     imageId: 'weapon_spread_seeker',
     projectileImageId: 'spread_seeker_projectile',

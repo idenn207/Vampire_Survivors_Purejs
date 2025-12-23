@@ -36,6 +36,7 @@
     color: '#00FFFF',
     secondaryColor: '#AAFFFF',
     tertiaryColor: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'chrono_crystal',
     imageId: 'weapon_chrono_shatter',
     projectileImageId: 'chrono_shatter_projectile',

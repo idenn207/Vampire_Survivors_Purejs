@@ -44,6 +44,7 @@
     ],
 
     color: '#8B0000',
+    visualScale: 1.2,
     icon: 'blood_scythe',
     imageId: 'weapon_blood_scythe',
     meleeImageId: 'blood_scythe_melee',

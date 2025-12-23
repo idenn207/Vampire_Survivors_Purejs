@@ -35,6 +35,7 @@
     color: '#000000',
     secondaryColor: '#330066',
     tertiaryColor: '#660099',
+    visualScale: 1.2,
     icon: 'void_emperor',
     imageId: 'weapon_void_emperor',
     areaImageId: 'void_emperor_area',

@@ -33,6 +33,7 @@
     // Visual
     color: '#9933FF',
     secondaryColor: '#FF33FF',
+    visualScale: 1.2,
     icon: 'portal',
     imageId: 'weapon_dimensional_rift',
     areaImageId: 'dimensional_rift_area',

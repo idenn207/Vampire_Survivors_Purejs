@@ -42,6 +42,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'lightning_lash',
     imageId: 'weapon_lightning_lash',
     meleeImageId: 'lightning_lash_melee',

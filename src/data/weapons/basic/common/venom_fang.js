@@ -32,6 +32,7 @@
 
     color: '#66FF44',
     size: 7,
+    visualScale: 1.2,
     shape: 'fang',
     lifetime: 2.0,
     icon: 'venom',

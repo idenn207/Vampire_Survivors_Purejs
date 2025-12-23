@@ -80,6 +80,7 @@
 
     // Visual properties
     color: '#FFFF00',
+    visualScale: 1.2,
     size: 18,
     shape: 'lance',
     lifetime: 3.0,

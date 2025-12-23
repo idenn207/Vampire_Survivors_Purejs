@@ -34,6 +34,7 @@
     color: '#FFFFFF',
     secondaryColor: '#FFFFAA',
     tertiaryColor: '#FFFF00',
+    visualScale: 1.2,
     icon: 'divine_lightning',
     imageId: 'weapon_heavens_wrath',
     bladeImageId: 'heavens_wrath_blade',

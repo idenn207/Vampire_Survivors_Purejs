@@ -40,6 +40,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'radiant_ground',
     imageId: 'weapon_radiant_ground',
     areaImageId: 'radiant_ground_area',

@@ -98,6 +98,7 @@
 
     // Visual properties
     color: '#DAA520',
+    visualScale: 1.2,
     size: 55,
     shape: 'claw',
     lifetime: 0.2,

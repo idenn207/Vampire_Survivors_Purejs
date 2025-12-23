@@ -34,6 +34,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'primal_strike',
     imageId: 'weapon_primal_strike',
     meleeImageId: 'primal_strike_melee',

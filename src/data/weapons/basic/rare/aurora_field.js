@@ -33,6 +33,7 @@
 
     // Visual
     color: '#FF66AA', // Base color, changes with cycle
+    visualScale: 1.2,
     icon: 'aurora',
     imageId: 'weapon_aurora_field',
     areaImageId: 'aurora_field_area',

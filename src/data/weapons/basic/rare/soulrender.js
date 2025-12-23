@@ -34,6 +34,7 @@
     // Visual
     color: '#00FFAA',
     secondaryColor: '#66FFCC',
+    visualScale: 1.2,
     icon: 'soul_blade',
     imageId: 'weapon_soulrender',
     meleeImageId: 'soulrender_melee',

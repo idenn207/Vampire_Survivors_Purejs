@@ -30,6 +30,7 @@
     range: 230,
 
     color: '#FF6600',
+    visualScale: 1.2,
     icon: 'ember_field',
     imageId: 'weapon_ember_field',
     areaImageId: 'ember_field_area',

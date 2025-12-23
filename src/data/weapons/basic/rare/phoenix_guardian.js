@@ -32,6 +32,7 @@
     // Visual
     color: '#FF6600',
     secondaryColor: '#FFCC00',
+    visualScale: 1.2,
     icon: 'phoenix',
     imageId: 'weapon_phoenix_guardian',
     summonImageId: 'phoenix_guardian_summon',

@@ -29,6 +29,7 @@
     damageDecay: 1.0,
 
     color: '#44DD00',
+    visualScale: 1.2,
     icon: 'toxic_chain',
     imageId: 'weapon_toxic_chain',
     bladeImageId: 'toxic_chain_blade',

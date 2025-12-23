@@ -37,6 +37,7 @@
     executeMultiplier: 2.0,
 
     color: '#4B0082',
+    visualScale: 1.2,
     icon: 'shadow_blade',
     imageId: 'weapon_shadow_blade',
     meleeImageId: 'shadow_blade_melee',

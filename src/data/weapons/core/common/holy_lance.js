@@ -39,6 +39,7 @@
     },
 
     color: '#FFD700',
+    visualScale: 1.2,
     icon: 'holy_lance',
     imageId: 'weapon_holy_lance',
     laserImageId: 'holy_lance_laser',

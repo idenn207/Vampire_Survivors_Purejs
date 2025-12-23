@@ -34,6 +34,7 @@
     color: '#00FFAA',
     secondaryColor: '#66FFCC',
     tertiaryColor: '#AAFFEE',
+    visualScale: 1.2,
     icon: 'soul_nexus',
     imageId: 'weapon_soul_nexus',
     bladeImageId: 'soul_nexus_blade',

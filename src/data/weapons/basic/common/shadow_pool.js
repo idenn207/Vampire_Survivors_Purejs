@@ -30,6 +30,7 @@
     range: 240,
 
     color: '#330066',
+    visualScale: 1.2,
     icon: 'shadow_pool',
     imageId: 'weapon_shadow_pool',
     areaImageId: 'shadow_pool_area',

@@ -30,6 +30,7 @@
     duration: 18.0,
 
     color: '#66DDFF',
+    visualScale: 1.2,
     icon: 'ice_bomb',
     imageId: 'weapon_ice_bomb',
     mineImageId: 'ice_bomb_mine',

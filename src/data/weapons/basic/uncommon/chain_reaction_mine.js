@@ -31,6 +31,7 @@
     maxMines: 5,
 
     color: '#FF0000',
+    visualScale: 1.2,
     icon: 'chain_reaction_mine',
     imageId: 'weapon_chain_reaction_mine',
     mineImageId: 'chain_reaction_mine_mine',

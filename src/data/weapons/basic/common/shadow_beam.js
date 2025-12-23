@@ -30,6 +30,7 @@
     tickRate: 0.1,
 
     color: '#660099',
+    visualScale: 1.2,
     icon: 'shadow_beam',
     imageId: 'weapon_shadow_beam',
     laserImageId: 'shadow_beam_laser',

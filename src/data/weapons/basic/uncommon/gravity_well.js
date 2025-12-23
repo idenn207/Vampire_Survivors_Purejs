@@ -30,6 +30,7 @@
     range: 300,
 
     color: '#9900CC',
+    visualScale: 1.2,
     icon: 'gravity_well',
     imageId: 'weapon_gravity_well',
     areaImageId: 'gravity_well_area',

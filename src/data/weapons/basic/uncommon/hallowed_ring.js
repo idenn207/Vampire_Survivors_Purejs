@@ -30,6 +30,7 @@
     range: 0,
 
     color: '#FFD700',
+    visualScale: 1.2,
     icon: 'hallowed_ring',
     imageId: 'weapon_hallowed_ring',
     areaImageId: 'hallowed_ring_area',

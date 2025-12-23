@@ -34,6 +34,7 @@
     passiveCDR: 0.1,
 
     color: '#9932CC',
+    visualScale: 1.2,
     size: 8,
     shape: 'circle',
     lifetime: 2.5,

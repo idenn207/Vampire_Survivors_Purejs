@@ -37,6 +37,7 @@
     coneExpansion: 3.5,
 
     color: '#FF6600',
+    visualScale: 1.2,
     icon: 'flame_scythe',
     imageId: 'weapon_flame_scythe',
     meleeImageId: 'flame_scythe_melee',

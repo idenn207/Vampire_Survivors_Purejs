@@ -45,6 +45,7 @@
     passivePlayerRegen: 2,
 
     color: '#228B22',
+    visualScale: 1.2,
     icon: 'venom_spore',
     imageId: 'weapon_venom_spore',
     areaImageId: 'venom_spore_area',

@@ -48,6 +48,7 @@
     ],
 
     color: '#2F0032',
+    visualScale: 1.2,
     icon: 'void_rift',
     imageId: 'weapon_void_rift',
     areaImageId: 'void_rift_area',

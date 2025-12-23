@@ -34,6 +34,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'toxic_inferno',
     imageId: 'weapon_toxic_inferno',
     areaImageId: 'toxic_inferno_area',

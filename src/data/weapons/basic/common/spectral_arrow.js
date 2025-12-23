@@ -32,6 +32,7 @@
 
     color: '#66FF99',
     size: 9,
+    visualScale: 1.2,
     shape: 'arrow',
     lifetime: 2.5,
     icon: 'spectral',

@@ -35,6 +35,7 @@
     color: '#FF0000',
     secondaryColor: '#FFAA00',
     tertiaryColor: '#000000',
+    visualScale: 1.2,
     icon: 'ragnarok',
     imageId: 'weapon_ragnarok',
     meleeImageId: 'ragnarok_melee',

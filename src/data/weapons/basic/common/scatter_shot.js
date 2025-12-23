@@ -32,6 +32,7 @@
 
     color: '#FFCC00',
     size: 5,
+    visualScale: 1.2,
     shape: 'pellet',
     lifetime: 1.5,
     icon: 'scatter',

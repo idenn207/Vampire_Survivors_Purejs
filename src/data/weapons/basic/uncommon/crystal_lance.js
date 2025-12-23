@@ -30,6 +30,7 @@
     pierce: 8,
 
     color: '#00FFFF',
+    visualScale: 1.2,
     icon: 'crystal_lance',
     imageId: 'weapon_crystal_lance',
     projectileImageId: 'crystal_lance_projectile',

@@ -30,6 +30,7 @@
     pierce: 99,
 
     color: '#FFD700',
+    visualScale: 1.2,
     icon: 'chakram',
     imageId: 'weapon_chakram',
     projectileImageId: 'chakram_projectile',

@@ -30,6 +30,7 @@
     pierce: 1,
 
     color: '#330066',
+    visualScale: 1.2,
     icon: 'void_bullet',
     imageId: 'weapon_void_bullet',
     projectileImageId: 'void_bullet_projectile',

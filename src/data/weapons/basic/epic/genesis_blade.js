@@ -35,6 +35,7 @@
     color: '#FFFFFF',
     secondaryColor: '#FFD700',
     tertiaryColor: '#FF69B4',
+    visualScale: 1.2,
     icon: 'genesis_blade',
     imageId: 'weapon_genesis_blade',
     meleeImageId: 'genesis_blade_melee',

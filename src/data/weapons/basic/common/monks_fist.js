@@ -36,6 +36,7 @@
     coneExpansion: 1.0,
 
     color: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'fist',
     imageId: 'weapon_monks_fist',
     meleeImageId: 'monks_fist_melee',

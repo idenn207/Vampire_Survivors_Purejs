@@ -34,6 +34,7 @@
     // Visual
     color: '#FF0000',
     secondaryColor: '#000000',
+    visualScale: 1.2,
     icon: 'apocalypse',
     imageId: 'weapon_apocalypse_engine',
     mineImageId: 'apocalypse_engine_mine',

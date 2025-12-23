@@ -34,6 +34,7 @@
     // Visual
     color: '#CCDDFF',
     secondaryColor: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'moonlight',
     imageId: 'weapon_moonlight_slash',
     laserImageId: 'moonlight_slash_laser',

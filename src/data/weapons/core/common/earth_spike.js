@@ -41,6 +41,7 @@
     ],
 
     color: '#8B4513',
+    visualScale: 1.2,
     icon: 'earth_spike',
     imageId: 'weapon_earth_spike',
     areaImageId: 'earth_spike_area',

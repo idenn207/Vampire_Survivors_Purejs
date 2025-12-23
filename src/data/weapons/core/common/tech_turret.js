@@ -38,6 +38,7 @@
     },
 
     color: '#00CED1',
+    visualScale: 1.2,
     size: 6,
     shape: 'square',
     lifetime: 2.0,

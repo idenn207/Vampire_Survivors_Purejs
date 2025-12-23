@@ -30,6 +30,7 @@
     range: 220,
 
     color: '#66DDFF',
+    visualScale: 1.2,
     icon: 'frost_ring',
     imageId: 'weapon_frost_circle',
     areaImageId: 'frost_circle_area',

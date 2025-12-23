@@ -86,6 +86,7 @@
 
     // Visual properties
     color: '#B80000',
+    visualScale: 1.2,
     size: 60,
     shape: 'arc',
     lifetime: 0.3,

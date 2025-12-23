@@ -34,6 +34,7 @@
     // Visual
     color: '#330066',
     secondaryColor: '#9933FF',
+    visualScale: 1.2,
     icon: 'void_reaver',
     imageId: 'weapon_void_reaver',
     meleeImageId: 'void_reaver_melee',

@@ -32,6 +32,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'death_ray',
     imageId: 'weapon_death_ray',
     laserImageId: 'death_ray_laser',

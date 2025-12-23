@@ -36,6 +36,7 @@
     coneExpansion: 1.2,
 
     color: '#CCCCCC',
+    visualScale: 1.2,
     icon: 'claw',
     imageId: 'weapon_claw_strike',
     meleeImageId: 'claw_strike_melee',

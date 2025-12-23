@@ -28,6 +28,7 @@
     summonDuration: 0,
 
     color: '#333366',
+    visualScale: 1.2,
     icon: 'shadow_clone',
     imageId: 'weapon_shadow_clone',
     summonImageId: 'shadow_clone_summon',

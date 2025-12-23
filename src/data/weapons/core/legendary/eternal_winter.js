@@ -88,6 +88,7 @@
 
     // Visual properties
     color: '#00FFFF',
+    visualScale: 1.2,
     size: 16,
     shape: 'diamond',
     lifetime: 4.0,

@@ -32,6 +32,7 @@
 
     color: '#CCFFFF',
     size: 12,
+    visualScale: 1.2,
     shape: 'crescent',
     lifetime: 1.5,
     knockback: 50,

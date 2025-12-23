@@ -32,6 +32,7 @@
 
     color: '#886644',
     size: 10,
+    visualScale: 1.2,
     shape: 'rock',
     lifetime: 2.5,
     icon: 'stone',

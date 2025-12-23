@@ -29,6 +29,7 @@
     particleSize: 10,
 
     color: '#FF6600',
+    visualScale: 1.2,
     icon: 'flame_dancers',
     imageId: 'weapon_flame_dancers',
     bladeImageId: 'flame_dancers_blade',

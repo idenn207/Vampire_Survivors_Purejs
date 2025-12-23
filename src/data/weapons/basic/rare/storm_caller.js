@@ -34,6 +34,7 @@
     // Visual
     color: '#FFFF00',
     secondaryColor: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'storm_hammer',
     imageId: 'weapon_storm_caller',
     meleeImageId: 'storm_caller_melee',

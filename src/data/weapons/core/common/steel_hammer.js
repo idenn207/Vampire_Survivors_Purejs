@@ -34,6 +34,7 @@
     armorPierce: 0.3,
 
     color: '#708090',
+    visualScale: 1.2,
     icon: 'steel_hammer',
     imageId: 'weapon_steel_hammer',
     meleeImageId: 'steel_hammer_melee',

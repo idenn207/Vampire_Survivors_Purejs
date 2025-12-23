@@ -34,6 +34,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'arcane_cannon',
     imageId: 'weapon_arcane_cannon',
     projectileImageId: 'arcane_cannon_projectile',

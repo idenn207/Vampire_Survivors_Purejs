@@ -72,6 +72,7 @@
 
     // Visual properties
     color: '#8B4513',
+    visualScale: 1.2,
     size: 40,
     shape: 'claw',
     lifetime: 0.15,

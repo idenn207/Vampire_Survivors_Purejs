@@ -49,6 +49,7 @@
     },
 
     color: '#DDA0DD',
+    visualScale: 1.2,
     icon: 'chrono_beam',
     imageId: 'weapon_chrono_beam',
     laserImageId: 'chrono_beam_laser',

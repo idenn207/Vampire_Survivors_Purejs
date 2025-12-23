@@ -30,6 +30,7 @@
     hitsPerSwing: 1,
 
     color: '#888888',
+    visualScale: 1.2,
     icon: 'cleaver',
     imageId: 'weapon_cleaver',
     meleeImageId: 'cleaver_melee',

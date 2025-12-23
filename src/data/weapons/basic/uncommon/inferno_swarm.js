@@ -49,6 +49,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'inferno_swarm',
     imageId: 'weapon_inferno_swarm',
     areaImageId: 'inferno_swarm_area',

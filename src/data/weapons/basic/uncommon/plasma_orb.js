@@ -30,6 +30,7 @@
     pierce: 5,
 
     color: '#FF00FF',
+    visualScale: 1.2,
     icon: 'plasma_orb',
     imageId: 'weapon_plasma_orb',
     projectileImageId: 'plasma_orb_projectile',

@@ -40,9 +40,10 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'umbral_wave',
     imageId: 'weapon_umbral_wave',
-    areaImageId: 'umbral_wave_melee',
+    areaImageId: 'umbral_wave_area',
 
     // Level upgrades
     upgrades: {

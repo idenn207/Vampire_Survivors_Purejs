@@ -30,6 +30,7 @@
     hitsPerSwing: 1,
 
     color: '#AA6633',
+    visualScale: 1.2,
     icon: 'rusty_blade',
     imageId: 'weapon_rusty_blade',
     meleeImageId: 'rusty_blade_melee',

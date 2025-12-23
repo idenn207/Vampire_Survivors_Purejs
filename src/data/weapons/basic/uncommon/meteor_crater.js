@@ -30,6 +30,7 @@
     range: 350,
 
     color: '#FF6600',
+    visualScale: 1.2,
     icon: 'meteor_crater',
     imageId: 'weapon_meteor_crater',
     areaImageId: 'meteor_crater_area',

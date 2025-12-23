@@ -30,6 +30,7 @@
     followPlayer: false,
 
     color: '#FFDD66',
+    visualScale: 1.2,
     icon: 'holy_ground',
     imageId: 'weapon_holy_ground',
     areaImageId: 'holy_ground_area',

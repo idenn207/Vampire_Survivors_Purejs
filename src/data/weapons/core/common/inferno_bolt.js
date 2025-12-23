@@ -48,6 +48,7 @@
     },
 
     color: '#FF4500',
+    visualScale: 1.2,
     size: 10,
     shape: 'circle',
     lifetime: 3.0,

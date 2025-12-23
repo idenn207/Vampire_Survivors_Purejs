@@ -30,6 +30,7 @@
     tickRate: 0.1,
 
     color: '#FF00FF',
+    visualScale: 1.2,
     icon: 'prismatic_ray',
     imageId: 'weapon_prismatic_ray',
     laserImageId: 'prismatic_ray_laser',

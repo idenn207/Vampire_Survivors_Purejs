@@ -54,6 +54,7 @@
 
     // Visual properties
     color: '#00FF00',
+    visualScale: 1.2,
     size: 6,
     shape: 'circle',
     lifetime: 2.0,

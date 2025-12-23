@@ -30,6 +30,7 @@
     range: 280,
 
     color: '#88DDFF',
+    visualScale: 1.2,
     icon: 'blizzard_zone',
     imageId: 'weapon_blizzard_zone',
     areaImageId: 'blizzard_zone_area',

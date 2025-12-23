@@ -467,6 +467,7 @@
     radiant_ground_area: { path: 'weapons/areas/radiant_ground.png' },
     venomous_surge_area: { path: 'weapons/areas/venomous_surge.png' },
     inferno_swarm_area: { path: 'weapons/areas/inferno_swarm.png' },
+    umbral_wave_area: { path: 'weapons/areas/umbral_wave.png' },
     // Basic Rare
     aurora_field_area: { path: 'weapons/areas/aurora_field.png' },
     dimensional_rift_area: { path: 'weapons/areas/dimensional_rift.png' },

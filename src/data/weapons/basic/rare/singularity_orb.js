@@ -35,6 +35,7 @@
     // Visual
     color: '#220033',
     secondaryColor: '#660099',
+    visualScale: 1.2,
     size: 14,
     shape: 'singularity',
     lifetime: 4.0,

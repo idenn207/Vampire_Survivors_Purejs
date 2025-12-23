@@ -34,6 +34,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'berserker_blade',
     imageId: 'weapon_berserker_blade',
     meleeImageId: 'berserker_blade_melee',

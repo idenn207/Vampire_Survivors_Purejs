@@ -30,6 +30,7 @@
     pierce: 1,
 
     color: '#FF3300',
+    visualScale: 1.2,
     icon: 'homing_missile',
     imageId: 'weapon_homing_missile',
     projectileImageId: 'homing_missile_projectile',

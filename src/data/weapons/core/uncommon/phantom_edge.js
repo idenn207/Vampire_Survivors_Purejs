@@ -63,6 +63,7 @@
 
     // Visual properties
     color: '#4B0082',
+    visualScale: 1.2,
     size: 45,
     shape: 'arc',
     lifetime: 0.2,

@@ -47,6 +47,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'explosive_trap',
     imageId: 'weapon_explosive_trap',
     mineImageId: 'explosive_trap_mine',

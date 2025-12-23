@@ -31,6 +31,7 @@
     spread: 15,
 
     color: '#FF6699',
+    visualScale: 1.2,
     icon: 'bifrost_bolt',
     imageId: 'weapon_bifrost_bolt',
     projectileImageId: 'bifrost_bolt_projectile',

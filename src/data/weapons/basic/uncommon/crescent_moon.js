@@ -29,6 +29,7 @@
     knockback: 60,
 
     color: '#CCCCFF',
+    visualScale: 1.2,
     icon: 'crescent_moon',
     imageId: 'weapon_crescent_moon',
     meleeImageId: 'crescent_moon_melee',

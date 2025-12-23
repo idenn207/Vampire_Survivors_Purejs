@@ -30,6 +30,7 @@
     duration: 20.0,
 
     color: '#FF6600',
+    visualScale: 1.2,
     icon: 'cluster_mine',
     imageId: 'weapon_cluster_mine',
     mineImageId: 'cluster_mine_mine',

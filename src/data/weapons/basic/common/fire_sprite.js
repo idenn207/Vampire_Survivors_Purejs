@@ -28,6 +28,7 @@
     summonDuration: 0,
 
     color: '#FF6600',
+    visualScale: 1.2,
     icon: 'fire_sprite',
     imageId: 'weapon_fire_sprite',
     summonImageId: 'fire_sprite_summon',

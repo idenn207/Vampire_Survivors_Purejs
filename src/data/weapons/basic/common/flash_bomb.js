@@ -30,6 +30,7 @@
     duration: 15.0,
 
     color: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'flash_bomb',
     imageId: 'weapon_flash_bomb',
     mineImageId: 'flash_bomb_mine',

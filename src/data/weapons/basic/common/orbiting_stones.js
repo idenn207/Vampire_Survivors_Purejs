@@ -30,6 +30,7 @@
 
     color: '#886644',
     size: 14,
+    visualScale: 1.2,
     icon: 'stones',
     imageId: 'weapon_orbiting_stones',
     bladeImageId: 'orbiting_stones_blade',

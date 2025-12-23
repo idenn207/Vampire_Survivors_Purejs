@@ -28,6 +28,7 @@
     summonDuration: 0,
 
     color: '#66DDFF',
+    visualScale: 1.2,
     icon: 'frost_elemental',
     imageId: 'weapon_frost_elemental',
     summonImageId: 'frost_elemental_summon',

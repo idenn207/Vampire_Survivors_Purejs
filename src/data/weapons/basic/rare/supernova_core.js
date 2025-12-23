@@ -33,6 +33,7 @@
     color: '#FFFF00',
     secondaryColor: '#FF6600',
     tertiaryColor: '#FFFFFF',
+    visualScale: 1.2,
     icon: 'supernova',
     imageId: 'weapon_supernova_core',
     areaImageId: 'supernova_core_area',

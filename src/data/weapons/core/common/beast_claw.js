@@ -54,6 +54,7 @@
     },
 
     color: '#FF6347',
+    visualScale: 1.2,
     icon: 'beast_claw',
     imageId: 'weapon_beast_claw',
     meleeImageId: 'beast_claw_melee',

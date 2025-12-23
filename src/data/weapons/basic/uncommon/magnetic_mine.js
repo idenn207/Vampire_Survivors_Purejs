@@ -30,6 +30,7 @@
     duration: 15.0,
 
     color: '#0066FF',
+    visualScale: 1.2,
     icon: 'magnetic_mine',
     imageId: 'weapon_magnetic_mine',
     mineImageId: 'magnetic_mine_mine',

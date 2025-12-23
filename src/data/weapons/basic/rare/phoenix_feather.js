@@ -35,6 +35,7 @@
     // Visual
     color: '#FF6600',
     secondaryColor: '#FFCC00',
+    visualScale: 1.2,
     size: 12,
     shape: 'feather',
     lifetime: 4.0,

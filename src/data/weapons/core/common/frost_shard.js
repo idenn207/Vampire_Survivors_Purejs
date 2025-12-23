@@ -52,6 +52,7 @@
     },
 
     color: '#00BFFF',
+    visualScale: 1.2,
     size: 9,
     shape: 'diamond',
     lifetime: 3.0,

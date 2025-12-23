@@ -33,6 +33,7 @@
     // Visual
     color: '#FF6600',
     secondaryColor: '#663300',
+    visualScale: 1.2,
     icon: 'meteor_storm',
     imageId: 'weapon_orbital_bombardment',
     bladeImageId: 'orbital_bombardment_blade',

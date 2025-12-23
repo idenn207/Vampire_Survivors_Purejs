@@ -29,6 +29,7 @@
     knockback: 40,
 
     color: '#CC0000',
+    visualScale: 1.2,
     icon: 'blood_razor',
     imageId: 'weapon_blood_razor',
     meleeImageId: 'blood_razor_melee',

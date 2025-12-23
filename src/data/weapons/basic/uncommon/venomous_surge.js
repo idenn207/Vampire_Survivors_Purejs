@@ -42,6 +42,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'venomous_surge',
     imageId: 'weapon_venomous_surge',
     areaImageId: 'venomous_surge_area',

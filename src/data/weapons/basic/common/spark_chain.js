@@ -29,6 +29,7 @@
     particleCount: 1,
 
     color: '#FFFF00',
+    visualScale: 1.2,
     icon: 'spark',
     imageId: 'weapon_spark_chain',
     bladeImageId: 'spark_chain_blade',

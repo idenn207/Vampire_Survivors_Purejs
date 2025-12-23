@@ -32,6 +32,7 @@
 
     color: '#66DDFF',
     size: 8,
+    visualScale: 1.2,
     shape: 'diamond',
     lifetime: 2.0,
     icon: 'ice_shard',

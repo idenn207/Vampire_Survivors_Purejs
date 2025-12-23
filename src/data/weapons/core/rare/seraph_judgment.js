@@ -71,6 +71,7 @@
 
     // Visual properties
     color: '#FFA500',
+    visualScale: 1.2,
     size: 16,
     shape: 'lance',
     lifetime: 2.5,

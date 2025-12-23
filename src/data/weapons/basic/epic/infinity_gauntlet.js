@@ -40,6 +40,7 @@
     // Visual
     color: '#FFD700',
     secondaryColor: '#AA8800',
+    visualScale: 1.2,
     icon: 'infinity_gauntlet',
     imageId: 'weapon_infinity_gauntlet',
     meleeImageId: 'infinity_gauntlet_melee',

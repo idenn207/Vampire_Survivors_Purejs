@@ -35,6 +35,7 @@
     // Visual
     color: '#FFFFFF',
     secondaryColor: '#6699FF',
+    visualScale: 1.2,
     size: 10,
     shape: 'arrow',
     lifetime: 3.0,

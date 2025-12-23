@@ -28,6 +28,7 @@
     summonDuration: 0,
 
     color: '#DDDDAA',
+    visualScale: 1.2,
     icon: 'skeleton',
     imageId: 'weapon_skeleton_minion',
     summonImageId: 'skeleton_minion_summon',

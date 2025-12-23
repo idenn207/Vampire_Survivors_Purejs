@@ -34,6 +34,7 @@
     // Visual
     color: '#00FFFF',
     secondaryColor: '#FF00FF',
+    visualScale: 1.2,
     icon: 'quantum_mine',
     imageId: 'weapon_quantum_mine',
     mineImageId: 'quantum_mine_mine',

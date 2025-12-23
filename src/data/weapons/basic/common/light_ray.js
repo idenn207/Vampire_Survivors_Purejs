@@ -30,6 +30,7 @@
     tickRate: 0.1,
 
     color: '#FFFF00',
+    visualScale: 1.2,
     icon: 'light_ray',
     imageId: 'weapon_light_ray',
     laserImageId: 'light_ray_laser',

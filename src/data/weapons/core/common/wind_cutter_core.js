@@ -36,6 +36,7 @@
     passiveSpeedBoost: 0.15,
 
     color: '#87CEEB',
+    visualScale: 1.2,
     size: 8,
     shape: 'arc',
     lifetime: 2.0,

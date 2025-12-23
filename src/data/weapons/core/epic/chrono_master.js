@@ -83,6 +83,7 @@
 
     // Visual properties
     color: '#87CEEB',
+    visualScale: 1.2,
     size: 20,
     shape: 'beam',
     lifetime: 0.55,

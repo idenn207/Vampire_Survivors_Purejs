@@ -35,6 +35,7 @@
     // Visual
     color: '#00FFFF',
     secondaryColor: '#AAFFFF',
+    visualScale: 1.2,
     size: 10,
     shape: 'bolt',
     lifetime: 3.5,

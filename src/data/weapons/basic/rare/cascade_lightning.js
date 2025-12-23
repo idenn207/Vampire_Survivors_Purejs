@@ -33,6 +33,7 @@
     // Visual
     color: '#FFFFFF',
     secondaryColor: '#FFFF00',
+    visualScale: 1.2,
     icon: 'cascade_lightning',
     imageId: 'weapon_cascade_lightning',
     bladeImageId: 'cascade_lightning_blade',

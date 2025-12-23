@@ -41,6 +41,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'undead_legion',
     imageId: 'weapon_undead_legion',
     summonImageId: 'undead_legion_summon',

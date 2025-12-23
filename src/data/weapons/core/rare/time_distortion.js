@@ -76,6 +76,7 @@
 
     // Visual properties
     color: '#6495ED',
+    visualScale: 1.2,
     size: 16,
     shape: 'beam',
     lifetime: 0.5,

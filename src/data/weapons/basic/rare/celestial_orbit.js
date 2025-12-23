@@ -31,6 +31,7 @@
     orbitSpeed: 1.5, // Rotations per second
 
     // Visual
+    visualScale: 1.2,
     icon: 'celestial',
     imageId: 'weapon_celestial_orbit',
     bladeImageId: 'celestial_orbit_blade',

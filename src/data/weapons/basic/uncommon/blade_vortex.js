@@ -30,6 +30,7 @@
     particleSize: 14,
 
     color: '#CCCCCC',
+    visualScale: 1.2,
     icon: 'blade_vortex',
     imageId: 'weapon_blade_vortex',
     bladeImageId: 'blade_vortex_blade',

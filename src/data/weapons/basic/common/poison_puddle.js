@@ -30,6 +30,7 @@
     range: 250,
 
     color: '#66FF44',
+    visualScale: 1.2,
     icon: 'poison_pool',
     imageId: 'weapon_poison_puddle',
     areaImageId: 'poison_puddle_area',

@@ -30,6 +30,7 @@
 
     color: '#66FFFF',
     size: 8,
+    visualScale: 1.2,
     icon: 'wisps',
     imageId: 'weapon_spirit_wisps',
     bladeImageId: 'spirit_wisps_blade',

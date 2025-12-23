@@ -92,6 +92,7 @@
 
     // Visual properties
     color: '#DEB887',
+    visualScale: 1.2,
     size: 100,
     shape: 'spike',
     lifetime: 0.8,

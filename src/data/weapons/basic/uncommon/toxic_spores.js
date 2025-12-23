@@ -30,6 +30,7 @@
     range: 250,
 
     color: '#66AA00',
+    visualScale: 1.2,
     icon: 'toxic_spores',
     imageId: 'weapon_toxic_spores',
     areaImageId: 'toxic_spores_area',

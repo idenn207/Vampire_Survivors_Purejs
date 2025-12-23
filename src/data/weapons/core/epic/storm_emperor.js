@@ -83,6 +83,7 @@
 
     // Visual properties
     color: '#40E0D0',
+    visualScale: 1.2,
     size: 16,
     shape: 'crescent',
     lifetime: 2.5,

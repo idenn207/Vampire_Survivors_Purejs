@@ -42,6 +42,7 @@
     maxTier: 4,
 
     // Visual
+    visualScale: 1.2,
     icon: 'mystic_arrow',
     imageId: 'weapon_mystic_arrow',
     projectileImageId: 'mystic_arrow_projectile',

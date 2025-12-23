@@ -29,6 +29,7 @@
     knockback: 150,
 
     color: '#FFFF00',
+    visualScale: 1.2,
     icon: 'thunder_hammer',
     imageId: 'weapon_thunder_hammer',
     meleeImageId: 'thunder_hammer_melee',

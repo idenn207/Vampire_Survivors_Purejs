@@ -89,6 +89,7 @@
 
     // Visual properties
     color: '#CD853F',
+    visualScale: 1.2,
     size: 50,
     shape: 'claw',
     lifetime: 0.18,
