@@ -86,7 +86,7 @@
         description: 'Cycles through 3 powerful buffs: Attack, Speed, and Aurora.',
         icon: 'buff_skill',
         type: ActiveSkillType.ROTATING_BUFF,
-        cooldown: 90, // seconds
+        cooldown: 60, // seconds
         buffDuration: 30, // seconds
         buffs: [
           {
@@ -94,17 +94,17 @@
             name: 'Attack Buff',
             description: 'Increases offensive power',
             color: '#E74C3C',
-            attackBonus: 0.3, // +30% attack power
-            critChanceBonus: 0.2, // +20% crit chance
-            critDamageBonus: 0.4, // +40% crit damage
+            attackBonus: 0.5, // +50% attack power
+            critChanceBonus: 0.3, // +30% crit chance
+            critDamageBonus: 0.8, // +80% crit damage
           },
           {
             id: BuffType.SPEED,
             name: 'Speed Buff',
             description: 'Enhances speed and efficiency',
             color: '#2ECC71',
-            moveSpeedBonus: 0.25, // +25% movement speed
-            cooldownReductionBonus: 0.25, // +25% cooldown reduction
+            moveSpeedBonus: 0.5, // +50% movement speed
+            cooldownReductionBonus: 0.5, // +50% cooldown reduction
             durationBonus: 0.3, // +30% duration on effects
           },
           {
@@ -146,4 +146,4 @@
   Data.BuffType = BuffType;
   Data.SlashPattern = SlashPattern;
   Data.ActiveSkillData = ActiveSkillData;
-})(window.VampireSurvivors.Data = window.VampireSurvivors.Data || {});
+})((window.VampireSurvivors.Data = window.VampireSurvivors.Data || {}));

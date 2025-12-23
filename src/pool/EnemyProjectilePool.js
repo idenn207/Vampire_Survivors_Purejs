@@ -193,8 +193,8 @@
      */
     render(ctx, camera) {
       var active = this._pool.getActiveObjects();
-      var offsetX = camera ? camera.offsetX : 0;
-      var offsetY = camera ? camera.offsetY : 0;
+      var offsetX = camera ? camera.x : 0;
+      var offsetY = camera ? camera.y : 0;
 
       for (var i = 0; i < active.length; i++) {
         var projectile = active[i];

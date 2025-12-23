@@ -15,7 +15,7 @@
     size: 24,
     color: '#FF0000',
     behavior: 'chase',
-    spawnWeight: 50,
+    spawnWeight: 200,
     startWave: 2,
     imageId: 'enemy_normal',
   };

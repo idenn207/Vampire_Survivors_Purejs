@@ -15,7 +15,7 @@
     size: 30,
     color: '#8800FF',
     behavior: 'jump_drop',
-    spawnWeight: 200,
+    spawnWeight: 10,
     startWave: 7,
     imageId: 'enemy_jump_drop',
     // Jump-specific config

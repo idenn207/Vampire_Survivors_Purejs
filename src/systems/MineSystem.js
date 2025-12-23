@@ -117,8 +117,28 @@
           ctx.stroke();
         }
 
-        // Draw triggered effect (pulsing glow)
+        // Draw triggered effect - explosion radius indicator with countdown
         if (mine.isTriggered) {
+          var explosionRadius = mine.explosionRadius;
+          var progress = mine.triggerProgress;
+
+          // 1. Draw explosion radius outline (green)
+          ctx.globalAlpha = 0.4;
+          ctx.strokeStyle = '#00FF00';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(screenX, screenY, explosionRadius, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // 2. Draw expanding fill animation (center to edge)
+          var expandingRadius = explosionRadius * progress;
+          ctx.globalAlpha = 0.25;
+          ctx.fillStyle = '#00FF00';
+          ctx.beginPath();
+          ctx.arc(screenX, screenY, expandingRadius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // 3. Keep pulsing mine body glow
           ctx.globalAlpha = sprite.alpha * 0.3;
           ctx.fillStyle = '#FFFF00';
           ctx.beginPath();

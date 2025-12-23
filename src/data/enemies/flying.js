@@ -15,7 +15,7 @@
     size: 22,
     color: '#00CCFF',
     behavior: 'flying',
-    spawnWeight: 20,
+    spawnWeight: 80,
     startWave: 3,
     imageId: 'enemy_flying',
     // Flying-specific config

@@ -35,7 +35,10 @@
       "Bash(node -e:*)",
       "Bash(paste:*)",
       "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/buffdebuff/effects/debuffs\"/*.js)",
-      "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/buffdebuff/effects/buffs\"/*.js)"
+      "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/buffdebuff/effects/buffs\"/*.js)",
+      "Bash(npx http-server:*)",
+      "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/summons\"/*.js)",
+      "Bash(wc:*)"
     ]
   }
 }

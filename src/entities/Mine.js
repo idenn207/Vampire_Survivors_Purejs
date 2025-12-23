@@ -192,6 +192,11 @@
       return this._sourceWeaponId;
     }
 
+    get triggerProgress() {
+      if (!this._isTriggered) return 0;
+      return Math.min(this._triggerTimer / this._triggerDelay, 1);
+    }
+
     get centerX() {
       var transform = this.transform;
       return transform.x + transform.width / 2;
