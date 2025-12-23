@@ -36,6 +36,9 @@
     _sourceWeaponId = null;
     _armDelay = 0.5; // Time before mine can be triggered
     _armTimer = 0;
+    _triggerMode = 'proximity'; // 'proximity' (trap) or 'timed' (mine)
+    _detonationTime = 2; // Total countdown time for timed mines
+    _detonationTimer = 0; // Current elapsed time for timed detonation
 
     // ----------------------------------------
     // Constructor
@@ -65,8 +68,10 @@
      * @param {string} color
      * @param {string} sourceWeaponId
      * @param {string} [imageId] - Image ID for sprite rendering (falls back to shape)
+     * @param {string} [triggerMode='proximity'] - 'proximity' (trap) or 'timed' (mine)
+     * @param {number} [detonationTime=2] - Time until explosion for timed mines
      */
-    reset(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId, imageId) {
+    reset(x, y, damage, explosionRadius, triggerRadius, duration, color, sourceWeaponId, imageId, triggerMode, detonationTime) {
       // Reset transform
       var transform = this.transform;
       transform.x = x - DEFAULT_SIZE / 2; // Center the mine
@@ -97,6 +102,9 @@
       this._triggerTimer = 0;
       this._sourceWeaponId = sourceWeaponId;
       this._armTimer = 0;
+      this._triggerMode = triggerMode || 'proximity';
+      this._detonationTime = detonationTime || 2;
+      this._detonationTimer = 0;
 
       // Ensure active
       this.isActive = true;
@@ -136,7 +144,20 @@
         return 'triggered';
       }
 
-      // Pulsing effect when armed (slower)
+      // Timed mode: auto-trigger after detonation time
+      if (this._triggerMode === 'timed') {
+        this._detonationTimer += deltaTime;
+        // Pulsing effect during countdown
+        this.sprite.alpha = 0.7 + Math.sin(Date.now() * 0.01) * 0.3;
+
+        if (this._detonationTimer >= this._detonationTime) {
+          this.trigger();
+          return 'triggered';
+        }
+        return 'active';
+      }
+
+      // Proximity mode: pulsing effect when armed (slower)
       var lifeRatio = this._lifetime / this._duration;
       this.sprite.alpha = 0.7 + Math.sin(Date.now() * 0.005) * 0.3;
 
@@ -195,6 +216,15 @@
     get triggerProgress() {
       if (!this._isTriggered) return 0;
       return Math.min(this._triggerTimer / this._triggerDelay, 1);
+    }
+
+    get triggerMode() {
+      return this._triggerMode;
+    }
+
+    get detonationProgress() {
+      if (this._triggerMode !== 'timed') return 0;
+      return Math.min(this._detonationTimer / this._detonationTime, 1);
     }
 
     get centerX() {

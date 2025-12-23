@@ -30,6 +30,8 @@
     triggerRadius: 45,
     explosionRadius: 80,
     duration: 20.0, // Mine lifetime
+    triggerMode: 'timed',
+    detonationTime: 2,
 
     // Visual
     color: '#00FFFF',

@@ -28,6 +28,7 @@
     triggerRadius: 35,
     explosionRadius: 70,
     duration: 15.0,
+    triggerMode: 'proximity',
 
     color: '#0066FF',
     visualScale: 1.2,

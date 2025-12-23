@@ -28,6 +28,8 @@
     triggerRadius: 38,
     explosionRadius: 65,
     duration: 18.0,
+    triggerMode: 'timed',
+    detonationTime: 2,
 
     color: '#66DDFF',
     visualScale: 1.2,

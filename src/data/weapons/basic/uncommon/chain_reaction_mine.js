@@ -29,6 +29,8 @@
     explosionRadius: 50,
     duration: 25.0,
     maxMines: 5,
+    triggerMode: 'timed',
+    detonationTime: 2,
 
     color: '#FF0000',
     visualScale: 1.2,

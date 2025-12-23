@@ -9,13 +9,13 @@
 
   Data.EnemyRegistry.projectile = {
     name: 'Spitter',
-    baseHealth: 150,
+    baseHealth: 60,
     baseSpeed: 50,
     baseDamage: 5,
     size: 26,
     color: '#00FF00',
     behavior: 'projectile',
-    spawnWeight: 15,
+    spawnWeight: 3,
     startWave: 6,
     imageId: 'enemy_projectile',
     // Projectile-specific config

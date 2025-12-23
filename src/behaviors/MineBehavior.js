@@ -44,6 +44,10 @@
       var baseSpawnRange = weapon.getStat('spawnRange', 150);
       var color = weapon.getStat('color', '#FF4444');
 
+      // Get trigger mode config (proximity = trap, timed = mine with countdown)
+      var triggerMode = weapon.getStat('triggerMode', 'proximity');
+      var detonationTime = weapon.getStat('detonationTime', 2);
+
       // Get image config for sprite rendering
       var mineImageId = weapon.getStat('mineImageId', null) ||
                         weapon.getStat('imageId', null);
@@ -69,7 +73,9 @@
           duration,
           color,
           weapon.id,
-          mineImageId
+          mineImageId,
+          triggerMode,
+          detonationTime
         );
 
         if (mine) {

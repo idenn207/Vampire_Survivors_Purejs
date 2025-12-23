@@ -9,7 +9,7 @@
 
   Data.EnemyRegistry.flying = {
     name: 'Flying Eye',
-    baseHealth: 25,
+    baseHealth: 40,
     baseSpeed: 120,
     baseDamage: 12,
     size: 22,

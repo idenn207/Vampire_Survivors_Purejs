@@ -41,6 +41,14 @@
     EPIC: 'epic',
   };
 
+  // ============================================
+  // Mine Trigger Mode Constants
+  // ============================================
+  var TriggerMode = {
+    PROXIMITY: 'proximity', // Trap - triggers when enemy enters radius
+    TIMED: 'timed',         // Mine - triggers after time delay with visual countdown
+  };
+
   // Rarity colors for UI
   var RarityColors = {
     common: '#AAAAAA',
@@ -107,6 +115,7 @@
   Data.TargetingMode = TargetingMode;
   Data.Rarity = Rarity;
   Data.RarityColors = RarityColors;
+  Data.TriggerMode = TriggerMode;
   Data.VisualPresets = VisualPresets;
   Data.StatusPresets = StatusPresets;
 

@@ -25,16 +25,6 @@
       xpMultiplier: 3.0,
       goldMultiplier: 2.0,
     },
-    swarm: {
-      // Small fast enemies - less drops
-      xpMultiplier: 0.5,
-      goldMultiplier: 0.3,
-    },
-    tank: {
-      // High HP enemies - more drops
-      xpMultiplier: 1.2,
-      goldMultiplier: 1.5,
-    },
     // Traversal enemies - reduced multipliers (more enemies now)
     traversal_circular: {
       xpMultiplier: 1.0,
@@ -74,15 +64,6 @@
       { type: 'gold', minValue: 100, maxValue: 200, chance: 1.0 }, // Always gold
       { type: 'health', minValue: 50, maxValue: 100, chance: 1.0 }, // Always health
       { type: 'magnet', minValue: 1, maxValue: 1, chance: 1.0 }, // Always magnet
-    ],
-    swarm: [
-      { type: 'exp', minValue: 1, maxValue: 2, chance: 0.8 }, // Small XP, 80% chance
-      { type: 'gold', minValue: 1, maxValue: 2, chance: 0.1 }, // 10% gold
-    ],
-    tank: [
-      { type: 'exp', minValue: 5, maxValue: 15, chance: 1.0 }, // Tier 1-2 XP
-      { type: 'gold', minValue: 5, maxValue: 15, chance: 0.3 }, // 30% gold
-      { type: 'health', minValue: 15, maxValue: 25, chance: 0.1 }, // 10% health
     ],
     // Traversal enemies - reduced per-enemy rewards (more enemies now)
     traversal_circular: [

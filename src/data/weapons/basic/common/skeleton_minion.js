@@ -23,7 +23,7 @@
     maxTier: 4,
 
     damage: 18,
-    cooldown: 0.0,
+    cooldown: 5.0,
     summonCount: 1,
     summonDuration: 0,
 

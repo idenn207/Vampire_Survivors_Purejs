@@ -107,14 +107,35 @@
         ctx.arc(screenX, screenY, 8, 0, Math.PI * 2);
         ctx.fill();
 
-        // Draw trigger radius indicator (subtle)
-        if (mine.isArmed()) {
+        // Draw trigger radius indicator (subtle) - only for proximity mode
+        if (mine.isArmed() && mine.triggerMode === 'proximity') {
           ctx.globalAlpha = 0.15;
           ctx.strokeStyle = sprite.color;
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.arc(screenX, screenY, mine.triggerRadius, 0, Math.PI * 2);
           ctx.stroke();
+        }
+
+        // Draw timed mine countdown visual - green expanding circle
+        if (mine.isArmed() && mine.triggerMode === 'timed' && !mine.isTriggered) {
+          var progress = mine.detonationProgress;
+          var explosionRadius = mine.explosionRadius;
+
+          // 1. Green outer circle (explosion radius)
+          ctx.globalAlpha = 0.5;
+          ctx.strokeStyle = '#00FF00';
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(screenX, screenY, explosionRadius, 0, Math.PI * 2);
+          ctx.stroke();
+
+          // 2. Green expanding fill (countdown visual)
+          ctx.globalAlpha = 0.25;
+          ctx.fillStyle = '#00FF00';
+          ctx.beginPath();
+          ctx.arc(screenX, screenY, explosionRadius * progress, 0, Math.PI * 2);
+          ctx.fill();
         }
 
         // Draw triggered effect - explosion radius indicator with countdown
@@ -154,11 +175,17 @@
     // Private Methods
     // ----------------------------------------
     /**
-     * Check if any enemies trigger the mine
+     * Check if any enemies trigger the mine (proximity mode only)
      * @param {Mine} mine
      * @param {Array<Entity>} enemies
      */
     _checkTriggers(mine, enemies) {
+      // Only check triggers for proximity mode mines
+      // Timed mines handle their own trigger via timer in Mine.update()
+      if (mine.triggerMode !== 'proximity') {
+        return;
+      }
+
       var mineX = mine.centerX;
       var mineY = mine.centerY;
       var triggerRadiusSq = mine.triggerRadius * mine.triggerRadius;
