@@ -478,9 +478,12 @@
             this._mainSlot = weapon;
             this._selectedTier = weapon.tier;  // Set tier on main selection
           } else if (!this._materialSlot) {
-            // Must be same tier as main
+            // Allow different tier if recipe exists
             if (weapon.tier !== this._selectedTier) {
-              return null;  // Reject different tier
+              // Check if recipe exists for this combination
+              if (!WeaponEvolutionData.isKnownRecipe(this._mainSlot.id, weapon.id)) {
+                return null;  // Reject if no recipe
+              }
             }
             // Core chain weapons cannot be used as material
             if (isCoreChain) {
@@ -488,9 +491,12 @@
             }
             this._materialSlot = weapon;
           } else {
-            // Both filled, replace material (only if same tier and not core)
+            // Both filled, replace material (allow if recipe exists or same tier)
             if (weapon.tier !== this._selectedTier) {
-              return null;  // Reject different tier
+              // Check if recipe exists for this combination
+              if (!WeaponEvolutionData.isKnownRecipe(this._mainSlot.id, weapon.id)) {
+                return null;  // Reject if no recipe
+              }
             }
             if (isCoreChain) {
               return null; // Reject selection
@@ -539,9 +545,12 @@
         return (this._tierCounts[weapon.tier] || 0) >= 2;
       }
 
-      // Main is selected - only same tier is selectable (as material)
+      // Main is selected - check if selectable as material
       if (weapon.tier !== this._selectedTier) {
-        return false;
+        // Allow if a known recipe exists
+        if (!WeaponEvolutionData.isKnownRecipe(this._mainSlot.id, weapon.id)) {
+          return false;
+        }
       }
 
       // Core chain weapons cannot be used as material
@@ -673,14 +682,22 @@
       var centerX = rect.x + rect.width / 2;
       var centerY = rect.y + rect.height / 2 - 8;
 
-      // Weapon icon (simplified)
+      // Weapon icon
       var weaponData = weapon.data || weapon;
-      var color = weaponData.color || '#FFFFFF';
-
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, SLOT_ICON_SIZE / 3, 0, Math.PI * 2);
-      ctx.fill();
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = weaponData.imageId;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        var imgSize = SLOT_ICON_SIZE * 0.7;
+        ctx.drawImage(img, centerX - imgSize / 2, centerY - imgSize / 2, imgSize, imgSize);
+      } else {
+        // Fallback to colored circle
+        var color = weaponData.color || '#FFFFFF';
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, SLOT_ICON_SIZE / 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Weapon name
       ctx.font = '10px Arial';
@@ -883,12 +900,20 @@
 
       // Weapon icon
       var weaponData = weapon.data || weapon;
-      var color = weaponData.color || '#FFFFFF';
-
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
-      ctx.fill();
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = weaponData.imageId;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        var imgSize = 26;
+        ctx.drawImage(img, centerX - imgSize / 2, centerY - imgSize / 2, imgSize, imgSize);
+      } else {
+        // Fallback to colored circle
+        var color = weaponData.color || '#FFFFFF';
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 15, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Weapon name
       ctx.font = '9px Arial';
