@@ -219,24 +219,21 @@
         ctx.fillRect(barX + shieldStart, y, shieldBarWidth, barHeight);
       }
 
-      // Text: "120(+240)/120" format - centered on HP bar (red portion only)
+      // Text: "120(+240)/120" format - centered on full bar width
       ctx.font = UIScale.font(11);
       ctx.textAlign = 'center';
-      var hpBarWidth = actualBarWidth * hpRatio;
-      var textX = barX + hpBarWidth / 2;
+      var textX = barX + actualBarWidth / 2;
       var textY = y + barHeight / 2;
 
       if (shieldAmount > 0) {
-        // Build combined text with shield: "120(+240)/120"
-        var hpText = Math.floor(current);
+        // Build combined text with shield: "120/120(+240)"
+        var hpText = Math.floor(current) + '/' + Math.floor(max);
         var shieldText = '(+' + Math.floor(shieldAmount) + ')';
-        var maxText = '/' + Math.floor(max);
-        var fullText = hpText + shieldText + maxText;
+        var fullText = hpText + shieldText;
 
         // Measure full text width to position segments correctly
         var fullWidth = ctx.measureText(fullText).width;
-        var hpWidth = ctx.measureText(String(hpText)).width;
-        var shieldWidth = ctx.measureText(shieldText).width;
+        var hpWidth = ctx.measureText(hpText).width;
 
         // Calculate starting position for left-aligned rendering from center
         var startX = textX - fullWidth / 2;
@@ -244,15 +241,11 @@
         // Draw HP value (white)
         ctx.textAlign = 'left';
         ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(String(hpText), startX, textY);
+        ctx.fillText(hpText, startX, textY);
 
         // Draw shield value (blue)
         ctx.fillStyle = SHIELD_BAR_FILL;
         ctx.fillText(shieldText, startX + hpWidth, textY);
-
-        // Draw max value (white)
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(maxText, startX + hpWidth + shieldWidth, textY);
       } else {
         // No shield - standard format centered
         ctx.fillStyle = '#FFFFFF';
