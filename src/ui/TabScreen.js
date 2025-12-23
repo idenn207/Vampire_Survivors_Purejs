@@ -607,10 +607,20 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(iconX, iconY, WEAPON_ICON_SIZE, WEAPON_ICON_SIZE);
 
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(iconX + WEAPON_ICON_SIZE / 2, iconY + WEAPON_ICON_SIZE / 2, WEAPON_ICON_SIZE / 3, 0, Math.PI * 2);
-      ctx.fill();
+      // Try to render image if available
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = weaponData.imageId;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        var imgSize = WEAPON_ICON_SIZE - 4;
+        ctx.drawImage(img, iconX + 2, iconY + 2, imgSize, imgSize);
+      } else {
+        // Fallback to colored circle
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(iconX + WEAPON_ICON_SIZE / 2, iconY + WEAPON_ICON_SIZE / 2, WEAPON_ICON_SIZE / 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Weapon name and level
       ctx.font = '12px Arial';

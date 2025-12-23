@@ -387,11 +387,18 @@
         var icon = option.weaponData.icon;
         var attackType = option.weaponData.attackType;
 
-        ctx.fillStyle = color;
-        ctx.strokeStyle = color;
-
-        // Render specific icon based on weapon icon property
-        this._renderWeaponIcon(ctx, centerX, centerY, icon, attackType, color, ICON_SIZE);
+        // Try to render image if available
+        var assetLoader = window.VampireSurvivors.Core.assetLoader;
+        var imageId = option.weaponData.imageId;
+        if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+          var img = assetLoader.getImage(imageId);
+          ctx.drawImage(img, centerX - ICON_SIZE / 2, centerY - ICON_SIZE / 2, ICON_SIZE, ICON_SIZE);
+        } else {
+          // Fallback to canvas icon
+          ctx.fillStyle = color;
+          ctx.strokeStyle = color;
+          this._renderWeaponIcon(ctx, centerX, centerY, icon, attackType, color, ICON_SIZE);
+        }
 
         // Attack type indicator ring
         var attackTypeColor = ATTACK_TYPE_COLORS[option.weaponData.attackType];

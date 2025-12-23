@@ -719,12 +719,21 @@
       ctx.lineWidth = 2;
       ctx.strokeRect(x, y, ICON_SIZE, ICON_SIZE);
 
-      // Weapon color circle
-      var color = weaponData.color || tierConfig.color || '#FFFFFF';
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(x + ICON_SIZE / 2, y + ICON_SIZE / 2, ICON_SIZE / 3, 0, Math.PI * 2);
-      ctx.fill();
+      // Try to render image if available
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = weaponData.imageId;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        var imgSize = ICON_SIZE - 4;
+        ctx.drawImage(img, x + 2, y + 2, imgSize, imgSize);
+      } else {
+        // Fallback to weapon color circle
+        var color = weaponData.color || tierConfig.color || '#FFFFFF';
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x + ICON_SIZE / 2, y + ICON_SIZE / 2, ICON_SIZE / 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Tier badge
       ctx.font = 'bold 9px Arial';

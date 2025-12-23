@@ -271,6 +271,18 @@
       // Starting weapon info
       var weaponData = CoreWeaponData[core.startingWeapon];
       if (weaponData) {
+        // Weapon icon image
+        var assetLoader = window.VampireSurvivors.Core.assetLoader;
+        var imageId = weaponData.imageId;
+        var iconSize = 24;
+        var iconX = rect.x + rect.width / 2;
+        var iconY = rect.y + rect.height - 65;
+
+        if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+          var img = assetLoader.getImage(imageId);
+          ctx.drawImage(img, iconX - iconSize / 2, iconY - iconSize / 2, iconSize, iconSize);
+        }
+
         ctx.font = '10px Arial';
         ctx.fillStyle = '#95A5A6';
         ctx.fillText(i18n.t('core.startingWeapon'), rect.x + rect.width / 2, rect.y + rect.height - 45);

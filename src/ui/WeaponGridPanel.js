@@ -307,11 +307,20 @@
       var icon = weapon.data ? weapon.data.icon : null;
       var attackType = weapon.data ? weapon.data.attackType : 'projectile';
 
+      // Try to render image if available
+      var assetLoader = window.VampireSurvivors.Core.assetLoader;
+      var imageId = weapon.data ? weapon.data.imageId : null;
+      if (imageId && assetLoader && assetLoader.hasImage(imageId)) {
+        var img = assetLoader.getImage(imageId);
+        ctx.drawImage(img, centerX - iconSize / 2, centerY - iconSize / 2, iconSize, iconSize);
+        return;
+      }
+
       ctx.fillStyle = color;
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
 
-      // Render specific icon based on weapon icon property
+      // Render specific icon based on weapon icon property (fallback)
       switch (icon) {
         case 'magic_orb':
           ctx.beginPath();
