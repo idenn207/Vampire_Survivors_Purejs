@@ -10,6 +10,7 @@
   // ============================================
   var UIScale = window.VampireSurvivors.Core.UIScale;
   var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
+  var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
   var Data = window.VampireSurvivors.Data;
 
   // ============================================
@@ -49,9 +50,13 @@
     weakness: '#9966FF',
     mark: '#FF00FF',
     pull: '#9933FF',
-    // Buffs (from ActiveBuff)
-    attack: '#E74C3C',
-    speed: '#2ECC71',
+    // Buffs (from ActiveBuff) - Individual stat effects
+    attack_power: '#E74C3C',
+    crit_chance: '#F39C12',
+    crit_damage: '#E67E22',
+    move_speed: '#2ECC71',
+    cooldown_reduction: '#3498DB',
+    duration_boost: '#1ABC9C',
     aurora: '#9B59B6',
     // Buffs (from BuffDebuff)
     attack_boost: '#E74C3C',
@@ -60,6 +65,21 @@
     regen: '#27AE60',
     shield_buff: '#F1C40F',
     magnet: '#E91E63',
+  };
+
+  // Mage buff breakdown - maps each buff type to its individual stat effects
+  var MAGE_BUFF_BREAKDOWN = {
+    attack: [
+      { type: 'attack_power', name: 'Attack Power', color: '#E74C3C' },
+      { type: 'crit_chance', name: 'Crit Chance', color: '#F39C12' },
+      { type: 'crit_damage', name: 'Crit Damage', color: '#E67E22' },
+    ],
+    speed: [
+      { type: 'move_speed', name: 'Move Speed', color: '#2ECC71' },
+      { type: 'cooldown_reduction', name: 'Cooldown Reduction', color: '#3498DB' },
+      { type: 'duration_boost', name: 'Duration Boost', color: '#1ABC9C' },
+    ],
+    aurora: [{ type: 'aurora', name: 'Aurora', color: '#9B59B6' }],
   };
 
   // ============================================
@@ -138,6 +158,26 @@
               duration: effectInstance.duration,
               stacks: effectInstance.stacks || 1,
               color: color,
+            });
+          }
+        }
+      }
+
+      // Get effects from ActiveBuff component (Mage buffs)
+      var activeBuff = this._player.getComponent(ActiveBuff);
+      if (activeBuff && activeBuff.hasBuff) {
+        var buffType = activeBuff.activeBuff; // 'attack', 'speed', or 'aurora'
+        var breakdown = MAGE_BUFF_BREAKDOWN[buffType];
+        if (breakdown) {
+          for (var j = 0; j < breakdown.length; j++) {
+            var statInfo = breakdown[j];
+            effects.push({
+              type: statInfo.type,
+              isDebuff: false,
+              remainingDuration: activeBuff.duration,
+              duration: activeBuff.maxDuration,
+              stacks: 1,
+              color: statInfo.color,
             });
           }
         }
@@ -298,6 +338,25 @@
           break;
         case 'magnet':
           this._drawMagnetSymbol(ctx, centerX, centerY, radius);
+          break;
+        // Mage buff individual stat effects
+        case 'attack_power':
+          this._drawAttackPowerSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'crit_chance':
+          this._drawCritChanceSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'crit_damage':
+          this._drawCritDamageSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'move_speed':
+          this._drawMoveSpeedSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'cooldown_reduction':
+          this._drawCooldownReductionSymbol(ctx, centerX, centerY, radius);
+          break;
+        case 'duration_boost':
+          this._drawDurationBoostSymbol(ctx, centerX, centerY, radius);
           break;
         default:
           // Default: simple circle
@@ -489,6 +548,112 @@
       ctx.lineTo(cx - r * 0.7, cy + r * 0.3);
       ctx.arc(cx, cy + r * 0.3, r * 0.7, Math.PI, 0, false);
       ctx.lineTo(cx + r * 0.7, cy - r);
+      ctx.stroke();
+    }
+
+    // Mage buff individual stat effect symbols
+    _drawAttackPowerSymbol(ctx, cx, cy, r) {
+      // Up arrow (attack power increase)
+      ctx.beginPath();
+      ctx.moveTo(cx, cy - r);
+      ctx.lineTo(cx + r * 0.6, cy);
+      ctx.lineTo(cx + r * 0.3, cy);
+      ctx.lineTo(cx + r * 0.3, cy + r);
+      ctx.lineTo(cx - r * 0.3, cy + r);
+      ctx.lineTo(cx - r * 0.3, cy);
+      ctx.lineTo(cx - r * 0.6, cy);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    _drawCritChanceSymbol(ctx, cx, cy, r) {
+      // Lightning bolt (critical strike chance)
+      ctx.beginPath();
+      ctx.moveTo(cx + r * 0.3, cy - r);
+      ctx.lineTo(cx - r * 0.2, cy - r * 0.1);
+      ctx.lineTo(cx + r * 0.1, cy - r * 0.1);
+      ctx.lineTo(cx - r * 0.3, cy + r);
+      ctx.lineTo(cx + r * 0.2, cy + r * 0.1);
+      ctx.lineTo(cx - r * 0.1, cy + r * 0.1);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    _drawCritDamageSymbol(ctx, cx, cy, r) {
+      // Explosion burst (critical damage)
+      ctx.beginPath();
+      for (var i = 0; i < 6; i++) {
+        var angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+        var outerR = r;
+        var innerR = r * 0.4;
+        var outerX = cx + Math.cos(angle) * outerR;
+        var outerY = cy + Math.sin(angle) * outerR;
+        var midAngle = angle + Math.PI / 6;
+        var innerX = cx + Math.cos(midAngle) * innerR;
+        var innerY = cy + Math.sin(midAngle) * innerR;
+        if (i === 0) {
+          ctx.moveTo(outerX, outerY);
+        } else {
+          ctx.lineTo(outerX, outerY);
+        }
+        ctx.lineTo(innerX, innerY);
+      }
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    _drawMoveSpeedSymbol(ctx, cx, cy, r) {
+      // Running figure / wind lines with arrow
+      ctx.beginPath();
+      // Arrow pointing right
+      ctx.moveTo(cx + r, cy);
+      ctx.lineTo(cx + r * 0.3, cy - r * 0.5);
+      ctx.lineTo(cx + r * 0.3, cy - r * 0.2);
+      ctx.lineTo(cx - r, cy - r * 0.2);
+      ctx.lineTo(cx - r, cy + r * 0.2);
+      ctx.lineTo(cx + r * 0.3, cy + r * 0.2);
+      ctx.lineTo(cx + r * 0.3, cy + r * 0.5);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    _drawCooldownReductionSymbol(ctx, cx, cy, r) {
+      // Clock with arrow (cooldown reduction)
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.8, 0, Math.PI * 2);
+      ctx.stroke();
+      // Clock hands
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx, cy - r * 0.5);
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + r * 0.4, cy);
+      ctx.stroke();
+      // Small arrow indicating reduction
+      ctx.beginPath();
+      ctx.moveTo(cx + r * 0.5, cy - r * 0.7);
+      ctx.lineTo(cx + r * 0.8, cy - r * 0.4);
+      ctx.lineTo(cx + r * 0.5, cy - r * 0.4);
+      ctx.stroke();
+    }
+
+    _drawDurationBoostSymbol(ctx, cx, cy, r) {
+      // Hourglass with plus sign (duration increase)
+      ctx.beginPath();
+      ctx.moveTo(cx - r * 0.5, cy - r);
+      ctx.lineTo(cx + r * 0.5, cy - r);
+      ctx.lineTo(cx, cy);
+      ctx.lineTo(cx + r * 0.5, cy + r);
+      ctx.lineTo(cx - r * 0.5, cy + r);
+      ctx.lineTo(cx, cy);
+      ctx.closePath();
+      ctx.stroke();
+      // Plus sign
+      ctx.beginPath();
+      ctx.moveTo(cx + r * 0.6, cy - r * 0.3);
+      ctx.lineTo(cx + r * 0.6, cy + r * 0.1);
+      ctx.moveTo(cx + r * 0.4, cy - r * 0.1);
+      ctx.lineTo(cx + r * 0.8, cy - r * 0.1);
       ctx.stroke();
     }
 
