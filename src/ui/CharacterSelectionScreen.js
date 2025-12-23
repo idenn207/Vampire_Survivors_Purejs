@@ -255,11 +255,11 @@
 
       // Base stats
       var statsY = rect.y + 170;
-      this._renderStat(ctx, rect.x + 15, statsY, i18n.t('character.attack'), character.baseStats.attack, 'multiplier');
-      this._renderStat(ctx, rect.x + 15, statsY + 18, i18n.t('character.speed'), character.baseStats.speed, 'multiplier');
-      this._renderStat(ctx, rect.x + 15, statsY + 36, i18n.t('character.hp'), character.baseStats.maxHealth, 'multiplier');
-      this._renderStat(ctx, rect.x + 15, statsY + 54, i18n.t('character.critChance'), character.baseStats.critChance, 'percent');
-      this._renderStat(ctx, rect.x + 15, statsY + 72, i18n.t('character.luck'), character.baseStats.luck, 'percent');
+      this._renderStat(ctx, rect.x + 15, statsY, i18n.t('character.attack'), character.baseStats.attack, 'attack');
+      this._renderStat(ctx, rect.x + 15, statsY + 18, i18n.t('character.speed'), character.baseStats.speed, 'speed');
+      this._renderStat(ctx, rect.x + 15, statsY + 36, i18n.t('character.hp'), character.baseStats.maxHealth, 'maxHealth');
+      this._renderStat(ctx, rect.x + 15, statsY + 54, i18n.t('character.critChance'), character.baseStats.critChance, 'critChance');
+      this._renderStat(ctx, rect.x + 15, statsY + 72, i18n.t('character.luck'), character.baseStats.luck, 'luck');
 
       // Passive section
       if (character.passive) {
@@ -331,9 +331,9 @@
      * @param {number} y
      * @param {string} label
      * @param {number} value
-     * @param {string} type - 'multiplier' or 'percent'
+     * @param {string} statId - stat identifier for formatting
      */
-    _renderStat(ctx, x, y, label, value, type) {
+    _renderStat(ctx, x, y, label, value, statId) {
       // Label
       ctx.font = '10px Arial';
       ctx.fillStyle = STAT_LABEL_COLOR;
@@ -346,24 +346,28 @@
 
       var valueText;
       var valueColor;
+      var isPercentage = this._isPercentageStat(statId);
+      var baseline = this._getStatBaseline(statId);
 
-      if (type === 'multiplier') {
+      if (isPercentage) {
+        // Percentage stats (critChance, luck): stored as decimal (0.05 = 5%)
         valueText = (value * 100).toFixed(0) + '%';
-        if (value > 1) {
-          valueColor = STAT_POSITIVE_COLOR;
-        } else if (value < 1) {
-          valueColor = STAT_NEGATIVE_COLOR;
-        } else {
-          valueColor = STAT_NEUTRAL_COLOR;
-        }
-      } else {
-        valueText = (value * 100).toFixed(0) + '%';
-        if (value > 0.05) {
+        if (value > baseline) {
           valueColor = STAT_POSITIVE_COLOR;
         } else if (value > 0) {
           valueColor = STAT_NEUTRAL_COLOR;
         } else {
           valueColor = STAT_LABEL_COLOR;
+        }
+      } else {
+        // Fixed-value stats (attack, speed, maxHealth): display as raw number
+        valueText = value.toString();
+        if (value > baseline) {
+          valueColor = STAT_POSITIVE_COLOR;
+        } else if (value < baseline) {
+          valueColor = STAT_NEGATIVE_COLOR;
+        } else {
+          valueColor = STAT_NEUTRAL_COLOR;
         }
       }
 
@@ -401,6 +405,32 @@
       }
 
       ctx.fillText(line.trim(), x, currentY);
+    }
+
+    /**
+     * Check if stat should be displayed as percentage
+     * @param {string} statId
+     * @returns {boolean}
+     */
+    _isPercentageStat(statId) {
+      var percentageStats = ['critChance', 'luck'];
+      return percentageStats.indexOf(statId) !== -1;
+    }
+
+    /**
+     * Get baseline value for stat comparison (color coding)
+     * @param {string} statId
+     * @returns {number}
+     */
+    _getStatBaseline(statId) {
+      var baselines = {
+        attack: 10,
+        speed: 100,
+        maxHealth: 100,
+        critChance: 0.05,
+        luck: 0.05
+      };
+      return baselines[statId] || 0;
     }
 
     /**
