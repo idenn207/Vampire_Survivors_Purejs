@@ -23,6 +23,7 @@
   var HEALTH_BAR_BG = 'rgba(0, 0, 0, 0.6)';
   var HEALTH_BAR_BORDER_COLOR = '#000000';
   var HEALTH_BAR_FILL_COLOR = '#E74C3C'; // Red for enemies
+  var HEALTH_BAR_ALLY_COLOR = '#44FF44'; // Green for summons/allies
 
   var HEALTH_BAR_DURATION = 3; // Seconds to show HP bar after damage
   var HEALTH_BAR_FADE_SPEED = 2;
@@ -162,8 +163,9 @@
         HEALTH_BAR_HEIGHT + HEALTH_BAR_BORDER * 2
       );
 
-      // Fill
-      ctx.fillStyle = HEALTH_BAR_FILL_COLOR;
+      // Fill - use green for allies/summons, red for enemies
+      var isAlly = entity.hasTag && (entity.hasTag('ally') || entity.hasTag('summon'));
+      ctx.fillStyle = isAlly ? HEALTH_BAR_ALLY_COLOR : HEALTH_BAR_FILL_COLOR;
       ctx.fillRect(x, y, HEALTH_BAR_WIDTH * ratio, HEALTH_BAR_HEIGHT);
 
       // Reset alpha
