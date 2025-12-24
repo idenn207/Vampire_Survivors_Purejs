@@ -90,23 +90,28 @@
     /**
      * Update skill timers
      * @param {number} deltaTime - Time since last frame
+     * @param {number} cooldownReduction - Cooldown reduction from player stats (0-0.8)
      */
-    update(deltaTime) {
+    update(deltaTime, cooldownReduction) {
+      cooldownReduction = cooldownReduction || 0;
+      // Calculate effective delta (faster cooldown with reduction)
+      var effectiveDelta = deltaTime * (1 + cooldownReduction);
+
       // Update cooldown
       if (this._cooldown > 0) {
-        this._cooldown -= deltaTime;
+        this._cooldown -= effectiveDelta;
         if (this._cooldown < 0) this._cooldown = 0;
       }
 
       // Update cast cooldown (for Rogue)
       if (this._castCooldown > 0) {
-        this._castCooldown -= deltaTime;
+        this._castCooldown -= effectiveDelta;
         if (this._castCooldown < 0) this._castCooldown = 0;
       }
 
       // Update charge regeneration (for Rogue)
       if (this._skillType === 'combo_slash' && this._charges < this._maxCharges) {
-        this._chargeRegenTimer += deltaTime;
+        this._chargeRegenTimer += effectiveDelta;
         if (this._chargeRegenTimer >= this._chargeRegenInterval) {
           this._chargeRegenTimer -= this._chargeRegenInterval;
           this._charges++;

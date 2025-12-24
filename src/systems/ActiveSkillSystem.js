@@ -16,7 +16,9 @@
   var Shield = window.VampireSurvivors.Components.Shield;
   var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
   var PlayerData = window.VampireSurvivors.Components.PlayerData;
+  var PlayerStats = window.VampireSurvivors.Components.PlayerStats;
   var ActiveSkillData = window.VampireSurvivors.Data.ActiveSkillData;
+  var GlobalStatsHelper = window.VampireSurvivors.Utils.GlobalStatsHelper;
   var Managers = window.VampireSurvivors.Managers;
 
   // ============================================
@@ -69,11 +71,15 @@
 
       var input = this._game.input;
 
-      // Update skill timers
-      activeSkill.update(deltaTime);
+      // Get cooldown reduction from player stats + ActiveBuff
+      var playerStats = this._player.getComponent(PlayerStats);
+      var activeBuff = this._player.getComponent(ActiveBuff);
+      var cooldownReduction = GlobalStatsHelper.getCooldownReductionWithBuff(playerStats, activeBuff);
+
+      // Update skill timers with cooldown reduction
+      activeSkill.update(deltaTime, cooldownReduction);
 
       // Update active buff
-      var activeBuff = this._player.getComponent(ActiveBuff);
       if (activeBuff) {
         activeBuff.update(deltaTime);
         this._processAuraBuff(deltaTime, activeBuff);
