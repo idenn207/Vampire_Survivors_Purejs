@@ -99,10 +99,20 @@
         return;
       }
 
+      // Calculate effective speed with ActiveBuff bonus (Mage's speed buff)
+      var effectiveSpeed = this._speed;
+      var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+      if (ActiveBuff) {
+        var activeBuff = this.getComponent(ActiveBuff);
+        if (activeBuff && activeBuff.moveSpeedBonus) {
+          effectiveSpeed *= (1 + activeBuff.moveSpeedBonus);
+        }
+      }
+
       // Normal movement
       var direction = input.getMovementDirection();
-      velocity.vx = direction.x * this._speed;
-      velocity.vy = direction.y * this._speed;
+      velocity.vx = direction.x * effectiveSpeed;
+      velocity.vy = direction.y * effectiveSpeed;
     }
 
     /**

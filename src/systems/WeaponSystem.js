@@ -141,9 +141,12 @@
       var weaponSlot = this._player.getComponent(WeaponSlot);
       if (!weaponSlot) return;
 
-      // Get cooldown reduction from player stats
+      // Get cooldown reduction from player stats + ActiveBuff (Mage's speed buff)
       var playerStats = this._player.getComponent(PlayerStats);
-      var cooldownReduction = playerStats ? playerStats.getStatBonus('cooldownReduction') : 0;
+      var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+      var activeBuff = ActiveBuff ? this._player.getComponent(ActiveBuff) : null;
+      var GlobalStatsHelper = window.VampireSurvivors.Utils.GlobalStatsHelper;
+      var cooldownReduction = GlobalStatsHelper.getCooldownReductionWithBuff(playerStats, activeBuff);
 
       // Update all weapon cooldowns with reduction
       weaponSlot.updateCooldowns(deltaTime, cooldownReduction);

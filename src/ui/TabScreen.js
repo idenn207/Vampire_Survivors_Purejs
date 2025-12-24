@@ -458,32 +458,63 @@
       ctx.textBaseline = 'middle';
       ctx.fillText(i18n.tsn(stat.id, stat.name) + ' Lv.' + stat.level, x + 20, centerY);
 
-      // Stat value display: base (fixed) + bonus (%) = total (fixed with 2 decimals)
+      // Stat value display: base + upgrade% + buff% = total
       // Get character fixed base value from PlayerData
       var baseValue = this._getBaseStatValue(stat.id);
-      var bonusPercent = stat.bonusPercent;
-      var finalValue = baseValue * (1 + bonusPercent / 100);
+      var upgradePercent = stat.bonusPercent; // From permanent gold upgrades
+      var buffPercent = this._getBuffBonusForStat(stat.id); // From ActiveBuff/BuffDebuff
+      var totalBonusPercent = upgradePercent + buffPercent;
+      var finalValue = baseValue * (1 + totalBonusPercent / 100);
 
       // Check if this stat should be displayed as percentage
       var isPercent = this._isPercentageStat(stat.id);
       var suffix = isPercent ? '%' : '';
 
-      // Format bonus text: no '+' for positive, '-' only for negative
-      var bonusText = bonusPercent < 0 ? '(' + bonusPercent + '%)' : '(' + bonusPercent + '%)';
-
       ctx.textAlign = 'right';
       ctx.font = '10px Arial';
 
-      if (bonusPercent === 0) {
+      var hasBuff = buffPercent !== 0;
+      var hasUpgrade = upgradePercent !== 0;
+
+      if (!hasUpgrade && !hasBuff) {
         // No bonus - show base only
         ctx.fillStyle = '#3498DB'; // Blue for base
         ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 5, centerY);
+      } else if (hasBuff) {
+        // Show base + upgrade + buff = total (compact layout)
+        var xPos = x + width - 5;
+
+        // Total (orange)
+        ctx.fillStyle = '#F39C12';
+        ctx.fillText('= ' + finalValue.toFixed(2) + suffix, xPos, centerY);
+        xPos -= 55;
+
+        // Buff bonus (green for positive, red for negative)
+        if (buffPercent !== 0) {
+          var buffText = buffPercent > 0 ? '+' + Math.round(buffPercent) + '%' : Math.round(buffPercent) + '%';
+          ctx.fillStyle = buffPercent > 0 ? '#2ECC71' : '#E74C3C'; // Green for buff, Red for debuff
+          ctx.fillText(buffText, xPos, centerY);
+          xPos -= 35;
+        }
+
+        // Upgrade bonus (purple)
+        if (upgradePercent !== 0) {
+          var upgradeText = '(' + upgradePercent + '%)';
+          ctx.fillStyle = '#9B59B6';
+          ctx.fillText(upgradeText, xPos, centerY);
+          xPos -= 40;
+        }
+
+        // Base (blue)
+        ctx.fillStyle = '#3498DB';
+        ctx.fillText(baseValue.toFixed(2) + suffix, xPos, centerY);
       } else {
-        // Show base + bonus = total
+        // Only upgrade bonus, no buff - show base + upgrade = total
         ctx.fillStyle = '#3498DB'; // Blue for base
         ctx.fillText(baseValue.toFixed(2) + suffix, x + width - 95, centerY);
-        ctx.fillStyle = '#9B59B6'; // Purple for bonus
-        ctx.fillText(bonusText, x + width - 50, centerY);
+        var upgradeText = '(' + upgradePercent + '%)';
+        ctx.fillStyle = '#9B59B6'; // Purple for upgrade
+        ctx.fillText(upgradeText, x + width - 50, centerY);
         ctx.fillStyle = '#F39C12'; // Orange for total
         ctx.fillText('= ' + finalValue.toFixed(2) + suffix, x + width - 5, centerY);
       }
@@ -537,6 +568,71 @@
         'luck'
       ];
       return percentageStats.indexOf(statId) !== -1;
+    }
+
+    /**
+     * Get buff/debuff bonus for a specific stat ID
+     * @param {string} statId - The stat identifier
+     * @returns {number} Buff bonus as percentage (positive = buff, negative = debuff)
+     */
+    _getBuffBonusForStat(statId) {
+      if (!this._player) return 0;
+
+      var buffPercent = 0;
+
+      // Get ActiveBuff component (Mage's active skill buffs)
+      var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+      if (ActiveBuff) {
+        var activeBuff = this._player.getComponent(ActiveBuff);
+        if (activeBuff && activeBuff.hasBuff) {
+          switch (statId) {
+            case 'damage':
+              buffPercent += (activeBuff.attackBonus || 0) * 100;
+              break;
+            case 'critChance':
+              buffPercent += (activeBuff.critChanceBonus || 0) * 100;
+              break;
+            case 'critDamage':
+              buffPercent += (activeBuff.critDamageBonus || 0) * 100;
+              break;
+            case 'moveSpeed':
+              buffPercent += (activeBuff.moveSpeedBonus || 0) * 100;
+              break;
+            case 'cooldownReduction':
+              buffPercent += (activeBuff.cooldownReductionBonus || 0) * 100;
+              break;
+            case 'duration':
+              buffPercent += (activeBuff.durationBonus || 0) * 100;
+              break;
+          }
+        }
+      }
+
+      // Get BuffDebuff component (general buff/debuff effects)
+      var BuffDebuff = window.VampireSurvivors.Components.BuffDebuff;
+      if (BuffDebuff) {
+        var buffDebuff = this._player.getComponent(BuffDebuff);
+        if (buffDebuff) {
+          switch (statId) {
+            case 'moveSpeed':
+              // Speed modifier is a multiplier (1.0 = normal, 0.5 = 50% slower)
+              var speedMod = buffDebuff.getSpeedModifier();
+              if (speedMod !== 1) {
+                buffPercent += (speedMod - 1) * 100;
+              }
+              break;
+            case 'damage':
+              // Damage dealt modifier from attack_boost effect
+              var damageMod = buffDebuff.getDamageDealtModifier();
+              if (damageMod !== 1) {
+                buffPercent += (damageMod - 1) * 100;
+              }
+              break;
+          }
+        }
+      }
+
+      return buffPercent;
     }
 
     _renderWeaponsSection(ctx) {

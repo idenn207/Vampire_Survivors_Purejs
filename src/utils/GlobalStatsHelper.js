@@ -108,6 +108,87 @@
   }
 
   // ============================================
+  // ActiveBuff-aware Helper Functions
+  // ============================================
+
+  /**
+   * Get damage multiplier including ActiveBuff bonus
+   * @param {PlayerStats} playerStats - Player stats component
+   * @param {ActiveBuff} activeBuff - Active buff component (optional)
+   * @returns {number} Damage multiplier
+   */
+  function getDamageMultiplierWithBuff(playerStats, activeBuff) {
+    var baseMultiplier = playerStats ? playerStats.getMultiplier('damage') : 1;
+    var buffBonus = activeBuff ? activeBuff.attackBonus : 0;
+    return baseMultiplier * (1 + buffBonus);
+  }
+
+  /**
+   * Get effective crit chance including ActiveBuff bonus
+   * @param {number} baseCritChance - Base critical hit chance (0-1)
+   * @param {PlayerStats} playerStats - Player stats component
+   * @param {ActiveBuff} activeBuff - Active buff component (optional)
+   * @returns {number} Effective crit chance
+   */
+  function getEffectiveCritChanceWithBuff(baseCritChance, playerStats, activeBuff) {
+    var baseEffective = getEffectiveCritChance(baseCritChance, playerStats);
+    var buffBonus = activeBuff ? activeBuff.critChanceBonus : 0;
+    // Cap at 100%
+    return Math.min(1, baseEffective + buffBonus);
+  }
+
+  /**
+   * Get effective crit multiplier including ActiveBuff bonus
+   * @param {number} baseCritMultiplier - Base critical damage multiplier (e.g., 2.0)
+   * @param {PlayerStats} playerStats - Player stats component
+   * @param {ActiveBuff} activeBuff - Active buff component (optional)
+   * @returns {number} Effective crit multiplier
+   */
+  function getEffectiveCritMultiplierWithBuff(baseCritMultiplier, playerStats, activeBuff) {
+    var baseEffective = getEffectiveCritMultiplier(baseCritMultiplier, playerStats);
+    var buffBonus = activeBuff ? activeBuff.critDamageBonus : 0;
+    return baseEffective + buffBonus;
+  }
+
+  /**
+   * Get cooldown reduction including ActiveBuff bonus
+   * @param {PlayerStats} playerStats - Player stats component
+   * @param {ActiveBuff} activeBuff - Active buff component (optional)
+   * @returns {number} Total cooldown reduction (0-0.8)
+   */
+  function getCooldownReductionWithBuff(playerStats, activeBuff) {
+    var baseReduction = playerStats ? playerStats.getStatBonus('cooldownReduction') : 0;
+    var buffBonus = activeBuff ? activeBuff.cooldownReductionBonus : 0;
+    // Cap reduction at 80% to prevent zero/negative cooldowns
+    return Math.min(baseReduction + buffBonus, 0.8);
+  }
+
+  /**
+   * Get effective duration including ActiveBuff bonus
+   * @param {number} baseDuration - Base effect duration
+   * @param {PlayerStats} playerStats - Player stats component
+   * @param {ActiveBuff} activeBuff - Active buff component (optional)
+   * @returns {number} Effective duration
+   */
+  function getEffectiveDurationWithBuff(baseDuration, playerStats, activeBuff) {
+    var baseMultiplier = playerStats ? playerStats.getMultiplier('duration') : 1;
+    var buffBonus = activeBuff ? activeBuff.durationBonus : 0;
+    return baseDuration * baseMultiplier * (1 + buffBonus);
+  }
+
+  /**
+   * Get movement speed multiplier including ActiveBuff bonus
+   * @param {PlayerStats} playerStats - Player stats component
+   * @param {ActiveBuff} activeBuff - Active buff component (optional)
+   * @returns {number} Speed multiplier
+   */
+  function getMoveSpeedMultiplierWithBuff(playerStats, activeBuff) {
+    var baseMultiplier = playerStats ? playerStats.getMultiplier('moveSpeed') : 1;
+    var buffBonus = activeBuff ? activeBuff.moveSpeedBonus : 0;
+    return baseMultiplier * (1 + buffBonus);
+  }
+
+  // ============================================
   // Export to Namespace
   // ============================================
   Utils.GlobalStatsHelper = {
@@ -119,5 +200,12 @@
     getEffectiveCritMultiplier: getEffectiveCritMultiplier,
     getDropLuckMultiplier: getDropLuckMultiplier,
     getSizeMultiplier: getSizeMultiplier,
+    // ActiveBuff-aware functions
+    getDamageMultiplierWithBuff: getDamageMultiplierWithBuff,
+    getEffectiveCritChanceWithBuff: getEffectiveCritChanceWithBuff,
+    getEffectiveCritMultiplierWithBuff: getEffectiveCritMultiplierWithBuff,
+    getCooldownReductionWithBuff: getCooldownReductionWithBuff,
+    getEffectiveDurationWithBuff: getEffectiveDurationWithBuff,
+    getMoveSpeedMultiplierWithBuff: getMoveSpeedMultiplierWithBuff,
   };
 })(window.VampireSurvivors.Utils);

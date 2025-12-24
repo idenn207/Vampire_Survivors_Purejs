@@ -76,6 +76,17 @@
     }
 
     /**
+     * Get active buff component (Mage's active skill buffs)
+     * @returns {ActiveBuff|null}
+     */
+    _getActiveBuff() {
+      if (!this._player) return null;
+      var ActiveBuff = window.VampireSurvivors.Components.ActiveBuff;
+      if (!ActiveBuff) return null;
+      return this._player.getComponent(ActiveBuff);
+    }
+
+    /**
      * Execute the weapon behavior (abstract - override in subclass)
      * @param {Weapon} weapon - Weapon component
      * @param {Entity} player - Player entity
@@ -359,13 +370,14 @@
     calculateDamage(weapon, critChance, critMultiplier) {
       var playerStats = this._getPlayerStats();
       var playerData = this._getPlayerData();
+      var activeBuff = this._getActiveBuff();
       var weaponDamage = weapon.damage;
 
       // Get player base attack from character selection (default 10 if no character)
       var playerBaseAttack = playerData ? playerData.baseAttack : 10;
 
-      // New formula: (Player Base Attack + Weapon Damage) × Damage Multiplier
-      var damageMultiplier = playerStats ? playerStats.getMultiplier('damage') : 1;
+      // Get damage multiplier including ActiveBuff bonus (Mage's attack buff)
+      var damageMultiplier = GlobalStatsHelper.getDamageMultiplierWithBuff(playerStats, activeBuff);
       var effectiveDamage = (playerBaseAttack + weaponDamage) * damageMultiplier;
 
       // Get crit stats from weapon if not provided as parameters
@@ -380,9 +392,9 @@
       // Add player character's passive crit damage bonus (Rogue)
       var passiveCritBonus = playerData ? playerData.getCritDamageBonus() : 0;
 
-      // Apply player crit chance and multiplier bonuses from stat upgrades
-      var effectiveCritChance = GlobalStatsHelper.getEffectiveCritChance(baseCritChance, playerStats);
-      var effectiveCritMultiplier = GlobalStatsHelper.getEffectiveCritMultiplier(baseCritMultiplier, playerStats) + passiveCritBonus;
+      // Apply player crit chance and multiplier bonuses from stat upgrades + ActiveBuff
+      var effectiveCritChance = GlobalStatsHelper.getEffectiveCritChanceWithBuff(baseCritChance, playerStats, activeBuff);
+      var effectiveCritMultiplier = GlobalStatsHelper.getEffectiveCritMultiplierWithBuff(baseCritMultiplier, playerStats, activeBuff) + passiveCritBonus;
 
       var isCrit = false;
       if (effectiveCritChance > 0 && Math.random() < effectiveCritChance) {
@@ -407,13 +419,14 @@
     }
 
     /**
-     * Get effective duration with player stats applied
+     * Get effective duration with player stats and ActiveBuff applied
      * @param {number} baseDuration - Base effect duration
      * @returns {number} Effective duration
      */
     getEffectiveDuration(baseDuration) {
       var playerStats = this._getPlayerStats();
-      return GlobalStatsHelper.getEffectiveDuration(baseDuration, playerStats);
+      var activeBuff = this._getActiveBuff();
+      return GlobalStatsHelper.getEffectiveDurationWithBuff(baseDuration, playerStats, activeBuff);
     }
 
     /**
