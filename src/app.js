@@ -244,6 +244,7 @@
       tabScreenSystem.initialize(game, entityManager);
       tabScreenSystem.setLevelUpSystem(levelUpSystem);
       tabScreenSystem.setGameOverSystem(gameOverSystem);
+      tabScreenSystem.setTechTreeSystem(techTreeSystem);
       game.addSystem(tabScreenSystem);
 
       // Create pause menu system (priority 117)

@@ -24,8 +24,9 @@
 
   var DEFAULT_EXPLOSION_RADIUS = 60;
   var DEFAULT_EXPLOSION_DAMAGE = 30;
-  var DEFAULT_FUSE_TIME = 3.0;
+  var DEFAULT_FUSE_TIME = 1.5;
   var DEFAULT_TRIGGER_RADIUS = 50;
+  var DEFAULT_AURORA_COLOR = '#FF0000';
   var PULSE_FREQUENCY_START = 2; // Pulses per second at start
   var PULSE_FREQUENCY_END = 10; // Pulses per second near explosion
 
@@ -49,16 +50,20 @@
      * @param {Object} config
      */
     onSpawn(enemy, config) {
+      var triggerRadius = config.triggerRadius || DEFAULT_TRIGGER_RADIUS;
       enemy.behaviorState = {
         state: State.APPROACHING,
         explosionRadius: config.explosionRadius || DEFAULT_EXPLOSION_RADIUS,
         explosionDamage: config.explosionDamage || DEFAULT_EXPLOSION_DAMAGE,
         fuseTime: config.fuseTime || DEFAULT_FUSE_TIME,
-        triggerRadius: config.triggerRadius || DEFAULT_TRIGGER_RADIUS,
+        triggerRadius: triggerRadius,
         fuseTimer: 0,
         pulseTime: 0,
         originalColor: config.color || '#FF6600',
         originalSize: config.size || 28,
+        // Aurora state for rendering
+        auroraColor: config.auroraColor || DEFAULT_AURORA_COLOR,
+        auroraRadius: triggerRadius, // Starts at trigger radius, expands during ignition
       };
     }
 
@@ -97,21 +102,70 @@
      */
     _updateApproaching(enemy, deltaTime) {
       var state = enemy.behaviorState;
-      var distance = this.getDistanceToPlayer(enemy);
 
       // Chase player
       this.moveTowardPlayer(enemy, enemy.speed);
 
-      // Check if close enough to prime
-      if (distance < state.triggerRadius) {
+      // Check if player or any summon is within trigger radius
+      var shouldIgnite = this._checkTriggerTargets(enemy, state.triggerRadius);
+
+      if (shouldIgnite) {
         state.state = State.PRIMED;
         state.fuseTimer = 0;
+        state.auroraRadius = 0; // Start expanding from center
         enemy.behaviorState = state;
       }
     }
 
     /**
-     * Update primed state - countdown to explosion
+     * Check if player or any summon is within trigger radius
+     * @param {Entity} enemy
+     * @param {number} triggerRadius
+     * @returns {boolean}
+     * @private
+     */
+    _checkTriggerTargets(enemy, triggerRadius) {
+      var enemyPos = this.getEnemyPosition(enemy);
+      if (!enemyPos) return false;
+
+      var triggerRadiusSq = triggerRadius * triggerRadius;
+
+      // Check player distance
+      var playerPos = this.getPlayerPosition();
+      if (playerPos) {
+        var dx = playerPos.x - enemyPos.x;
+        var dy = playerPos.y - enemyPos.y;
+        var distSq = dx * dx + dy * dy;
+        if (distSq < triggerRadiusSq) {
+          return true;
+        }
+      }
+
+      // Check summons
+      var Pool = window.VampireSurvivors.Pool;
+      if (Pool && Pool.summonPool) {
+        var activeSummons = Pool.summonPool.getActiveSummons();
+        for (var i = 0; i < activeSummons.length; i++) {
+          var summon = activeSummons[i];
+          if (!summon.isActive) continue;
+
+          var summonTransform = summon.getComponent(Transform);
+          if (!summonTransform) continue;
+
+          var dx = summonTransform.centerX - enemyPos.x;
+          var dy = summonTransform.centerY - enemyPos.y;
+          var distSq = dx * dx + dy * dy;
+          if (distSq < triggerRadiusSq) {
+            return true;
+          }
+        }
+      }
+
+      return false;
+    }
+
+    /**
+     * Update primed state - countdown to explosion (ignition)
      * @param {Entity} enemy
      * @param {number} deltaTime
      * @private
@@ -119,23 +173,28 @@
     _updatePrimed(enemy, deltaTime) {
       var state = enemy.behaviorState;
 
-      // Still chase but slower
-      this.moveTowardPlayer(enemy, enemy.speed * 0.5);
+      // STOP movement during ignition
+      this.stopMovement(enemy);
 
       // Update fuse timer
       state.fuseTimer += deltaTime;
       state.pulseTime += deltaTime;
 
+      // Calculate fuse progress (0 to 1)
+      var fuseProgress = Math.min(state.fuseTimer / state.fuseTime, 1);
+
+      // Aurora expands from 0 to explosionRadius over fuse time
+      state.auroraRadius = state.explosionRadius * fuseProgress;
+
       // Calculate pulse frequency based on remaining fuse time
-      var fuseProgress = state.fuseTimer / state.fuseTime;
       var pulseFrequency =
         PULSE_FREQUENCY_START + (PULSE_FREQUENCY_END - PULSE_FREQUENCY_START) * fuseProgress;
 
-      // Visual pulsing effect
+      // Visual pulsing effect on enemy body
       var sprite = enemy.getComponent(Sprite);
       if (sprite) {
         var pulseValue = Math.sin(state.pulseTime * pulseFrequency * Math.PI * 2);
-        // Pulse between original color and white
+        // Pulse between original color and yellow
         if (pulseValue > 0) {
           sprite.color = '#FFFF00'; // Yellow flash
         } else {
@@ -152,7 +211,7 @@
         transform.height = newSize;
       }
 
-      // Check if fuse is complete
+      // Check if fuse is complete (aurora reached explosion radius)
       if (state.fuseTimer >= state.fuseTime) {
         state.state = State.EXPLODING;
         enemy.behaviorState = state;
@@ -183,16 +242,43 @@
       var enemyPos = this.getEnemyPosition(enemy);
       if (!enemyPos) return;
 
+      var explosionRadiusSq = state.explosionRadius * state.explosionRadius;
+
       // Check if player is in explosion radius
       var playerPos = this.getPlayerPosition();
       if (playerPos) {
         var dx = playerPos.x - enemyPos.x;
         var dy = playerPos.y - enemyPos.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
+        var distSq = dx * dx + dy * dy;
 
-        if (distance < state.explosionRadius) {
+        if (distSq < explosionRadiusSq) {
           // Damage player
           this.damagePlayer(state.explosionDamage, enemy);
+        }
+      }
+
+      // Damage summons in explosion radius
+      var Pool = window.VampireSurvivors.Pool;
+      if (Pool && Pool.summonPool) {
+        var activeSummons = Pool.summonPool.getActiveSummons();
+        for (var i = 0; i < activeSummons.length; i++) {
+          var summon = activeSummons[i];
+          if (!summon.isActive) continue;
+
+          var summonTransform = summon.getComponent(Transform);
+          if (!summonTransform) continue;
+
+          var dx = summonTransform.centerX - enemyPos.x;
+          var dy = summonTransform.centerY - enemyPos.y;
+          var distSq = dx * dx + dy * dy;
+
+          if (distSq < explosionRadiusSq) {
+            // Damage the summon
+            var summonHealth = summon.getComponent(Health);
+            if (summonHealth && !summonHealth.isDead) {
+              summonHealth.takeDamage(state.explosionDamage);
+            }
+          }
         }
       }
 
@@ -204,11 +290,10 @@
         damage: state.explosionDamage,
       });
 
-      // Kill the enemy
-      var health = enemy.getComponent(Health);
-      if (health) {
-        health.die();
-      }
+      // VANISH - Direct removal without triggering drops/score
+      // Do NOT call health.die() - that emits 'entity:died' which triggers drops
+      enemy.isActive = false;
+      // EnemySystem._cleanupDeadEnemies() will handle entity removal
     }
 
     /**

@@ -27,7 +27,7 @@
   var AI_UPDATE_INTERVAL = 0.2; // seconds
 
   // Behaviors that need per-frame updates (for smooth animation)
-  var ANIMATING_BEHAVIORS = ['jump_drop'];
+  var ANIMATING_BEHAVIORS = ['jump_drop', 'self_destruct'];
 
   // ============================================
   // Class Definition
@@ -316,6 +316,107 @@
           this._entityManager.destroy(enemy);
         }
       }
+    }
+
+    // ----------------------------------------
+    // Rendering
+    // ----------------------------------------
+    /**
+     * Render self-destruct enemy aurora effects
+     * @param {CanvasRenderingContext2D} ctx
+     */
+    render(ctx) {
+      if (!this._entityManager || !this._game) return;
+
+      var camera = this._game.camera;
+      if (!camera) return;
+
+      var cameraX = camera.x;
+      var cameraY = camera.y;
+
+      var enemies = this._entityManager.getByTag('enemy');
+      if (!enemies) return;
+
+      for (var i = 0; i < enemies.length; i++) {
+        var enemy = enemies[i];
+        if (!enemy.isActive) continue;
+
+        var state = enemy.behaviorState;
+        if (!state) continue;
+
+        // Only render aurora for self_destruct enemies
+        var config = enemy.config;
+        if (!config || config.behavior !== 'self_destruct') continue;
+
+        this._renderSelfDestructAurora(ctx, enemy, state, cameraX, cameraY);
+      }
+    }
+
+    /**
+     * Render red aurora for self-destruct enemy
+     * @param {CanvasRenderingContext2D} ctx
+     * @param {Entity} enemy
+     * @param {Object} state - behaviorState
+     * @param {number} cameraX
+     * @param {number} cameraY
+     * @private
+     */
+    _renderSelfDestructAurora(ctx, enemy, state, cameraX, cameraY) {
+      var transform = enemy.getComponent(Transform);
+      if (!transform) return;
+
+      var screenX = transform.centerX - cameraX;
+      var screenY = transform.centerY - cameraY;
+
+      var radius = state.auroraRadius || state.triggerRadius;
+      if (radius <= 0) return;
+
+      var auroraColor = state.auroraColor || '#FF0000';
+
+      ctx.save();
+
+      // Parse color for gradient (assuming hex format #RRGGBB)
+      var r = parseInt(auroraColor.slice(1, 3), 16);
+      var g = parseInt(auroraColor.slice(3, 5), 16);
+      var b = parseInt(auroraColor.slice(5, 7), 16);
+
+      // Determine alpha based on state - brighter during ignition
+      var isIgnited = state.state === 'primed';
+      var baseAlpha = isIgnited ? 0.4 : 0.25;
+
+      // Pulsing effect
+      var pulse = Math.sin(Date.now() / 300) * 0.05 + 1;
+      var drawRadius = radius * pulse;
+
+      // Radial gradient for fading edge effect
+      var gradient = ctx.createRadialGradient(
+        screenX,
+        screenY,
+        0,
+        screenX,
+        screenY,
+        drawRadius
+      );
+
+      gradient.addColorStop(0, 'rgba(' + r + ',' + g + ',' + b + ', 0.0)');
+      gradient.addColorStop(0.6, 'rgba(' + r + ',' + g + ',' + b + ',' + baseAlpha * 0.3 + ')');
+      gradient.addColorStop(0.85, 'rgba(' + r + ',' + g + ',' + b + ',' + baseAlpha + ')');
+      gradient.addColorStop(1, 'rgba(' + r + ',' + g + ',' + b + ',' + baseAlpha * 0.5 + ')');
+
+      ctx.fillStyle = gradient;
+      ctx.beginPath();
+      ctx.arc(screenX, screenY, drawRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Ring border (always visible, brighter during ignition)
+      var ringAlpha = isIgnited ? 0.6 : 0.35;
+      ctx.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + ringAlpha + ')';
+      ctx.lineWidth = isIgnited ? 2 : 1;
+      ctx.beginPath();
+      ctx.arc(screenX, screenY, drawRadius, 0, Math.PI * 2);
+      ctx.stroke();
+
+      ctx.restore();
     }
 
     // ----------------------------------------

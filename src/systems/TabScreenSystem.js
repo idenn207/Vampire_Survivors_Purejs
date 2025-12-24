@@ -32,6 +32,7 @@
     // Reference to other systems to check their state
     _levelUpSystem = null;
     _gameOverSystem = null;
+    _techTreeSystem = null;
 
     // Flag to skip Tab key on the frame we were opened from another screen
     _skipNextTabKey = false;
@@ -80,6 +81,14 @@
      */
     setGameOverSystem(gameOverSystem) {
       this._gameOverSystem = gameOverSystem;
+    }
+
+    /**
+     * Set reference to TechTreeSystem for conflict prevention
+     * @param {Object} techTreeSystem
+     */
+    setTechTreeSystem(techTreeSystem) {
+      this._techTreeSystem = techTreeSystem;
     }
 
     /**
@@ -164,6 +173,11 @@
         return true;
       }
 
+      // Check TechTreeSystem
+      if (this._techTreeSystem && this._techTreeSystem.isPopupActive()) {
+        return true;
+      }
+
       return false;
     }
 
@@ -232,6 +246,7 @@
       this._player = null;
       this._levelUpSystem = null;
       this._gameOverSystem = null;
+      this._techTreeSystem = null;
       super.dispose();
     }
   }
