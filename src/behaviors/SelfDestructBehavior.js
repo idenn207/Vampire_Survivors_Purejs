@@ -51,9 +51,10 @@
      */
     onSpawn(enemy, config) {
       var triggerRadius = config.triggerRadius || DEFAULT_TRIGGER_RADIUS;
+      var explosionRadius = config.explosionRadius || DEFAULT_EXPLOSION_RADIUS;
       enemy.behaviorState = {
         state: State.APPROACHING,
-        explosionRadius: config.explosionRadius || DEFAULT_EXPLOSION_RADIUS,
+        explosionRadius: explosionRadius,
         explosionDamage: config.explosionDamage || DEFAULT_EXPLOSION_DAMAGE,
         fuseTime: config.fuseTime || DEFAULT_FUSE_TIME,
         triggerRadius: triggerRadius,
@@ -63,7 +64,7 @@
         originalSize: config.size || 28,
         // Aurora state for rendering
         auroraColor: config.auroraColor || DEFAULT_AURORA_COLOR,
-        auroraRadius: triggerRadius, // Starts at trigger radius, expands during ignition
+        auroraRadius: explosionRadius, // Always show full explosion radius
       };
     }
 
@@ -112,7 +113,7 @@
       if (shouldIgnite) {
         state.state = State.PRIMED;
         state.fuseTimer = 0;
-        state.auroraRadius = 0; // Start expanding from center
+        // auroraRadius stays at explosionRadius (always visible)
         enemy.behaviorState = state;
       }
     }
@@ -183,8 +184,7 @@
       // Calculate fuse progress (0 to 1)
       var fuseProgress = Math.min(state.fuseTimer / state.fuseTime, 1);
 
-      // Aurora expands from 0 to explosionRadius over fuse time
-      state.auroraRadius = state.explosionRadius * fuseProgress;
+      // auroraRadius stays at explosionRadius (always visible)
 
       // Calculate pulse frequency based on remaining fuse time
       var pulseFrequency =

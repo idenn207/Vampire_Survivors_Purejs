@@ -210,6 +210,7 @@
       renderSystem.initialize(game, entityManager);
       renderSystem.setCamera(camera);
       renderSystem.setActiveSkillSystem(activeSkillSystem);
+      renderSystem.setEnemySystem(enemySystem);
       game.addSystem(renderSystem);
 
       var hudSystem = new HUDSystem();

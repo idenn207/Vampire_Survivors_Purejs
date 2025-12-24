@@ -16,13 +16,13 @@
     color: '#FF6600',
     behavior: 'self_destruct',
     spawnWeight: 15,
-    startWave: 1,
+    startWave: 11,
     imageId: 'enemy_self_destruct',
     // Self-destruct specific config
-    explosionRadius: 300,
+    explosionRadius: 80,
     explosionDamage: 30,
-    fuseTime: 1.0,
-    triggerRadius: 80,
+    fuseTime: 1.5,
+    triggerRadius: 50,
     auroraColor: '#FF0000',
   };
 })(window.VampireSurvivors.Data);

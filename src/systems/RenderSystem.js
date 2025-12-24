@@ -23,6 +23,7 @@
     _priority = 100; // Render last
     _camera = null;
     _activeSkillSystem = null;
+    _enemySystem = null;
 
     // ----------------------------------------
     // Constructor
@@ -42,6 +43,10 @@
       this._activeSkillSystem = activeSkillSystem;
     }
 
+    setEnemySystem(enemySystem) {
+      this._enemySystem = enemySystem;
+    }
+
     render(ctx) {
       if (!this._entityManager) return;
 
@@ -57,6 +62,11 @@
       // Get camera offset
       var cameraX = this._camera ? this._camera.x : 0;
       var cameraY = this._camera ? this._camera.y : 0;
+
+      // Render enemy ground effects (explosion radius indicators) before entities
+      if (this._enemySystem) {
+        this._enemySystem.renderEnemyEffects(ctx, cameraX, cameraY);
+      }
 
       for (var i = 0; i < entities.length; i++) {
         var entity = entities[i];

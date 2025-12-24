@@ -322,17 +322,13 @@
     // Rendering
     // ----------------------------------------
     /**
-     * Render self-destruct enemy aurora effects
+     * Render enemy effects (called from RenderSystem before entities)
      * @param {CanvasRenderingContext2D} ctx
+     * @param {number} cameraX
+     * @param {number} cameraY
      */
-    render(ctx) {
-      if (!this._entityManager || !this._game) return;
-
-      var camera = this._game.camera;
-      if (!camera) return;
-
-      var cameraX = camera.x;
-      var cameraY = camera.y;
+    renderEnemyEffects(ctx, cameraX, cameraY) {
+      if (!this._entityManager) return;
 
       var enemies = this._entityManager.getByTag('enemy');
       if (!enemies) return;
@@ -368,7 +364,7 @@
       var screenX = transform.centerX - cameraX;
       var screenY = transform.centerY - cameraY;
 
-      var radius = state.auroraRadius || state.triggerRadius;
+      var radius = state.auroraRadius || state.explosionRadius || state.triggerRadius;
       if (radius <= 0) return;
 
       var auroraColor = state.auroraColor || '#FF0000';
