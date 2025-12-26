@@ -118,6 +118,18 @@ CollisionLayer.HITBOX = 8;   // 0b01000
 CollisionLayer.PICKUP = 16;  // 0b10000
 ```
 
+### Registry + Aggregator Pattern
+
+All data types follow a consistent pattern:
+1. **Registry file** defines `Data.<Type>Registry = {}` and constants
+2. **Individual files** add entries: `Data.<Type>Registry[id] = { ... }`
+3. **Aggregator file** merges registry into final data: `Data.<Type>Data`
+
+Examples:
+- Weapons: `WeaponRegistry` → `WeaponAggregator.js` → `Data.WeaponData`
+- Enemies: `EnemyRegistry` → `EnemyAggregator.js` → `Data.EnemyData`
+- Tech Cores: `TechCoreRegistry` → `TechCoreAggregator.js` → `Data.TechCoreData`
+
 ### Script Loading Order (index.html)
 
 10 phases in strict dependency order. When adding new files:
@@ -137,6 +149,30 @@ CollisionLayer.PICKUP = 16;  // 0b10000
 1. Create enemy file in `src/data/enemies/`
 2. Register to `Data.EnemyRegistry[enemyId] = { ... }`
 3. Add `<script>` tag before EnemyAggregator.js
+
+### Adding New Bosses
+
+1. Create boss file in `src/data/bosses/`
+2. Register to `Data.BossRegistry[bossId] = { ... }` with phases and attacks
+3. Add `<script>` tag before BossAggregator.js
+
+### Adding New Summons
+
+1. Create summon file in `src/data/summons/`
+2. Register to `Data.SummonRegistry[summonId] = { ... }`
+3. Add `<script>` tag before SummonAggregator.js
+
+### Adding New Buff/Debuffs
+
+1. Create effect file in `src/data/buffdebuff/effects/buffs/` or `effects/debuffs/`
+2. Register to `Data.BuffDebuffRegistry[effectId] = { ... }`
+3. Add `<script>` tag before BuffDebuffAggregator.js
+
+### Adding New Tech Cores
+
+1. Create core file in `src/data/techcores/`
+2. Register to `Data.TechCoreRegistry[coreId] = { ... }` with tree structure
+3. Add `<script>` tag before TechCoreAggregator.js
 
 ## Code Conventions
 
@@ -197,15 +233,33 @@ events.emit('player:damaged', { amount: 10 });
 
 ## Key Files
 
+**Core:**
 - `src/app.js` - Entry point, wires systems and creates player
 - `src/core/Game.js` - Game loop, state management
 - `src/managers/EntityManager.js` - Entity creation/querying
 - `src/entities/Entity.js` - Base entity class with component/tag system
+
+**Data Aggregators:**
 - `src/data/weapons/WeaponAggregator.js` - Merges all weapon files into WeaponData
+- `src/data/weapons/core/CoreWeaponAggregator.js` - Merges core weapons
+- `src/data/weapons/core/EvolvedAggregator.js` - Merges evolved weapons
 - `src/data/techcores/TechCoreAggregator.js` - Merges all tech core files
+- `src/data/enemies/EnemyAggregator.js` - Merges enemy types
+- `src/data/bosses/BossAggregator.js` - Merges boss definitions
+- `src/data/summons/SummonAggregator.js` - Merges summon types
+- `src/data/buffdebuff/BuffDebuffAggregator.js` - Merges buff/debuff effects
+
+**Game Config:**
 - `src/data/WeaponTierData.js` - Tier multipliers and evolution recipes
 - `src/data/WaveData.js` - Enemy wave configurations
+- `src/data/CharacterData.js` - Playable character definitions
+- `src/data/ActiveSkillData.js` - Character active skills
+
+**Combat:**
 - `src/systems/WeaponSystem.js` - Weapon firing orchestration
+- `src/systems/combat/CombatSystem.js` - Damage dealing and effects
+- `src/systems/combat/DamageProcessor.js` - Damage calculation
+- `src/systems/levelup/LevelUpSystem.js` - Level-up logic and upgrades
 
 ## Project Versions
 
