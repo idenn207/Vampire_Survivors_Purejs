@@ -9,9 +9,9 @@
   // XP Tier Thresholds
   // ============================================
   var XP_TIERS = {
-    TIER_1: { min: 1, max: 9 },      // Small green
-    TIER_2: { min: 10, max: 49 },    // Medium blue
-    TIER_3: { min: 50, max: 199 },   // Large purple
+    TIER_1: { min: 1, max: 9 }, // Small green
+    TIER_2: { min: 10, max: 49 }, // Medium blue
+    TIER_3: { min: 50, max: 199 }, // Large purple
     TIER_4: { min: 200, max: 9999 }, // Extra large gold (boss/elite only)
   };
 
@@ -22,7 +22,7 @@
     // XP Tier 1: Small green gems (1-9 XP, from normal enemies)
     exp_tier1: {
       color: '#2ECC71', // Green
-      size: 6,
+      size: 30,
       magnetRadius: 80,
       magnetSpeed: 200,
       imageId: 'pickup_exp_tier1',
@@ -30,7 +30,7 @@
     // XP Tier 2: Medium blue gems (10-49 XP)
     exp_tier2: {
       color: '#3498DB', // Blue
-      size: 10,
+      size: 30,
       magnetRadius: 100,
       magnetSpeed: 250,
       imageId: 'pickup_exp_tier2',
@@ -38,7 +38,7 @@
     // XP Tier 3: Large purple gems (50-199 XP)
     exp_tier3: {
       color: '#9B59B6', // Purple
-      size: 14,
+      size: 30,
       magnetRadius: 120,
       magnetSpeed: 300,
       imageId: 'pickup_exp_tier3',
@@ -46,7 +46,7 @@
     // XP Tier 4: Extra large gold gems (200+ XP, from bosses/elites)
     exp_tier4: {
       color: '#F1C40F', // Gold
-      size: 20,
+      size: 30,
       magnetRadius: 150,
       magnetSpeed: 350,
       imageId: 'pickup_exp_tier4',
@@ -54,28 +54,28 @@
     // Legacy exp config (fallback)
     exp: {
       color: '#2ECC71', // Green
-      size: 8,
+      size: 30,
       magnetRadius: 100,
       magnetSpeed: 250,
       imageId: 'pickup_exp_tier1',
     },
     gold: {
       color: '#FFA500', // Orange
-      size: 10,
+      size: 15,
       magnetRadius: 80,
       magnetSpeed: 200,
       imageId: 'pickup_gold',
     },
     health: {
       color: '#FF0066', // Pink-Red
-      size: 12,
+      size: 30,
       magnetRadius: 60,
       magnetSpeed: 180,
       imageId: 'pickup_health',
     },
     magnet: {
       color: '#FF00FF', // Magenta
-      size: 16,
+      size: 40,
       magnetRadius: 100,
       magnetSpeed: 300,
       duration: 10, // Seconds the effect lasts
