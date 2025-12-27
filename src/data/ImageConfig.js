@@ -551,14 +551,25 @@
   // Sprite Sheets
   // ============================================
   var SPRITE_SHEETS = {
-    // Example sprite sheet definition (can be used later)
-    // ui_icons: {
-    //   path: 'ui/icons_sheet.png',
-    //   frames: [
-    //     { id: 'icon_damage', x: 0, y: 0, width: 32, height: 32 },
-    //     { id: 'icon_speed', x: 32, y: 0, width: 32, height: 32 },
-    //   ]
-    // }
+    // Background tile spritesheets
+    background_forest: {
+      path: 'backgrounds/forest_tiles.png',
+      frames: [
+        { id: 'tile_0', x: 0 + 10, y: 10, width: 32, height: 32 },
+        { id: 'tile_1', x: 32 + 30, y: 10, width: 32, height: 32 },
+        { id: 'tile_2', x: 64 + 50, y: 10, width: 32, height: 32 },
+        { id: 'tile_3', x: 96 + 70, y: 10, width: 32, height: 32 },
+        { id: 'tile_4', x: 128 + 90, y: 10, width: 32, height: 32 },
+        { id: 'tile_5', x: 160 + 110, y: 10, width: 32, height: 32 },
+        { id: 'tile_6', x: 192 + 130, y: 10, width: 32, height: 32 },
+        { id: 'tile_7', x: 224 + 150, y: 10, width: 32, height: 32 },
+        { id: 'tile_8', x: 256 + 170, y: 10, width: 32, height: 32 },
+        { id: 'tile_9', x: 288 + 190, y: 10, width: 32, height: 32 },
+        { id: 'tile_10', x: 320 + 210, y: 10, width: 32, height: 32 },
+        { id: 'tile_11', x: 352 + 230, y: 10, width: 32, height: 32 },
+        { id: 'tile_12', x: 384 + 250, y: 10, width: 32, height: 32 },
+      ],
+    },
   };
 
   // ============================================

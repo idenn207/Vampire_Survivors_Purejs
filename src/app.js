@@ -120,6 +120,12 @@
       var backgroundSystem = new BackgroundSystem();
       backgroundSystem.initialize(game, entityManager);
       backgroundSystem.setCamera(camera);
+      // Set forest background tiles (falls back to grid if spritesheet not loaded)
+      backgroundSystem.setTileSpriteSheet('background_forest', [
+        'tile_0', 'tile_1', 'tile_2', 'tile_3',
+        'tile_4', 'tile_5', 'tile_6', 'tile_7',
+        'tile_8', 'tile_9', 'tile_10', 'tile_11', 'tile_12'
+      ]);
       game.addSystem(backgroundSystem);
 
       var waveSystem = new WaveSystem();
