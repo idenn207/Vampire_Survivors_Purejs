@@ -241,26 +241,16 @@
       game.addSystem(techTreeSystem);
 
       // Create tab screen system (priority 116)
+      // Uses Unity-style event decoupling - no direct system references needed
       var tabScreenSystem = new TabScreenSystem();
       tabScreenSystem.initialize(game, entityManager);
-      tabScreenSystem.setLevelUpSystem(levelUpSystem);
-      tabScreenSystem.setGameOverSystem(gameOverSystem);
-      tabScreenSystem.setTechTreeSystem(techTreeSystem);
       game.addSystem(tabScreenSystem);
 
       // Create pause menu system (priority 117)
+      // Uses Unity-style event decoupling - no direct system references needed
       var pauseMenuSystem = new PauseMenuSystem();
       pauseMenuSystem.initialize(game, entityManager);
-      pauseMenuSystem.setLevelUpSystem(levelUpSystem);
-      pauseMenuSystem.setGameOverSystem(gameOverSystem);
-      pauseMenuSystem.setTabScreenSystem(tabScreenSystem);
-      pauseMenuSystem.setTechTreeSystem(techTreeSystem);
-      pauseMenuSystem.setCoreSelectionSystem(coreSelectionSystem);
       game.addSystem(pauseMenuSystem);
-
-      // Wire LevelUpSystem with screen systems for Tab/ESC transitions
-      levelUpSystem.setTabScreenSystem(tabScreenSystem);
-      levelUpSystem.setPauseMenuSystem(pauseMenuSystem);
 
       // Store selected character ID for player setup
       var selectedCharacterId = null;
@@ -322,7 +312,7 @@
         hudSystem.setPlayer(player);
         hudSystem.setCamera(camera);
         hudSystem.setInput(game.input);
-        hudSystem.setWaveSystem(waveSystem);
+        // WaveSystem info comes via events (wave:announcing, wave:started)
         hudSystem.setTraversalSystem(traversalEnemySystem);
         bossSystem.setHUDSystem(hudSystem);
         weaponSystem.setCamera(camera);

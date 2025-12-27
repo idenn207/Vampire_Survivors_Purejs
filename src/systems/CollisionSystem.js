@@ -23,11 +23,16 @@
     _priority = 20; // After MovementSystem (10), before CameraSystem (50)
     _collisions = [];
 
+    // Unity-style: Callback registry for push-based collision handling
+    // Map key format: "tagA:tagB" (alphabetically sorted)
+    _collisionCallbacks = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
     constructor() {
       super();
+      this._collisionCallbacks = new Map();
     }
 
     // ----------------------------------------
@@ -66,11 +71,97 @@
 
             this._collisions.push(collision);
 
-            // Emit collision event
+            // Emit collision event (legacy)
             events.emit('collision:detected', collision);
+
+            // Unity-style: Invoke registered callbacks
+            this._invokeCallbacks(collision);
           }
         }
       }
+    }
+
+    // ----------------------------------------
+    // Unity-style Callback Registration
+    // ----------------------------------------
+    /**
+     * Register a callback for collisions between entities with specific tags
+     * @param {string} tagA - First entity tag
+     * @param {string} tagB - Second entity tag
+     * @param {Function} callback - Function(entityA, entityB, collision)
+     */
+    registerCollisionCallback(tagA, tagB, callback) {
+      var key = this._makeCallbackKey(tagA, tagB);
+      if (!this._collisionCallbacks.has(key)) {
+        this._collisionCallbacks.set(key, []);
+      }
+      this._collisionCallbacks.get(key).push({
+        tagA: tagA,
+        tagB: tagB,
+        callback: callback,
+      });
+    }
+
+    /**
+     * Unregister a collision callback
+     * @param {string} tagA
+     * @param {string} tagB
+     * @param {Function} callback
+     */
+    unregisterCollisionCallback(tagA, tagB, callback) {
+      var key = this._makeCallbackKey(tagA, tagB);
+      var callbacks = this._collisionCallbacks.get(key);
+      if (callbacks) {
+        for (var i = callbacks.length - 1; i >= 0; i--) {
+          if (callbacks[i].callback === callback) {
+            callbacks.splice(i, 1);
+          }
+        }
+        if (callbacks.length === 0) {
+          this._collisionCallbacks.delete(key);
+        }
+      }
+    }
+
+    /**
+     * Create a consistent key for tag pairs (alphabetically sorted)
+     * @param {string} tagA
+     * @param {string} tagB
+     * @returns {string}
+     */
+    _makeCallbackKey(tagA, tagB) {
+      return tagA < tagB ? tagA + ':' + tagB : tagB + ':' + tagA;
+    }
+
+    /**
+     * Invoke callbacks for a collision
+     * @param {Object} collision
+     */
+    _invokeCallbacks(collision) {
+      var entityA = collision.entityA;
+      var entityB = collision.entityB;
+
+      // Check all registered tag pairs
+      this._collisionCallbacks.forEach(function (callbacks, key) {
+        for (var i = 0; i < callbacks.length; i++) {
+          var entry = callbacks[i];
+          var tagA = entry.tagA;
+          var tagB = entry.tagB;
+
+          // Check if entities match the tag pair (in either order)
+          if (entityA.hasTag(tagA) && entityB.hasTag(tagB)) {
+            entry.callback(entityA, entityB, collision);
+          } else if (entityA.hasTag(tagB) && entityB.hasTag(tagA)) {
+            // Swap order to match expected tagA, tagB
+            entry.callback(entityB, entityA, {
+              entityA: entityB,
+              entityB: entityA,
+              colliderA: collision.colliderB,
+              colliderB: collision.colliderA,
+            });
+          }
+        }
+      });
     }
 
     /**
@@ -158,6 +249,10 @@
     // ----------------------------------------
     dispose() {
       this._collisions = [];
+      if (this._collisionCallbacks) {
+        this._collisionCallbacks.clear();
+        this._collisionCallbacks = null;
+      }
       super.dispose();
     }
   }

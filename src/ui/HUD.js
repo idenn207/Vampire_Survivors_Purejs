@@ -50,8 +50,7 @@
     _camera = null;
     _killCount = 0;
 
-    // Wave system reference
-    _waveSystem = null;
+    // Wave tracking (via events, no direct reference needed)
     _currentWave = 1;
 
     // UI Components
@@ -133,10 +132,6 @@
       this._playerOverhead.setCamera(camera);
       this._entityHealthBars.setCamera(camera);
       this._damageNumbers.setCamera(camera);
-    }
-
-    setWaveSystem(waveSystem) {
-      this._waveSystem = waveSystem;
     }
 
     incrementKillCount() {
@@ -358,7 +353,6 @@
       this._player = null;
       this._game = null;
       this._camera = null;
-      this._waveSystem = null;
       this._boundOnWaveAnnouncing = null;
       this._boundOnWaveStarted = null;
     }

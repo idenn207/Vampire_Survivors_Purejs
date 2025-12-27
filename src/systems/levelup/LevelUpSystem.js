@@ -56,9 +56,13 @@
     _tabKeyWasPressed = false;
     _escKeyWasPressed = false;
 
-    // References to other screen systems
-    _tabScreenSystem = null;
-    _pauseMenuSystem = null;
+    // Track active screens via events (Unity-style decoupling)
+    _activeScreens = null;
+
+    // Bound event handlers for screen state tracking
+    _boundOnScreenOpened = null;
+    _boundOnScreenClosed = null;
+    _boundOnScreenRequestResume = null;
 
     // Suspended state (when Tab/ESC opens another screen)
     _isSuspended = false;
@@ -76,6 +80,12 @@
       this._boundOnLevelUp = this._onLevelUp.bind(this);
       this._boundOnGameStart = this._onGameStart.bind(this);
       this._boundOnWaveStarted = this._onWaveStarted.bind(this);
+
+      // Screen state event handlers (Unity-style decoupling)
+      this._activeScreens = new Set();
+      this._boundOnScreenOpened = this._onScreenOpened.bind(this);
+      this._boundOnScreenClosed = this._onScreenClosed.bind(this);
+      this._boundOnScreenRequestResume = this._onScreenRequestResume.bind(this);
     }
 
     // ----------------------------------------
@@ -87,6 +97,11 @@
       events.on('player:level_up', this._boundOnLevelUp);
       events.on('game:start', this._boundOnGameStart);
       events.on('wave:started', this._boundOnWaveStarted);
+
+      // Subscribe to screen state events (Unity-style decoupling)
+      events.on('screen:opened', this._boundOnScreenOpened);
+      events.on('screen:closed', this._boundOnScreenClosed);
+      events.on('screen:requestResume', this._boundOnScreenRequestResume);
     }
 
     /**
@@ -120,20 +135,37 @@
       this._player = player;
     }
 
+    // ----------------------------------------
+    // Screen State Event Handlers (Unity-style decoupling)
+    // ----------------------------------------
     /**
-     * Set reference to TabScreenSystem
-     * @param {Object} tabScreenSystem
+     * Handle screen opened event - track which screens are active
+     * @param {Object} data - { screen: string }
      */
-    setTabScreenSystem(tabScreenSystem) {
-      this._tabScreenSystem = tabScreenSystem;
+    _onScreenOpened(data) {
+      if (data && data.screen && data.screen !== 'levelup') {
+        this._activeScreens.add(data.screen);
+      }
     }
 
     /**
-     * Set reference to PauseMenuSystem
-     * @param {Object} pauseMenuSystem
+     * Handle screen closed event
+     * @param {Object} data - { screen: string }
      */
-    setPauseMenuSystem(pauseMenuSystem) {
-      this._pauseMenuSystem = pauseMenuSystem;
+    _onScreenClosed(data) {
+      if (data && data.screen) {
+        this._activeScreens.delete(data.screen);
+      }
+    }
+
+    /**
+     * Handle request to resume from suspended state
+     * @param {Object} data - { screen: string }
+     */
+    _onScreenRequestResume(data) {
+      if (data && data.screen === 'levelup') {
+        this.resumeFromSuspend();
+      }
     }
 
     update(deltaTime) {
@@ -187,11 +219,11 @@
       this._isSuspended = true;
       // Keep _isActive = true so we know to resume
 
-      // Open Tab screen (game stays paused)
-      // Pass true to skip Tab key on same frame
-      if (this._tabScreenSystem) {
-        this._tabScreenSystem._openScreen(true);
-      }
+      // Emit suspended event so other systems know we're waiting to resume
+      events.emitSync('screen:suspended', { screen: 'levelup' });
+
+      // Request Tab screen to open via event (Unity-style decoupling)
+      events.emitSync('screen:requestOpen', { screen: 'tabscreen', skipKey: true });
     }
 
     /**
@@ -205,11 +237,11 @@
       this._isSuspended = true;
       // Keep _isActive = true so we know to resume
 
-      // Open Pause Menu (game stays paused)
-      // Pass true to skip ESC key on same frame
-      if (this._pauseMenuSystem) {
-        this._pauseMenuSystem._openScreen(true);
-      }
+      // Emit suspended event so other systems know we're waiting to resume
+      events.emitSync('screen:suspended', { screen: 'levelup' });
+
+      // Request Pause Menu to open via event (Unity-style decoupling)
+      events.emitSync('screen:requestOpen', { screen: 'pausemenu', skipKey: true });
     }
 
     render(ctx) {
@@ -236,6 +268,9 @@
       this._game.pause();
       this._isActive = true;
       this._isSuspended = false;
+
+      // Emit screen:opened event (Unity-style decoupling)
+      events.emitSync('screen:opened', { screen: 'levelup' });
 
       // Reset evolution state
       this._evolutionState = EvolutionState.NORMAL;
@@ -472,6 +507,8 @@
 
       this._pendingLevelUps--;
 
+      // Emit screen:closed event (Unity-style decoupling)
+      events.emitSync('screen:closed', { screen: 'levelup' });
       events.emitSync('levelup:screen_closed', {});
 
       if (this._pendingLevelUps > 0) {
@@ -535,6 +572,11 @@
       events.off('game:start', this._boundOnGameStart);
       events.off('wave:started', this._boundOnWaveStarted);
 
+      // Unsubscribe from screen state events
+      events.off('screen:opened', this._boundOnScreenOpened);
+      events.off('screen:closed', this._boundOnScreenClosed);
+      events.off('screen:requestResume', this._boundOnScreenRequestResume);
+
       if (this._screen) {
         this._screen.dispose();
         this._screen = null;
@@ -549,6 +591,10 @@
       this._boundOnLevelUp = null;
       this._boundOnGameStart = null;
       this._boundOnWaveStarted = null;
+      this._boundOnScreenOpened = null;
+      this._boundOnScreenClosed = null;
+      this._boundOnScreenRequestResume = null;
+      this._activeScreens = null;
       this._evolutionEligibility = null;
 
       super.dispose();

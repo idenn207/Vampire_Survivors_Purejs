@@ -98,12 +98,6 @@
       }
     }
 
-    setWaveSystem(waveSystem) {
-      if (this._hud) {
-        this._hud.setWaveSystem(waveSystem);
-      }
-    }
-
     setTraversalSystem(traversalSystem) {
       this._traversalSystem = traversalSystem;
     }

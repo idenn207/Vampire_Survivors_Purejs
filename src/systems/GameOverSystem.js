@@ -100,6 +100,9 @@
       this._game.gameOver();
       this._isActive = true;
 
+      // Emit screen:opened event (Unity-style decoupling)
+      events.emitSync('screen:opened', { screen: 'gameover' });
+
       // Show the game over screen
       this._screen.show(this._finalStats, this._game.width, this._game.height);
     }
@@ -142,6 +145,9 @@
       this._screen.hide();
       this._isActive = false;
       this._finalStats = null;
+
+      // Emit screen:closed event (Unity-style decoupling)
+      events.emitSync('screen:closed', { screen: 'gameover' });
 
       // Emit restart event for app.js to handle
       events.emitSync('game:restart', {});

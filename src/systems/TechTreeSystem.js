@@ -189,6 +189,9 @@
       this._isPopupActive = true;
       this._pendingUnlockChoices = choices;
 
+      // Emit screen:opened event (Unity-style decoupling)
+      events.emitSync('screen:opened', { screen: 'techtree' });
+
       this._techUnlockPopup.show(
         this._player,
         choices,
@@ -252,6 +255,10 @@
       this._techUnlockPopup.hide();
       this._isPopupActive = false;
       this._pendingUnlockChoices = [];
+
+      // Emit screen:closed event (Unity-style decoupling)
+      events.emitSync('screen:closed', { screen: 'techtree' });
+
       this._game.resume();
     }
 

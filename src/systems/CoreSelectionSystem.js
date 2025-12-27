@@ -70,6 +70,10 @@
 
       // Pause game and show screen
       this._game.pause();
+
+      // Emit screen:opened event (Unity-style decoupling)
+      events.emitSync('screen:opened', { screen: 'coreselection' });
+
       this._screen.show(this._availableCores, this._game.width, this._game.height);
 
       console.log('[CoreSelectionSystem] Selection started with ' + this._availableCores.length + ' cores');
@@ -163,6 +167,9 @@
       this._selectedCore = coreId;
       this._screen.hide();
       this._isActive = false;
+
+      // Emit screen:closed event (Unity-style decoupling)
+      events.emitSync('screen:closed', { screen: 'coreselection' });
 
       var coreData = TechCoreData.getCoreData(coreId);
       console.log('[CoreSelectionSystem] Selected core: ' + (coreData ? coreData.name : coreId));

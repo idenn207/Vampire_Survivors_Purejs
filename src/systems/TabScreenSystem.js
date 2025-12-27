@@ -29,10 +29,17 @@
     _player = null;
     _isActive = false;
 
-    // Reference to other systems to check their state
-    _levelUpSystem = null;
-    _gameOverSystem = null;
-    _techTreeSystem = null;
+    // Track active screens via events (Unity-style decoupling)
+    _activeScreens = null;
+    _suspendedScreens = null;
+    _gameState = 'running';
+
+    // Bound event handlers for screen state tracking
+    _boundOnScreenOpened = null;
+    _boundOnScreenClosed = null;
+    _boundOnScreenSuspended = null;
+    _boundOnScreenRequestOpen = null;
+    _boundOnGameStateChanged = null;
 
     // Flag to skip Tab key on the frame we were opened from another screen
     _skipNextTabKey = false;
@@ -45,6 +52,15 @@
       this._priority = PRIORITY;
       this._updatesDuringPause = true;
       this._screen = new TabScreen();
+
+      // Screen state event handlers (Unity-style decoupling)
+      this._activeScreens = new Set();
+      this._suspendedScreens = new Set();
+      this._boundOnScreenOpened = this._onScreenOpened.bind(this);
+      this._boundOnScreenClosed = this._onScreenClosed.bind(this);
+      this._boundOnScreenSuspended = this._onScreenSuspended.bind(this);
+      this._boundOnScreenRequestOpen = this._onScreenRequestOpen.bind(this);
+      this._boundOnGameStateChanged = this._onGameStateChanged.bind(this);
     }
 
     // ----------------------------------------
@@ -57,6 +73,13 @@
      */
     initialize(game, entityManager) {
       super.initialize(game, entityManager);
+
+      // Subscribe to screen state events (Unity-style decoupling)
+      events.on('screen:opened', this._boundOnScreenOpened);
+      events.on('screen:closed', this._boundOnScreenClosed);
+      events.on('screen:suspended', this._boundOnScreenSuspended);
+      events.on('screen:requestOpen', this._boundOnScreenRequestOpen);
+      events.on('game:stateChanged', this._boundOnGameStateChanged);
     }
 
     /**
@@ -67,28 +90,60 @@
       this._player = player;
     }
 
+    // ----------------------------------------
+    // Screen State Event Handlers (Unity-style decoupling)
+    // ----------------------------------------
     /**
-     * Set reference to LevelUpSystem for conflict prevention
-     * @param {Object} levelUpSystem
+     * Handle screen opened event - track which screens are active
+     * @param {Object} data - { screen: string }
      */
-    setLevelUpSystem(levelUpSystem) {
-      this._levelUpSystem = levelUpSystem;
+    _onScreenOpened(data) {
+      if (data && data.screen && data.screen !== 'tabscreen') {
+        this._activeScreens.add(data.screen);
+        // If a screen opens, it's no longer suspended
+        this._suspendedScreens.delete(data.screen);
+      }
     }
 
     /**
-     * Set reference to GameOverSystem for conflict prevention
-     * @param {Object} gameOverSystem
+     * Handle screen closed event
+     * @param {Object} data - { screen: string }
      */
-    setGameOverSystem(gameOverSystem) {
-      this._gameOverSystem = gameOverSystem;
+    _onScreenClosed(data) {
+      if (data && data.screen) {
+        this._activeScreens.delete(data.screen);
+        this._suspendedScreens.delete(data.screen);
+      }
     }
 
     /**
-     * Set reference to TechTreeSystem for conflict prevention
-     * @param {Object} techTreeSystem
+     * Handle screen suspended event
+     * @param {Object} data - { screen: string }
      */
-    setTechTreeSystem(techTreeSystem) {
-      this._techTreeSystem = techTreeSystem;
+    _onScreenSuspended(data) {
+      if (data && data.screen) {
+        this._suspendedScreens.add(data.screen);
+      }
+    }
+
+    /**
+     * Handle request to open this screen
+     * @param {Object} data - { screen: string, skipKey: boolean }
+     */
+    _onScreenRequestOpen(data) {
+      if (data && data.screen === 'tabscreen') {
+        this._openScreen(data.skipKey);
+      }
+    }
+
+    /**
+     * Handle game state change event
+     * @param {Object} data - { state: string }
+     */
+    _onGameStateChanged(data) {
+      if (data && data.state) {
+        this._gameState = data.state;
+      }
     }
 
     /**
@@ -154,27 +209,18 @@
     }
 
     /**
-     * Check if another modal screen is active
+     * Check if another modal screen is active (Unity-style - uses event tracking)
      * @returns {boolean}
      */
     _isAnotherScreenActive() {
-      // Check LevelUpSystem
-      if (this._levelUpSystem && this._levelUpSystem._isActive) {
+      // Check tracked active screens (populated via screen:opened events)
+      if (this._activeScreens.size > 0) {
         return true;
       }
 
-      // Check GameOverSystem
-      if (this._gameOverSystem && this._gameOverSystem._isActive) {
-        return true;
-      }
-
-      // Check game state
-      if (this._game._state === 'game_over') {
-        return true;
-      }
-
-      // Check TechTreeSystem
-      if (this._techTreeSystem && this._techTreeSystem.isPopupActive()) {
+      // Check game state (populated via game:stateChanged events)
+      // Fall back to direct check if game state events not yet implemented
+      if (this._gameState === 'game_over' || this._game._state === 'game_over') {
         return true;
       }
 
@@ -202,6 +248,8 @@
         this._game.height
       );
 
+      // Emit screen:opened event (Unity-style decoupling)
+      events.emitSync('screen:opened', { screen: 'tabscreen' });
       events.emit('tabscreen:opened', {});
     }
 
@@ -212,9 +260,12 @@
       this._screen.hide();
       this._isActive = false;
 
-      // Check if level-up screen was suspended - if so, resume it
-      if (this._levelUpSystem && this._levelUpSystem.isSuspended) {
-        this._levelUpSystem.resumeFromSuspend();
+      // Emit screen:closed event (Unity-style decoupling)
+      events.emitSync('screen:closed', { screen: 'tabscreen' });
+
+      // Check if level-up screen was suspended - if so, request resume via event
+      if (this._suspendedScreens.has('levelup')) {
+        events.emitSync('screen:requestResume', { screen: 'levelup' });
       } else if (!this._isAnotherScreenActive()) {
         // Only resume game if no other screen is active
         this._game.resume();
@@ -239,14 +290,25 @@
     // Lifecycle
     // ----------------------------------------
     dispose() {
+      // Unsubscribe from screen state events
+      events.off('screen:opened', this._boundOnScreenOpened);
+      events.off('screen:closed', this._boundOnScreenClosed);
+      events.off('screen:suspended', this._boundOnScreenSuspended);
+      events.off('screen:requestOpen', this._boundOnScreenRequestOpen);
+      events.off('game:stateChanged', this._boundOnGameStateChanged);
+
       if (this._screen) {
         this._screen.dispose();
         this._screen = null;
       }
       this._player = null;
-      this._levelUpSystem = null;
-      this._gameOverSystem = null;
-      this._techTreeSystem = null;
+      this._activeScreens = null;
+      this._suspendedScreens = null;
+      this._boundOnScreenOpened = null;
+      this._boundOnScreenClosed = null;
+      this._boundOnScreenSuspended = null;
+      this._boundOnScreenRequestOpen = null;
+      this._boundOnGameStateChanged = null;
       super.dispose();
     }
   }

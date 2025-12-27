@@ -52,6 +52,10 @@
 
     _boundLoop = null;
 
+    // Bound event handlers for Unity-style request/response pattern
+    _boundOnRequestPause = null;
+    _boundOnRequestResume = null;
+
     // ----------------------------------------
     // Constructor
     // ----------------------------------------
@@ -59,6 +63,12 @@
       this._time = new Time();
       this._input = new Input();
       this._boundLoop = this._loop.bind(this);
+
+      // Unity-style: Listen for pause/resume requests instead of direct calls
+      this._boundOnRequestPause = this._onRequestPause.bind(this);
+      this._boundOnRequestResume = this._onRequestResume.bind(this);
+      events.on('game:requestPause', this._boundOnRequestPause);
+      events.on('game:requestResume', this._boundOnRequestResume);
     }
 
     // ----------------------------------------
@@ -119,6 +129,7 @@
       this._elapsedTime = 0;
 
       await events.emit('game:started', { game: this });
+      events.emitSync('game:stateChanged', { state: GameState.RUNNING, previousState: GameState.INITIALIZING });
 
       this._rafId = requestAnimationFrame(this._boundLoop);
 
@@ -128,22 +139,27 @@
     pause() {
       if (this._state !== GameState.RUNNING) return;
 
+      var previousState = this._state;
       this._state = GameState.PAUSED;
       this._time.pause();
 
       events.emitSync('game:paused', { game: this });
+      events.emitSync('game:stateChanged', { state: GameState.PAUSED, previousState: previousState });
     }
 
     resume() {
       if (this._state !== GameState.PAUSED) return;
 
+      var previousState = this._state;
       this._state = GameState.RUNNING;
       this._time.resume();
 
       events.emitSync('game:resumed', { game: this });
+      events.emitSync('game:stateChanged', { state: GameState.RUNNING, previousState: previousState });
     }
 
     stop() {
+      var previousState = this._state;
       this._isRunning = false;
 
       if (this._rafId) {
@@ -152,13 +168,16 @@
       }
 
       events.emitSync('game:stopped', { game: this });
+      events.emitSync('game:stateChanged', { state: 'stopped', previousState: previousState });
     }
 
     gameOver() {
+      var previousState = this._state;
       this._state = GameState.GAME_OVER;
       this._time.pause();
 
       events.emitSync('game:over', { game: this });
+      events.emitSync('game:stateChanged', { state: GameState.GAME_OVER, previousState: previousState });
     }
 
     addSystem(system) {
@@ -232,6 +251,25 @@
     }
 
     // ----------------------------------------
+    // Unity-style Request Handlers
+    // ----------------------------------------
+    /**
+     * Handle pause request event
+     * @param {Object} data - { requester: string }
+     */
+    _onRequestPause(data) {
+      this.pause();
+    }
+
+    /**
+     * Handle resume request event
+     * @param {Object} data - { requester: string }
+     */
+    _onRequestResume(data) {
+      this.resume();
+    }
+
+    // ----------------------------------------
     // Getters / Setters
     // ----------------------------------------
     get canvas() {
@@ -297,6 +335,12 @@
     // ----------------------------------------
     dispose() {
       this.stop();
+
+      // Unsubscribe from request events
+      events.off('game:requestPause', this._boundOnRequestPause);
+      events.off('game:requestResume', this._boundOnRequestResume);
+      this._boundOnRequestPause = null;
+      this._boundOnRequestResume = null;
 
       for (var i = 0; i < this._systems.length; i++) {
         var system = this._systems[i];
