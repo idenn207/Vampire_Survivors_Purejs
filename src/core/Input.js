@@ -74,6 +74,9 @@
       this._keysReleased.clear();
       this._mouseButtonsPressed.clear();
       this._mouseButtonsReleased.clear();
+
+      // Update mouse world position every frame to account for camera movement
+      this._updateMouseWorldPosition();
     }
 
     setCamera(camera) {
