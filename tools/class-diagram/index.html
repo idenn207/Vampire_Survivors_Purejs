@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Vampire Survivors - Class Diagram</title>
+  <meta charset="UTF-8">
+  <!-- CDN Dependencies -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/panzoom@9/dist/panzoom.min.js"></script>
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <h1>Vampire Survivors - Class Diagram</h1>
+    <p>Interactive visualization of system architecture and dependencies</p>
+  </header>
+
+  <nav class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('core')">Core</button>
+    <button class="tab-btn" onclick="switchTab('components')">Components</button>
+    <button class="tab-btn" onclick="switchTab('entities')">Entities</button>
+    <button class="tab-btn" onclick="switchTab('systems')">Systems</button>
+    <button class="tab-btn" onclick="switchTab('behaviors')">Behaviors</button>
+    <button class="tab-btn" onclick="switchTab('managers')">Managers & Pools</button>
+    <button class="tab-btn" onclick="switchTab('ui')">UI</button>
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search classes..." oninput="handleSearch(this.value)"
+        onblur="setTimeout(hideSearchResults, 200)">
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </nav>
+
+  <main>
+    <div class="diagram-container">
+      <!-- Tab content will be populated by aggregator.js -->
+      <div id="tab-overview" class="tab-content active"></div>
+      <div id="tab-core" class="tab-content"></div>
+      <div id="tab-components" class="tab-content"></div>
+      <div id="tab-entities" class="tab-content"></div>
+      <div id="tab-systems" class="tab-content"></div>
+      <div id="tab-behaviors" class="tab-content"></div>
+      <div id="tab-managers" class="tab-content"></div>
+      <div id="tab-ui" class="tab-content"></div>
+    </div>
+
+    <!-- Sidebar Legend -->
+    <aside class="sidebar">
+      <h3>Legend</h3>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #00d4ff;"></div>
+        <span>Inheritance (extends)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #ff6b6b;"></div>
+        <span>Composition (contains)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #4ecdc4;"></div>
+        <span>Dependency (uses)</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #ffe66d;"></div>
+        <span>Event-based (emits/listens)</span>
+      </div>
+
+      <div class="stats">
+        <h3>Class Statistics</h3>
+        <div class="stat-row">
+          <span>Core Classes</span>
+          <span class="stat-value">8</span>
+        </div>
+        <div class="stat-row">
+          <span>Components</span>
+          <span class="stat-value">20</span>
+        </div>
+        <div class="stat-row">
+          <span>Entities</span>
+          <span class="stat-value">10</span>
+        </div>
+        <div class="stat-row">
+          <span>Systems</span>
+          <span class="stat-value">27</span>
+        </div>
+        <div class="stat-row">
+          <span>Behaviors</span>
+          <span class="stat-value">17</span>
+        </div>
+        <div class="stat-row">
+          <span>Managers/Pools</span>
+          <span class="stat-value">10</span>
+        </div>
+        <div class="stat-row">
+          <span>UI Classes</span>
+          <span class="stat-value">28</span>
+        </div>
+        <div class="stat-row" style="border-top: 1px solid #0f3460; padding-top: 10px; margin-top: 5px;">
+          <span><strong>Total Classes</strong></span>
+          <span class="stat-value">120+</span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <h3>System Priorities</h3>
+        <div class="stat-row">
+          <span>0-5: Input/Setup</span>
+          <span class="stat-value">4</span>
+        </div>
+        <div class="stat-row">
+          <span>8-15: Spawning/Combat</span>
+          <span class="stat-value">10</span>
+        </div>
+        <div class="stat-row">
+          <span>20-50: Physics/Items</span>
+          <span class="stat-value">5</span>
+        </div>
+        <div class="stat-row">
+          <span>100+: Rendering/UI</span>
+          <span class="stat-value">8</span>
+        </div>
+      </div>
+
+      <div class="stats">
+        <h3>Event Types</h3>
+        <div class="stat-row">
+          <span>game:*</span>
+          <span class="stat-value">6</span>
+        </div>
+        <div class="stat-row">
+          <span>player:*</span>
+          <span class="stat-value">5</span>
+        </div>
+        <div class="stat-row">
+          <span>enemy:*</span>
+          <span class="stat-value">3</span>
+        </div>
+        <div class="stat-row">
+          <span>weapon:*</span>
+          <span class="stat-value">4</span>
+        </div>
+        <div class="stat-row">
+          <span>wave:*</span>
+          <span class="stat-value">3</span>
+        </div>
+        <div class="stat-row">
+          <span>entity:*</span>
+          <span class="stat-value">4</span>
+        </div>
+        <div class="stat-row">
+          <span>screen:*</span>
+          <span class="stat-value">4</span>
+        </div>
+        <div class="stat-row">
+          <span>Other events</span>
+          <span class="stat-value">5+</span>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Zoom Controls -->
+  <div class="zoom-controls">
+    <button onclick="zoomIn()" title="Zoom In">+</button>
+    <button onclick="zoomOut()" title="Zoom Out">-</button>
+    <button class="text-btn" onclick="resetZoom()" title="Reset Zoom">Reset</button>
+  </div>
+
+  <!-- Tooltip -->
+  <div id="tooltip" class="tooltip"></div>
+
+  <!-- Main module (ES6) -->
+  <script type="module" src="aggregator.js"></script>
+</body>
+
+</html>
