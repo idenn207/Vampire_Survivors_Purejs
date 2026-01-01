@@ -20,9 +20,13 @@ export async function switchTab(tabName) {
     await window.renderTab(tabName);
   }
 
-  // Initialize panzoom for new tab after a short delay
+  // Initialize panzoom and node listeners for new tab after a short delay
   setTimeout(function() {
     initPanzoom();
+    // Setup node listeners for newly rendered nodes
+    if (window.setupNodeListeners) {
+      window.setupNodeListeners();
+    }
   }, 100);
 }
 

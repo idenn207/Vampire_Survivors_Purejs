@@ -3,6 +3,8 @@ export const managers = {
   description: 'VampireSurvivors.Managers and VampireSurvivors.Pool - Entity management and object pooling (10 classes)',
   content: `
 classDiagram
+    direction TB
+
     class EntityManager {
         -Map _entities
         -Map _entitiesByTag

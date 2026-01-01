@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weapon Debug Tool</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="loading-overlay">
+    <h1>Weapon Debug Tool</h1>
+    <div id="loading-progress">
+      <div id="loading-progress-bar"></div>
+    </div>
+    <div id="loading-text">Initializing...</div>
+  </div>
+
+  <div id="app">
+    <!-- Left Panel: Weapon List -->
+    <div id="weapon-list-panel">
+      <div id="weapon-list-header">
+        <h2>Weapons</h2>
+        <input type="text" id="weapon-search" placeholder="Search weapons...">
+      </div>
+      <div id="category-tabs">
+        <button class="category-tab active" data-category="all">All</button>
+        <button class="category-tab" data-category="basic">Basic</button>
+        <button class="category-tab" data-category="core">Core</button>
+        <button class="category-tab" data-category="evolved">Evolved</button>
+      </div>
+      <div id="weapon-list"></div>
+    </div>
+
+    <!-- Right Panel -->
+    <div id="right-panel">
+      <!-- Characteristics Panel -->
+      <div id="characteristics-panel">
+        <div id="weapon-info-header">
+          <div>
+            <div id="weapon-name">Select a Weapon</div>
+            <div id="weapon-meta">Click a weapon from the list to begin testing</div>
+          </div>
+          <div id="test-result-badge" class="pending">PENDING</div>
+        </div>
+
+        <div class="panel-section">
+          <h3>Properties</h3>
+          <table class="props-table" id="props-table">
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="panel-section">
+          <h3>Effect Verification</h3>
+          <table class="verify-table" id="verify-table">
+            <thead>
+              <tr>
+                <th>Effect</th>
+                <th>Expected</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+
+        <div class="panel-section">
+          <h3>Stats Verification</h3>
+          <table class="verify-table" id="stats-verify-table">
+            <thead>
+              <tr>
+                <th style="width: 35%">Property</th>
+                <th style="width: 20%">Expected</th>
+                <th style="width: 30%">Measured</th>
+                <th style="width: 15%">Status</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <div class="stats-summary" id="stats-summary">
+            <div class="stats-summary-item">
+              <span class="label">Pass:</span>
+              <span class="value pass" id="stats-pass-count">0</span>
+            </div>
+            <div class="stats-summary-item">
+              <span class="label">Fail:</span>
+              <span class="value fail" id="stats-fail-count">0</span>
+            </div>
+            <div class="stats-summary-item">
+              <span class="label">Pending:</span>
+              <span class="value pending" id="stats-pending-count">0</span>
+            </div>
+            <div class="stats-summary-item">
+              <span class="label">Need Data:</span>
+              <span class="value insufficient" id="stats-insufficient-count">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel-section collapsible" id="failed-tests-section">
+          <div class="section-header" onclick="toggleCollapse(this)">
+            <span class="collapse-icon">&#9660;</span>
+            <span class="section-title">Failed Tests</span>
+            <span class="section-count" id="failed-tests-count">0</span>
+          </div>
+          <div class="section-content">
+            <div id="failed-tests-panel">
+              <div style="padding: 12px; color: #888; font-size: 12px;">No failed tests yet</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Panel -->
+      <div id="game-panel">
+        <div id="game-controls">
+          <button class="control-btn primary" id="btn-spawn">Spawn Enemies (5)</button>
+          <button class="control-btn secondary" id="btn-spawn-many">Spawn Many (20)</button>
+          <div class="scenario-btn-group">
+            <button class="control-btn scenario" id="btn-spawn-cluster" title="Spawn clustered enemies for ricochet testing">Cluster</button>
+            <button class="control-btn scenario" id="btn-spawn-line" title="Spawn enemies in a line for pierce testing">Line</button>
+            <button class="control-btn scenario" id="btn-spawn-weak" title="Spawn weak enemies for on-kill testing">Weak</button>
+          </div>
+          <div class="scenario-btn-group" style="margin-top: 5px;">
+            <button class="control-btn scenario" id="btn-spawn-boss" title="Spawn high HP boss for sustained damage testing">Boss</button>
+            <button class="control-btn scenario" id="btn-spawn-moving" title="Spawn moving enemies for homing testing">Moving</button>
+            <button class="control-btn scenario" id="btn-spawn-mixed" title="Spawn mixed HP enemies for execute testing">Mixed</button>
+            <button class="control-btn scenario" id="btn-wave-mode" title="Start multi-wave sustained test mode">Wave Mode</button>
+          </div>
+          <button class="control-btn secondary" id="btn-clear">Clear Enemies</button>
+          <button class="control-btn danger" id="btn-reset">Reset Test</button>
+          <button class="control-btn secondary" id="btn-center-camera" title="Center camera on player">Center</button>
+          <button class="control-btn primary" id="btn-force-fire" title="Force weapon to fire (reset cooldown)">Force Fire</button>
+          <label style="margin-left: 10px; color: #888;"><input type="checkbox" id="chk-auto-spawn" checked> Auto-spawn enemies</label>
+          <button class="control-btn success" id="btn-batch">Test All Weapons</button>
+          <button class="control-btn copy-report" id="btn-copy-report" title="Copy full test report to clipboard">Copy Report</button>
+          <button class="control-btn secondary" id="btn-damage-report" title="Generate damage breakdown report">Damage Report</button>
+        </div>
+        <div id="attack-counter">
+          <div class="counter-item">
+            <span class="counter-label">Fired:</span>
+            <span class="counter-value fired" id="counter-fired">0</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-label">Hits:</span>
+            <span class="counter-value hit" id="counter-hit">0</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-label">Kills:</span>
+            <span class="counter-value kill" id="counter-kill">0</span>
+          </div>
+          <div class="counter-item">
+            <span class="counter-label">Effects:</span>
+            <span class="counter-value effect" id="counter-effect">0</span>
+          </div>
+        </div>
+        <div id="effect-progress"></div>
+        <div id="instructions">
+          Click on canvas to fire weapon. Auto weapons fire automatically. WASD to move player.
+        </div>
+        <div id="canvas-container">
+          <canvas id="game-canvas"></canvas>
+
+          <!-- Real-time Verification Status Overlay -->
+          <div id="realtime-status-overlay">
+            <div id="realtime-status-header">
+              <span id="realtime-weapon-name">No Weapon</span>
+              <span id="realtime-status-badge" class="pending">PENDING</span>
+            </div>
+            <div id="realtime-checklist"></div>
+            <div id="realtime-stats">
+              <span class="stat"><span class="label">Fired:</span><span id="rt-fired" class="value">0</span></span>
+              <span class="stat"><span class="label">Hits:</span><span id="rt-hits" class="value">0</span></span>
+              <span class="stat"><span class="label">Kills:</span><span id="rt-kills" class="value">0</span></span>
+            </div>
+          </div>
+
+          <!-- Debug Log Panel (collapsible) -->
+          <div id="debug-log-panel" class="collapsible">
+            <div class="section-header" onclick="toggleCollapse(this)">
+              <span class="collapse-icon">&#9660;</span>
+              <span class="section-title">Debug Log</span>
+              <span class="section-count" id="debug-log-count">0</span>
+            </div>
+            <div class="section-content">
+              <div id="debug-log"></div>
+            </div>
+          </div>
+          <!-- Event Log Panel (collapsible) -->
+          <div id="event-log-panel" class="collapsible">
+            <div class="section-header" onclick="toggleCollapse(this)">
+              <span class="collapse-icon">&#9660;</span>
+              <span class="section-title">Event Log</span>
+              <span class="section-count" id="event-log-count">0</span>
+            </div>
+            <div class="section-content">
+              <div id="event-log"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Batch Test Modal -->
+  <div id="batch-modal">
+    <div id="batch-content">
+      <h2>Batch Test Results</h2>
+      <div id="batch-progress"></div>
+      <table id="batch-results-table">
+        <thead>
+          <tr>
+            <th>Weapon</th>
+            <th>Category</th>
+            <th>Result</th>
+            <th>Failed Effects</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div style="margin-top: 15px; text-align: right;">
+        <button class="control-btn secondary" id="btn-copy-results">Copy Results</button>
+        <button class="control-btn primary" id="btn-close-batch">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Load ES6 module entry point -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

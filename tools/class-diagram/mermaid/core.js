@@ -4,13 +4,13 @@ export const core = {
   content: `
 classDiagram
     class Game {
-        -Canvas _canvas
-        -Context _ctx
-        -Time _time
-        -Input _input
-        -Camera _camera
-        -Array _systems
-        -GameState _state
+        -_canvas
+        -_ctx
+        -_time
+        -_input
+        -_camera
+        -_systems
+        -_state
         +initialize(canvasId)
         +start()
         +pause()
@@ -21,7 +21,7 @@ classDiagram
     }
 
     class EventBus {
-        -Map _listeners
+        -_listeners
         +on(event, callback)
         +once(event, callback)
         +off(event, callback)
@@ -30,20 +30,20 @@ classDiagram
     }
 
     class Time {
-        +number deltaTime
-        +number unscaledDeltaTime
-        +number timeScale
-        +number elapsed
-        +number frameCount
-        +number fps
+        +deltaTime
+        +unscaledDeltaTime
+        +timeScale
+        +elapsed
+        +frameCount
+        +fps
         +update()
         +pause()
         +resume()
     }
 
     class Input {
-        -Map _keys
-        -Object _mouse
+        -_keys
+        -_mouse
         +isKeyDown(key)
         +isKeyPressed(key)
         +getMousePosition()
@@ -51,12 +51,12 @@ classDiagram
     }
 
     class Camera {
-        +number x
-        +number y
-        +number width
-        +number height
-        +number zoom
-        +Entity target
+        +x
+        +y
+        +width
+        +height
+        +zoom
+        +target
         +follow(entity)
         +update()
         +worldToScreen(x, y)
@@ -64,35 +64,35 @@ classDiagram
     }
 
     class AssetLoader {
-        -Map _images
-        -Map _spriteSheets
+        -_images
+        -_spriteSheets
         +loadImage(id, path)
         +getImage(id)
         +loadSpriteSheet(id, path, config)
     }
 
     class UIScale {
-        +number scale
-        +number baseWidth
-        +number baseHeight
+        +scale
+        +baseWidth
+        +baseHeight
         +calculate(canvas)
         +apply(ctx)
     }
 
     class i18n {
-        -string _locale
-        -Object _translations
+        -_locale
+        -_translations
         +setLocale(locale)
         +t(key)
         +loadTranslations(locale)
     }
 
-    Game --> Time : uses
-    Game --> Input : uses
-    Game --> Camera : uses
-    Game --> EventBus : emits events
-    Game --> AssetLoader : loads assets
-    Game --> UIScale : scales UI
-    `,
+    Game --> Time
+    Game --> Input
+    Game --> Camera
+    Game --> EventBus
+    Game --> AssetLoader
+    Game --> UIScale
+`,
 };
 

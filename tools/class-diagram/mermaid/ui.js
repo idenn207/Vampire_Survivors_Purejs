@@ -3,6 +3,8 @@ export const ui = {
   description: 'VampireSurvivors.UI - HUD, screens, panels, and overlays (28 classes)',
   content: `
 classDiagram
+    direction TB
+
     class HUD {
         -StatusPanel _statusPanel
         -WeaponSlots _weaponSlots

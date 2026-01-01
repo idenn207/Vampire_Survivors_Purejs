@@ -3,6 +3,8 @@ export const behaviors = {
   description: 'VampireSurvivors.Behaviors - Weapon and enemy behavior patterns (17 classes)',
   content: `
 classDiagram
+    direction TB
+
     class WeaponBehavior {
         <<abstract>>
         #EntityManager _entityManager

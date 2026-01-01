@@ -38,7 +38,17 @@
       "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/buffdebuff/effects/buffs\"/*.js)",
       "Bash(npx http-server:*)",
       "Bash(for f in \"C:/_project/my/Vampire_Survivors_Purejs/src/data/summons\"/*.js)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(npm install:*)",
+      "Bash(node tools/generate-weapon-catalog.js:*)",
+      "WebFetch(domain:mermaid.js.org)",
+      "Skill(commit-commands:commit)",
+      "mcp__plugin_context7_context7__resolve-library-id",
+      "mcp__plugin_context7_context7__query-docs",
+      "Bash(git checkout:*)",
+      "Bash(while read f)",
+      "Bash(do if ! grep -q \"direction TB\" \"$f\")",
+      "Bash(then echo \"Adding direction TB to: $f\" fi done)"
     ]
   }
 }

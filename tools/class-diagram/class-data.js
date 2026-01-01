@@ -415,10 +415,56 @@ export const classData = {
     file: 'src/systems/BossSystem.js',
     description: 'Boss spawning, phase transitions, and attack patterns.',
     priority: 8,
-    methods: ['setPlayer', 'spawnBoss', 'updateAttacks', 'setHUDSystem'],
+    properties: {
+      private: ['_priority', '_player', '_camera', '_hudSystem', '_currentWave', '_activeBosses', '_aiTimer', '_bossProjectiles', '_boundOnWaveStarted', '_boundOnEntityDied'],
+      public: []
+    },
+    methods: {
+      public: [
+        { name: 'initialize', params: ['game', 'entityManager'], returns: 'void' },
+        { name: 'setPlayer', params: ['player'], returns: 'void' },
+        { name: 'setCamera', params: ['camera'], returns: 'void' },
+        { name: 'setHUDSystem', params: ['hudSystem'], returns: 'void' },
+        { name: 'update', params: ['deltaTime'], returns: 'void' },
+        { name: 'getPrimaryBoss', params: [], returns: 'Boss' },
+        { name: 'getActiveBosses', params: [], returns: 'Array' },
+        { name: 'render', params: ['ctx'], returns: 'void' },
+        { name: 'getDebugInfo', params: [], returns: 'Object' },
+        { name: 'dispose', params: [], returns: 'void' }
+      ],
+      private: [
+        { name: '_onWaveStarted', params: ['data'], returns: 'void' },
+        { name: '_onEntityDied', params: ['data'], returns: 'void' },
+        { name: '_spawnBossWave', params: ['specialWave', 'wave'], returns: 'void' },
+        { name: '_spawnBoss', params: ['bossType', 'wave', 'index', 'totalCount'], returns: 'void' },
+        { name: '_handleBossDeath', params: ['boss'], returns: 'void' },
+        { name: '_updateBosses', params: ['deltaTime'], returns: 'void' },
+        { name: '_updateBossAI', params: ['boss'], returns: 'void' },
+        { name: '_chasePlayer', params: ['boss', 'dx', 'dy', 'distance'], returns: 'void' },
+        { name: '_executeAttack', params: ['boss'], returns: 'void' },
+        { name: '_executeDash', params: ['boss', 'attackData'], returns: 'void' },
+        { name: '_executeProjectile', params: ['boss', 'attackData'], returns: 'void' },
+        { name: '_executeRing', params: ['boss', 'attackData'], returns: 'void' },
+        { name: '_spawnBossProjectile', params: ['x', 'y', 'vx', 'vy', 'damage'], returns: 'void' },
+        { name: '_updateProjectiles', params: ['deltaTime'], returns: 'void' },
+        { name: '_renderProjectiles', params: ['ctx'], returns: 'void' },
+        { name: '_cleanupInactiveBosses', params: [], returns: 'void' }
+      ]
+    },
+    callChain: {
+      'update': ['_updateBosses', '_updateProjectiles', '_cleanupInactiveBosses'],
+      '_onWaveStarted': ['_spawnBossWave'],
+      '_spawnBossWave': ['_spawnBoss'],
+      '_updateBosses': ['_executeAttack', '_updateBossAI'],
+      '_updateBossAI': ['_chasePlayer'],
+      '_executeAttack': ['_executeDash', '_executeProjectile', '_executeRing'],
+      '_executeProjectile': ['_spawnBossProjectile'],
+      '_executeRing': ['_spawnBossProjectile'],
+      'render': ['_renderProjectiles']
+    },
     extends: 'System',
-    dependencies: ['Boss', 'BossData', 'Camera'],
-    events: ['wave:started', 'entity:died']
+    dependencies: ['System', 'Transform', 'Velocity', 'Health', 'Boss', 'BossData', 'events'],
+    events: ['wave:started', 'entity:died', 'player:damaged', 'player:died']
   },
   'MovementSystem': {
     namespace: 'VampireSurvivors.Systems',
@@ -920,9 +966,22 @@ export const classData = {
   'ShieldBar': {
     namespace: 'VampireSurvivors.UI',
     file: 'src/ui/ShieldBar.js',
-    description: 'Shield HP display bar.',
-    methods: ['render'],
-    dependencies: ['Shield']
+    description: 'Shield HP display bar below health bar or overhead.',
+    properties: {
+      private: ['_player', '_healthBarY'],
+      public: []
+    },
+    methods: {
+      public: [
+        { name: 'setPlayer', params: ['player'], returns: 'void' },
+        { name: 'setHealthBarY', params: ['y'], returns: 'void' },
+        { name: 'render', params: ['ctx', 'canvasWidth', 'canvasHeight'], returns: 'void' },
+        { name: 'renderOverhead', params: ['ctx', 'screenX', 'screenY', 'barWidth', 'healthBarHeight', 'offsetY'], returns: 'void' },
+        { name: 'dispose', params: [], returns: 'void' }
+      ],
+      private: []
+    },
+    dependencies: ['UIScale', 'Shield']
   },
   'LevelUpScreen': {
     namespace: 'VampireSurvivors.UI',

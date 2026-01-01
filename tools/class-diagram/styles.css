@@ -225,9 +225,299 @@ main {
 .search-no-results { padding: 15px; color: #888; text-align: center; }
 .search-result-highlight { background: #ffe66d; color: #000; padding: 0 2px; border-radius: 2px; }
 
+/* ============================================
+   Detail Panel
+   ============================================ */
+.detail-panel {
+  position: fixed;
+  width: 480px;
+  max-height: 70vh;
+  background: #16213e;
+  border: 2px solid #00d4ff;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  z-index: 2000;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.detail-panel.visible { display: flex; }
+.detail-panel.pinned { border-color: #ffe66d; }
+.detail-panel.pinned .pin-btn { color: #ffe66d; }
+
+/* Bring panel to front on interaction for multi-panel stacking */
+.detail-panel:hover,
+.detail-panel:focus-within {
+  z-index: 2001;
+}
+
+/* Detail Panel Header */
+.detail-panel-header {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  background: #0f3460;
+  border-bottom: 1px solid #00d4ff;
+  cursor: grab;
+  user-select: none;
+}
+.detail-panel-header:active { cursor: grabbing; }
+
+.detail-panel-title {
+  flex: 1;
+  color: #00d4ff;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 0 10px;
+}
+
+.detail-panel-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.detail-panel-btn:hover { color: #00d4ff; background: rgba(0,212,255,0.1); }
+
+/* Detail Panel Meta */
+.detail-panel-meta {
+  padding: 10px 12px;
+  background: #1a1a2e;
+  border-bottom: 1px solid #0f3460;
+  font-size: 12px;
+}
+.detail-panel-namespace { color: #4ecdc4; margin-bottom: 4px; }
+.detail-panel-file { color: #888; font-family: monospace; font-size: 11px; }
+.detail-panel-extends { color: #ff6b6b; margin-top: 4px; font-style: italic; }
+
+/* Detail Panel Tabs */
+.detail-panel-tabs {
+  display: flex;
+  background: #0f3460;
+  border-bottom: 1px solid #16213e;
+}
+.detail-panel-tab {
+  flex: 1;
+  padding: 10px 12px;
+  background: transparent;
+  border: none;
+  color: #888;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.detail-panel-tab:hover { color: #00d4ff; background: rgba(0,212,255,0.05); }
+.detail-panel-tab.active {
+  color: #00d4ff;
+  border-bottom-color: #00d4ff;
+  background: rgba(0,212,255,0.1);
+}
+
+/* Detail Panel Content */
+.detail-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  max-height: 400px;
+}
+
+/* Methods & Properties */
+.method-section, .property-section {
+  margin-bottom: 15px;
+}
+.method-section-title, .property-section-title {
+  color: #888;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.method-item, .property-item {
+  font-family: monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin: 2px 0;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.2);
+}
+.method-item.public, .property-item.public { border-left: 3px solid #4ecdc4; }
+.method-item.private, .property-item.private { border-left: 3px solid #888; }
+
+.method-name, .property-name { color: #eee; }
+.method-params { color: #888; }
+.method-returns { color: #4ecdc4; }
+
+/* Call Graph */
+.callgraph-section {
+  margin-bottom: 15px;
+}
+.callgraph-section-title {
+  color: #888;
+  font-size: 11px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.call-tree {
+  font-family: monospace;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.call-tree-item {
+  padding: 2px 0;
+}
+.call-tree-method.public { color: #4ecdc4; }
+.call-tree-method.private { color: #888; }
+.call-tree-method::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+  border-left: 1px solid #555;
+  border-bottom: 1px solid #555;
+  vertical-align: middle;
+}
+.call-tree-recursive { color: #ff6b6b; font-style: italic; }
+
+.dependency-item, .event-item {
+  font-family: monospace;
+  font-size: 12px;
+  padding: 4px 8px;
+  margin: 2px 0;
+  border-radius: 3px;
+  background: rgba(0,0,0,0.2);
+}
+.dependency-item { color: #4ecdc4; border-left: 3px solid #4ecdc4; }
+.event-item { color: #ffe66d; border-left: 3px solid #ffe66d; }
+
+/* Source Code */
+.source-code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 11px;
+  line-height: 1.5;
+  background: #0f0f1a;
+  padding: 10px;
+  border-radius: 4px;
+  overflow-x: auto;
+  white-space: pre;
+  color: #ddd;
+}
+.source-code .line-num {
+  color: #555;
+  margin-right: 15px;
+  user-select: none;
+}
+.source-code .kw { color: #c586c0; }
+.source-code .str { color: #ce9178; }
+.source-code .cmt { color: #6a9955; }
+.source-code .num { color: #b5cea8; }
+
+.source-loading, .source-error {
+  padding: 20px;
+  text-align: center;
+  color: #888;
+}
+.source-error { color: #ff6b6b; }
+
+/* No Data */
+.no-data {
+  color: #666;
+  text-align: center;
+  padding: 20px;
+  font-style: italic;
+}
+
+/* ============================================
+   Export Buttons
+   ============================================ */
+.export-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: 15px;
+  padding: 0 10px;
+}
+.export-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #0f3460;
+  border: 1px solid #00d4ff;
+  color: #00d4ff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+.export-btn:hover {
+  background: #00d4ff;
+  color: #000;
+}
+.export-btn svg {
+  flex-shrink: 0;
+}
+
+/* ============================================
+   PDF Progress Overlay
+   ============================================ */
+.pdf-progress-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+.pdf-progress-overlay.visible {
+  display: flex;
+}
+.pdf-progress-content {
+  background: #16213e;
+  border: 2px solid #00d4ff;
+  border-radius: 12px;
+  padding: 40px 60px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 212, 255, 0.2);
+}
+.pdf-progress-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #0f3460;
+  border-top-color: #00d4ff;
+  border-radius: 50%;
+  margin: 0 auto 20px;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.pdf-progress-text {
+  color: #eee;
+  font-size: 16px;
+  font-weight: bold;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .sidebar { display: none; }
   main { height: calc(100vh - 100px); }
   .search-container input { width: 150px; }
+  .detail-panel { width: 90vw; max-width: 400px; }
+  .export-buttons { display: none; }
 }

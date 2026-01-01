@@ -3,6 +3,8 @@ export const systems = {
   description: 'VampireSurvivors.Systems - Logic processors with priority-based execution (27+ classes)',
   content: `
 classDiagram
+    direction TB
+
     class System {
         <<abstract>>
         #Game _game

@@ -3,6 +3,8 @@ export const components = {
   description: 'VampireSurvivors.Components - ECS data containers (20 classes)',
   content: `
 classDiagram
+    direction TB
+
     class Component {
         <<abstract>>
         #Entity _entity

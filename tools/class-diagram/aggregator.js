@@ -13,6 +13,8 @@ import { initPanzoom, zoomIn, zoomOut, resetZoom } from './panzoom-controller.js
 import { showTooltip, hideTooltip } from './tooltip.js';
 import { handleSearch, hideSearchResults } from './search.js';
 import { switchTab } from './tabs.js';
+import { detailPanelManager } from './detail-panel.js';
+import { pdfExport } from './pdf-export.js';
 
 // Aggregate all diagrams
 const diagrams = {
@@ -43,7 +45,7 @@ const renderedTabs = new Set();
 
 // Populate a single tab's content (without rendering mermaid yet)
 function populateTab(tabId) {
-  const tab = tabConfig.find(t => t.id === tabId);
+  const tab = tabConfig.find((t) => t.id === tabId);
   if (!tab) return null;
 
   const diagram = diagrams[tab.diagramKey];
@@ -121,34 +123,69 @@ async function init() {
     securityLevel: 'loose',
   });
 
+  // Initialize detail panel manager
+  detailPanelManager.init();
+
   // Only render the initial visible tab (overview)
   await renderTab('overview');
 
-  // Initialize panzoom and hover listeners after Mermaid renders
+  // Initialize panzoom and hover/click listeners after Mermaid renders
   setTimeout(function () {
     initPanzoom();
-
-    // Add hover listeners to nodes
-    document.querySelectorAll('.node').forEach(function (node) {
-      node.style.cursor = 'pointer';
-      node.addEventListener('mouseenter', function (e) {
-        const text = node.querySelector('.nodeLabel');
-        if (text) {
-          const className = text.textContent.split('\n')[0].trim();
-          showTooltip(className, e.clientX, e.clientY);
-        }
-      });
-      node.addEventListener('mouseleave', hideTooltip);
-      node.addEventListener('mousemove', function (e) {
-        const tooltip = document.getElementById('tooltip');
-        if (tooltip) {
-          tooltip.style.left = e.clientX + 15 + 'px';
-          tooltip.style.top = e.clientY + 15 + 'px';
-        }
-      });
-    });
+    setupNodeListeners();
   }, 1000);
 
+  // Close detail panel when clicking outside
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.detail-panel') && !e.target.closest('.node')) {
+      detailPanelManager.hide();
+    }
+  });
+}
+
+// Setup node listeners (called after each tab render)
+function setupNodeListeners() {
+  document.querySelectorAll('.node').forEach(function (node) {
+    // Skip if already has listeners
+    if (node.dataset.hasListeners) return;
+    node.dataset.hasListeners = 'true';
+
+    node.style.cursor = 'pointer';
+
+    // Hover for tooltip
+    node.addEventListener('mouseenter', function (e) {
+      const text = node.querySelector('.nodeLabel');
+      if (text) {
+        const className = text.textContent.split('\n')[0].trim();
+        showTooltip(className, e.clientX, e.clientY);
+      }
+    });
+    node.addEventListener('mouseleave', hideTooltip);
+    node.addEventListener('mousemove', function (e) {
+      const tooltip = document.getElementById('tooltip');
+      if (tooltip) {
+        tooltip.style.left = e.clientX + 15 + 'px';
+        tooltip.style.top = e.clientY + 15 + 'px';
+      }
+    });
+
+    // Click for detail panel
+    node.addEventListener('click', function (e) {
+      e.stopPropagation();
+      const text = node.querySelector('.nodeLabel');
+      if (text) {
+        const className = text.textContent.split('\n')[0].trim();
+        detailPanelManager.toggle(className, e.clientX, e.clientY);
+      }
+    });
+  });
+}
+
+// Export for use after tab renders
+window.setupNodeListeners = setupNodeListeners;
+
+// Setup keyboard shortcuts
+function setupKeyboardShortcuts() {
   // Keyboard shortcuts
   document.addEventListener('keydown', function (e) {
     // Search shortcut (Ctrl+F or Cmd+F)
@@ -157,10 +194,11 @@ async function init() {
       document.getElementById('searchInput').focus();
       return;
     }
-    // Escape to close search
+    // Escape to close search and detail panel
     if (e.key === 'Escape') {
       hideSearchResults();
       document.getElementById('searchInput').blur();
+      detailPanelManager.forceHide();
       return;
     }
     // Don't trigger zoom if typing in search
@@ -179,6 +217,9 @@ async function init() {
     }
   });
 }
+
+// Call keyboard setup on load
+setupKeyboardShortcuts();
 
 // Run initialization when DOM is ready
 if (document.readyState === 'loading') {

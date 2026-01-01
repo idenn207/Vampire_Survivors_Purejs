@@ -3,6 +3,8 @@ export const entities = {
   description: 'VampireSurvivors.Entities - Game objects with component composition (10 classes)',
   content: `
 classDiagram
+    direction TB
+
     class Entity {
         <<abstract>>
         #number _id
