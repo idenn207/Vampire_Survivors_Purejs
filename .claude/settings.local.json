@@ -48,7 +48,13 @@
       "Bash(git checkout:*)",
       "Bash(while read f)",
       "Bash(do if ! grep -q \"direction TB\" \"$f\")",
-      "Bash(then echo \"Adding direction TB to: $f\" fi done)"
+      "Bash(then echo \"Adding direction TB to: $f\" fi done)",
+      "WebFetch(domain:docs.nestjs.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:excaliburjs.com)",
+      "Bash(for f in /workspaces/Vampire_Survivors_Purejs/framework/core/*.js /workspaces/Vampire_Survivors_Purejs/framework/ecs/*.js /workspaces/Vampire_Survivors_Purejs/framework/utils/*.js /workspaces/Vampire_Survivors_Purejs/framework/components/*.js)",
+      "Bash(node tools/call-flow/generate-call-data.js:*)",
+      "Bash(for f in /workspaces/Vampire_Survivors_Purejs/framework/lib/RF/core/*.js /workspaces/Vampire_Survivors_Purejs/framework/lib/RF/math/*.js /workspaces/Vampire_Survivors_Purejs/framework/lib/RF/physics/*.js /workspaces/Vampire_Survivors_Purejs/framework/lib/RF/patterns/*.js /workspaces/Vampire_Survivors_Purejs/framework/lib/RF/debug/*.js)"
     ]
   }
 }
