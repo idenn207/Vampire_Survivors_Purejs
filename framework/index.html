@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoguelikeFramework Demo</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #1a1a2e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #eee;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #4cc9f0;
+    }
+
+    .info {
+      margin-bottom: 20px;
+      color: #aaa;
+    }
+
+    canvas {
+      border: 2px solid #4cc9f0;
+      background-color: #16213e;
+    }
+
+    .controls {
+      margin-top: 20px;
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .controls strong {
+      color: #4cc9f0;
+    }
+
+    .stats {
+      margin-top: 10px;
+      font-family: monospace;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>RoguelikeFramework Demo</h1>
+  <p class="info">A simple ECS game framework demo</p>
+
+  <canvas id="game-canvas"></canvas>
+
+  <div class="controls">
+    <strong>WASD / Arrow Keys</strong> - Move the player
+  </div>
+  <div class="stats" id="stats">FPS: 0 | Entities: 0</div>
+
+  <!-- Framework Core -->
+  <script src="core/namespace.js"></script>
+  <script src="utils/Vector2.js"></script>
+  <script src="core/EventBus.js"></script>
+  <script src="core/Time.js"></script>
+  <script src="core/Input.js"></script>
+  <script src="core/Camera.js"></script>
+  <script src="ecs/Component.js"></script>
+  <script src="ecs/Entity.js"></script>
+  <script src="ecs/System.js"></script>
+  <script src="ecs/EntityManager.js"></script>
+  <script src="ecs/QueryManager.js"></script>
+  <script src="core/Game.js"></script>
+  <script src="ecs/World.js"></script>
+
+  <!-- Framework Components -->
+  <script src="components/Transform.js"></script>
+  <script src="components/Velocity.js"></script>
+
+  <!-- Demo Game -->
+  <script>
+    (function() {
+      'use strict';
+
+      // ============================================
+      // Imports from Framework
+      // ============================================
+      var World = window.RoguelikeFramework.ECS.World;
+      var System = window.RoguelikeFramework.ECS.System;
+      var Entity = window.RoguelikeFramework.ECS.Entity;
+      var Component = window.RoguelikeFramework.ECS.Component;
+      var Transform = window.RoguelikeFramework.Components.Transform;
+      var Velocity = window.RoguelikeFramework.Components.Velocity;
+
+      // ============================================
+      // Custom Sprite Component
+      // ============================================
+      class Sprite extends Component {
+        constructor(color, shape) {
+          super();
+          this.color = color || '#4cc9f0';
+          this.shape = shape || 'rect'; // 'rect' or 'circle'
+        }
+      }
+
+      // ============================================
+      // Player System - Handle Input
+      // ============================================
+      class PlayerSystem extends System {
+        constructor() {
+          super();
+          this._priority = 5;
+          this._playerSpeed = 200;
+        }
+
+        update(deltaTime) {
+          var players = this.entityManager.getByTag('player');
+          if (players.length === 0) return;
+
+          var player = players[0];
+          var velocity = player.getComponent(Velocity);
+          if (!velocity) return;
+
+          // Get input direction
+          var direction = this.game.input.getMovementDirection();
+
+          // Set velocity based on input
+          velocity.vx = direction.x * this._playerSpeed;
+          velocity.vy = direction.y * this._playerSpeed;
+        }
+      }
+
+      // ============================================
+      // Movement System - Apply Velocity
+      // ============================================
+      class MovementSystem extends System {
+        constructor() {
+          super();
+          this._priority = 10;
+        }
+
+        update(deltaTime) {
+          var entities = this.entityManager.getWithComponents(Transform, Velocity);
+
+          for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+            var transform = entity.getComponent(Transform);
+            var velocity = entity.getComponent(Velocity);
+
+            transform.x += velocity.vx * deltaTime;
+            transform.y += velocity.vy * deltaTime;
+
+            // Clamp to screen bounds
+            var game = this.game;
+            if (transform.x < 0) transform.x = 0;
+            if (transform.y < 0) transform.y = 0;
+            if (transform.x + transform.width > game.width) {
+              transform.x = game.width - transform.width;
+            }
+            if (transform.y + transform.height > game.height) {
+              transform.y = game.height - transform.height;
+            }
+          }
+        }
+      }
+
+      // ============================================
+      // Render System - Draw Entities
+      // ============================================
+      class RenderSystem extends System {
+        constructor() {
+          super();
+          this._priority = 100;
+        }
+
+        render(ctx) {
+          var entities = this.entityManager.getWithComponents(Transform, Sprite);
+
+          for (var i = 0; i < entities.length; i++) {
+            var entity = entities[i];
+            var transform = entity.getComponent(Transform);
+            var sprite = entity.getComponent(Sprite);
+
+            ctx.fillStyle = sprite.color;
+
+            if (sprite.shape === 'circle') {
+              ctx.beginPath();
+              ctx.arc(
+                transform.centerX,
+                transform.centerY,
+                transform.width / 2,
+                0,
+                Math.PI * 2
+              );
+              ctx.fill();
+            } else {
+              ctx.fillRect(
+                transform.x,
+                transform.y,
+                transform.width,
+                transform.height
+              );
+            }
+          }
+        }
+      }
+
+      // ============================================
+      // Stats System - Update HUD
+      // ============================================
+      class StatsSystem extends System {
+        constructor() {
+          super();
+          this._priority = 200;
+          this._statsElement = document.getElementById('stats');
+          this._updateInterval = 0.5;
+          this._elapsed = 0;
+        }
+
+        update(deltaTime) {
+          this._elapsed += deltaTime;
+          if (this._elapsed >= this._updateInterval) {
+            this._elapsed = 0;
+            this._statsElement.textContent =
+              'FPS: ' + this.game.time.fps +
+              ' | Entities: ' + this.entityManager.getCount();
+          }
+        }
+      }
+
+      // ============================================
+      // Main Entry Point
+      // ============================================
+      async function main() {
+        // Create world
+        var world = new World({ width: 800, height: 600 });
+        await world.initialize('game-canvas');
+
+        // Add systems
+        world.addSystem(new PlayerSystem());
+        world.addSystem(new MovementSystem());
+        world.addSystem(new RenderSystem());
+        world.addSystem(new StatsSystem());
+
+        // Create player entity
+        var player = world.createEntity(Entity);
+        player.addComponent(new Transform(400 - 16, 300 - 16, 32, 32));
+        player.addComponent(new Velocity(0, 0));
+        player.addComponent(new Sprite('#4cc9f0', 'rect'));
+        player.addTag('player');
+
+        // Create some enemy entities for demo
+        var enemyColors = ['#f72585', '#7209b7', '#3a0ca3', '#4361ee'];
+        for (var i = 0; i < 10; i++) {
+          var enemy = world.createEntity(Entity);
+          enemy.addComponent(new Transform(
+            Math.random() * 700 + 50,
+            Math.random() * 500 + 50,
+            24,
+            24
+          ));
+          enemy.addComponent(new Velocity(
+            (Math.random() - 0.5) * 100,
+            (Math.random() - 0.5) * 100
+          ));
+          enemy.addComponent(new Sprite(
+            enemyColors[Math.floor(Math.random() * enemyColors.length)],
+            'circle'
+          ));
+          enemy.addTag('enemy');
+        }
+
+        // Start the game
+        await world.start();
+
+        // Log framework info
+        window.RoguelikeFramework.info();
+        console.log('Demo started with', world.entityManager.getCount(), 'entities');
+      }
+
+      // Run when DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', main);
+      } else {
+        main();
+      }
+    })();
+  </script>
+</body>
+</html>

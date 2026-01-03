@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Call Flow Analyzer - Vampire Survivors</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+  <script src="https://unpkg.com/panzoom@9.4.3/dist/panzoom.min.js"></script>
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="header">
+      <h1>Call Flow Analyzer</h1>
+      <div class="header-controls">
+        <input type="text" id="search-input" placeholder="Search classes or methods..." />
+        <select id="view-mode">
+          <option value="flowchart">Flowchart</option>
+          <option value="sequence">Sequence Diagram</option>
+          <option value="tree">Call Tree</option>
+          <option value="timeline">Timeline (Runtime)</option>
+        </select>
+        <button id="help-toggle" class="help-btn" title="Test Guidelines">?</button>
+      </div>
+    </header>
+
+    <!-- Test Guidelines Panel -->
+    <div id="test-guidelines" class="test-guidelines" style="display: none;">
+      <div class="guidelines-header">
+        <h3>Test Guidelines</h3>
+        <button id="close-guidelines" class="close-btn">&times;</button>
+      </div>
+      <div class="guidelines-content">
+        <h4>How to Test This Tool</h4>
+        <ol>
+          <li><strong>Start Server:</strong> <code>npx http-server -p 8080 -o</code></li>
+          <li><strong>Navigate:</strong> Open <code>/tools/call-flow/</code></li>
+          <li><strong>Select Class:</strong> Click a class in the sidebar &rarr; should show flowchart</li>
+          <li><strong>Change View:</strong> Use dropdown to switch between Flowchart/Sequence/Tree</li>
+          <li><strong>Entry Points:</strong> Click an entry point &rarr; navigates to that method</li>
+          <li><strong>Zoom:</strong> Use +/- buttons or scroll to zoom, drag to pan</li>
+          <li><strong>Export:</strong> Click "Export SVG" &rarr; downloads diagram file</li>
+        </ol>
+
+        <h4>View Modes</h4>
+        <ul>
+          <li><strong>Flowchart:</strong> Shows internal method call structure of a class</li>
+          <li><strong>Sequence:</strong> Shows method execution order from entry point</li>
+          <li><strong>Call Tree:</strong> Shows hierarchical call chain from selected method</li>
+          <li><strong>Timeline:</strong> Runtime trace (requires recording)</li>
+        </ul>
+
+        <h4>Node Colors</h4>
+        <ul class="color-legend">
+          <li><span class="color-box entry"></span> Entry points (green)</li>
+          <li><span class="color-box private"></span> Private methods (gray)</li>
+          <li><span class="color-box external"></span> External calls (blue)</li>
+          <li><span class="color-box event"></span> Events (orange)</li>
+        </ul>
+
+        <h4>Sample Data</h4>
+        <p>Pre-loaded with 5 sample systems: EnemySystem, WeaponSystem, CombatSystem, CollisionSystem, PlayerSystem</p>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Classes</h3>
+          <div id="class-list" class="class-list"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Entry Points</h3>
+          <div id="entry-points" class="entry-points"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>Statistics</h3>
+          <div id="statistics" class="statistics"></div>
+        </div>
+      </aside>
+
+      <!-- Diagram Area -->
+      <main class="diagram-area">
+        <div class="tabs">
+          <button class="tab active" data-tab="diagram">Diagram</button>
+          <button class="tab" data-tab="tree">Call Tree</button>
+          <button class="tab" data-tab="runtime">Runtime Trace</button>
+        </div>
+
+        <div class="tab-content active" id="tab-diagram">
+          <div class="diagram-controls">
+            <button id="zoom-in">+</button>
+            <button id="zoom-reset">Reset</button>
+            <button id="zoom-out">-</button>
+            <button id="export-svg">Export SVG</button>
+          </div>
+          <div id="diagram-container" class="diagram-container">
+            <pre id="mermaid-diagram" class="mermaid"></pre>
+          </div>
+        </div>
+
+        <div class="tab-content" id="tab-tree">
+          <div id="tree-container" class="tree-container"></div>
+        </div>
+
+        <div class="tab-content" id="tab-runtime">
+          <div class="runtime-controls">
+            <button id="start-recording">Start Recording</button>
+            <button id="stop-recording" disabled>Stop Recording</button>
+            <span id="recording-status">Not recording</span>
+          </div>
+          <div id="timeline-container" class="timeline-container"></div>
+        </div>
+      </main>
+
+      <!-- Detail Panel -->
+      <aside class="detail-panel" id="detail-panel" style="display: none;">
+        <div class="detail-header">
+          <h3 id="detail-title">Method Details</h3>
+          <button id="close-detail">×</button>
+        </div>
+        <div class="detail-content" id="detail-content"></div>
+      </aside>
+    </div>
+  </div>
+
+  <script type="module" src="./aggregator.js"></script>
+</body>
+</html>

@@ -1,0 +1,802 @@
+/* ============================================
+   Call Flow Analyzer - Styles
+   ============================================ */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #1a1a2e;
+  color: #eee;
+  min-height: 100vh;
+}
+
+/* ============================================
+   Layout
+   ============================================ */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #16213e;
+  border-bottom: 1px solid #0f3460;
+}
+
+.header h1 {
+  font-size: 1.5rem;
+  color: #00d4ff;
+}
+
+.header-controls {
+  display: flex;
+  gap: 16px;
+}
+
+.header-controls input {
+  padding: 8px 16px;
+  width: 300px;
+  background-color: #0f3460;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 14px;
+}
+
+.header-controls input:focus {
+  outline: none;
+  border-color: #00d4ff;
+}
+
+.header-controls select {
+  padding: 8px 16px;
+  background-color: #0f3460;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  color: #eee;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ============================================
+   Sidebar
+   ============================================ */
+
+.sidebar {
+  width: 280px;
+  background-color: #16213e;
+  border-right: 1px solid #0f3460;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.sidebar-section {
+  padding: 16px;
+  border-bottom: 1px solid #0f3460;
+}
+
+.sidebar-section h3 {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: #00d4ff;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+}
+
+.class-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.class-item {
+  padding: 8px 12px;
+  background-color: #0f3460;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.2s;
+}
+
+.class-item:hover {
+  background-color: #00d4ff;
+  color: #1a1a2e;
+}
+
+.class-item.active {
+  background-color: #00d4ff;
+  color: #1a1a2e;
+}
+
+.entry-points {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.entry-point-item {
+  padding: 6px 10px;
+  background-color: rgba(76, 175, 80, 0.2);
+  border-left: 3px solid #4CAF50;
+  border-radius: 0 4px 4px 0;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.entry-point-item:hover {
+  background-color: rgba(76, 175, 80, 0.4);
+}
+
+.entry-point-item .method {
+  color: #DCDCAA;
+}
+
+.entry-point-item .class {
+  color: #9CDCFE;
+  font-size: 11px;
+}
+
+.statistics {
+  font-size: 13px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stat-row:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  color: #888;
+}
+
+.stat-value {
+  color: #00d4ff;
+  font-weight: 600;
+}
+
+/* ============================================
+   Diagram Area
+   ============================================ */
+
+.diagram-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  background-color: #16213e;
+  border-bottom: 1px solid #0f3460;
+}
+
+.tab {
+  padding: 12px 24px;
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  color: #eee;
+}
+
+.tab.active {
+  color: #00d4ff;
+  border-bottom-color: #00d4ff;
+}
+
+.tab-content {
+  display: none;
+  flex: 1;
+  overflow: hidden;
+}
+
+.tab-content.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.diagram-controls {
+  display: flex;
+  gap: 8px;
+  padding: 12px 16px;
+  background-color: #16213e;
+  border-bottom: 1px solid #0f3460;
+}
+
+.diagram-controls button {
+  padding: 6px 12px;
+  background-color: #0f3460;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  color: #eee;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.diagram-controls button:hover {
+  background-color: #00d4ff;
+  color: #1a1a2e;
+}
+
+.diagram-container {
+  flex: 1;
+  overflow: auto;
+  padding: 24px;
+  background-color: #1a1a2e;
+}
+
+.mermaid {
+  display: flex;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.mermaid svg {
+  max-width: 100%;
+}
+
+/* ============================================
+   Tree Container
+   ============================================ */
+
+.tree-container {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+  background-color: #1a1a2e;
+}
+
+/* Call Tree Styles */
+.call-tree {
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.call-tree-node {
+  margin: 0;
+}
+
+.call-tree-header {
+  display: flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.call-tree-header:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.call-tree-toggle,
+.call-tree-toggle-spacer {
+  width: 16px;
+  height: 16px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  font-size: 10px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+.call-tree-toggle:hover {
+  color: #fff;
+}
+
+.call-tree-icon {
+  margin-right: 6px;
+  font-size: 12px;
+}
+
+.call-tree-class {
+  color: #9CDCFE;
+}
+
+.call-tree-name {
+  color: #DCDCAA;
+}
+
+.call-tree-line {
+  color: #6A9955;
+  margin-left: 8px;
+  font-size: 11px;
+}
+
+.call-tree-duration {
+  color: #CE9178;
+  margin-left: 8px;
+  font-size: 11px;
+}
+
+.call-tree-badge {
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.call-tree-badge.recursive {
+  background-color: #FF5722;
+  color: #fff;
+}
+
+.call-tree-badge.truncated {
+  background-color: #607D8B;
+  color: #fff;
+}
+
+.call-tree-badge.missing {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.call-tree-children {
+  border-left: 1px solid #3E3E3E;
+  margin-left: 8px;
+}
+
+/* ============================================
+   Runtime Trace
+   ============================================ */
+
+.runtime-controls {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #16213e;
+  border-bottom: 1px solid #0f3460;
+}
+
+.runtime-controls button {
+  padding: 8px 16px;
+  background-color: #0f3460;
+  border: none;
+  border-radius: 4px;
+  color: #eee;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.runtime-controls button:hover:not(:disabled) {
+  background-color: #00d4ff;
+  color: #1a1a2e;
+}
+
+.runtime-controls button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.runtime-controls button#start-recording {
+  background-color: #4CAF50;
+}
+
+.runtime-controls button#stop-recording {
+  background-color: #f44336;
+}
+
+#recording-status {
+  color: #888;
+  font-size: 13px;
+}
+
+#recording-status.recording {
+  color: #f44336;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.timeline-container {
+  flex: 1;
+  overflow: auto;
+  padding: 16px;
+}
+
+/* Timeline Styles */
+.timeline-wrapper {
+  background-color: #1a1a2e;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.timeline-empty {
+  padding: 40px;
+  text-align: center;
+  color: #888;
+}
+
+.timeline-axis {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 180px 8px 200px;
+  background-color: #16213e;
+  border-bottom: 1px solid #0f3460;
+  font-size: 11px;
+  color: #888;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #0f3460;
+  padding: 2px 8px;
+}
+
+.timeline-row:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.timeline-label {
+  width: 180px;
+  flex-shrink: 0;
+  font-size: 12px;
+  color: #9CDCFE;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.timeline-bar-container {
+  flex: 1;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-bar {
+  position: absolute;
+  height: 100%;
+  min-width: 2px;
+  background-color: #4CAF50;
+  border-radius: 2px;
+}
+
+.timeline-bar:hover {
+  filter: brightness(1.2);
+}
+
+.timeline-duration {
+  width: 80px;
+  flex-shrink: 0;
+  text-align: right;
+  font-size: 11px;
+  color: #CE9178;
+  padding-left: 8px;
+}
+
+/* ============================================
+   Detail Panel
+   ============================================ */
+
+.detail-panel {
+  width: 350px;
+  background-color: #16213e;
+  border-left: 1px solid #0f3460;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background-color: #0f3460;
+  border-bottom: 1px solid #1a1a2e;
+}
+
+.detail-header h3 {
+  font-size: 14px;
+  color: #00d4ff;
+}
+
+.detail-header button {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.detail-header button:hover {
+  color: #eee;
+}
+
+.detail-content {
+  padding: 16px;
+}
+
+.detail-section {
+  margin-bottom: 20px;
+}
+
+.detail-section h4 {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #888;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.detail-section pre {
+  background-color: #0f3460;
+  padding: 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  overflow-x: auto;
+}
+
+.detail-section code {
+  font-family: 'Consolas', 'Monaco', monospace;
+  color: #eee;
+}
+
+.detail-list {
+  list-style: none;
+}
+
+.detail-list li {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: 13px;
+}
+
+.detail-list li:last-child {
+  border-bottom: none;
+}
+
+/* ============================================
+   Mermaid Theme Override
+   ============================================ */
+
+.mermaid .node rect,
+.mermaid .node circle,
+.mermaid .node ellipse,
+.mermaid .node polygon,
+.mermaid .node path {
+  fill: #0f3460;
+  stroke: #00d4ff;
+}
+
+.mermaid .label {
+  color: #eee;
+}
+
+.mermaid .edgePath .path {
+  stroke: #00d4ff;
+}
+
+.mermaid .edgeLabel {
+  background-color: #1a1a2e;
+  color: #888;
+}
+
+.mermaid .cluster rect {
+  fill: #16213e;
+  stroke: #0f3460;
+}
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .detail-panel {
+    width: 300px;
+  }
+}
+
+@media (max-width: 900px) {
+  .main-content {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    max-height: 200px;
+    border-right: none;
+    border-bottom: 1px solid #0f3460;
+  }
+
+  .detail-panel {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    width: 100%;
+    max-width: 400px;
+    z-index: 100;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.3);
+  }
+}
+
+/* ============================================
+   Help Button & Test Guidelines
+   ============================================ */
+
+.help-btn {
+  width: 32px;
+  height: 32px;
+  background-color: #0f3460;
+  border: 1px solid #00d4ff;
+  border-radius: 50%;
+  color: #00d4ff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.help-btn:hover {
+  background-color: #00d4ff;
+  color: #1a1a2e;
+}
+
+.test-guidelines {
+  position: fixed;
+  top: 70px;
+  right: 20px;
+  width: 420px;
+  max-height: calc(100vh - 100px);
+  background-color: #16213e;
+  border: 1px solid #0f3460;
+  border-radius: 8px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.guidelines-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background-color: #0f3460;
+  border-bottom: 1px solid #1a1a2e;
+}
+
+.guidelines-header h3 {
+  color: #00d4ff;
+  font-size: 16px;
+  margin: 0;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 24px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.close-btn:hover {
+  color: #eee;
+}
+
+.guidelines-content {
+  padding: 20px;
+  overflow-y: auto;
+  max-height: calc(100vh - 180px);
+}
+
+.guidelines-content h4 {
+  color: #00d4ff;
+  font-size: 14px;
+  margin: 20px 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #0f3460;
+}
+
+.guidelines-content h4:first-child {
+  margin-top: 0;
+}
+
+.guidelines-content ol,
+.guidelines-content ul {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.guidelines-content li {
+  margin: 8px 0;
+  line-height: 1.6;
+  font-size: 13px;
+}
+
+.guidelines-content code {
+  background-color: #0f3460;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Consolas', 'Monaco', monospace;
+  font-size: 12px;
+  color: #DCDCAA;
+}
+
+.guidelines-content p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #aaa;
+}
+
+/* Color Legend */
+.color-legend {
+  list-style: none;
+  padding-left: 0;
+}
+
+.color-legend li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.color-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+
+.color-box.entry {
+  background-color: #4CAF50;
+}
+
+.color-box.private {
+  background-color: #9E9E9E;
+}
+
+.color-box.external {
+  background-color: #2196F3;
+}
+
+.color-box.event {
+  background-color: #FF9800;
+}
