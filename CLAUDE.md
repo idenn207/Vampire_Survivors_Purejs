@@ -261,7 +261,15 @@ events.emit('player:damaged', { amount: 10 });
 - `src/systems/combat/DamageProcessor.js` - Damage calculation
 - `src/systems/levelup/LevelUpSystem.js` - Level-up logic and upgrades
 
-## Project Versions
+## Development Tools
 
-- `src/` - Current v2 (simplified ECS)
-- `v1/` - Archived v1 (more complex, includes weapons/pools/scenes)
+Located in `tools/`:
+- **class-diagram/** - Interactive class diagram viewer with Mermaid rendering
+- **call-flow/** - Call flow visualizer showing system execution paths
+- **debug-weapon/** - Weapon testing/debugging utility
+
+Open any tool's `index.html` in a browser to use.
+
+## Reference Framework
+
+The `reference-framework/` submodule contains a reusable game framework extracted from this project. It's for reference and potential reuse in other projects.
